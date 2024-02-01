@@ -3,7 +3,7 @@ title: "TODO - Your title"
 abbrev: "TODO - Abbreviation"
 category: info
 
-docname: draft-ietf-high-assurance-dids-with-dns
+docname: draft-ietf-high-assurance-dids-with-dns-latest
 submissiontype: IETF  # also: "independent", "editorial", "IAB", or "IRTF"
 number:
 date:
@@ -41,7 +41,7 @@ author:
    email: mathieu@northernblock.io
 
 informative:
-   Self-Sovereign Identity:
+   Self-Sovereign-Identity:
       title: "Self-Sovereign Identity"
       author:
         -
@@ -109,23 +109,23 @@ In essence, the integration of DIDs with DNS, specifically through the use of TL
 
 The DNS can provide an additional layer of authenticity to a DID by acting as a form of MFA. By hosting important information about a DID, specifically the DID itself (through a URI record) and its PKI (through TLSA records), in a seperate location than the DID document, a user is provided with a higher level of assurance and verifiability that the DID document they are interacting with is authentic while also having a means to verify the DID outside the DID document itself.
 
-+----------------+     +----------------+ 
-|                |     |                | 
-|    DNS Server  |     |   Web Server   | 
-|                |     |                | 
-|    +------+    |     |    +------+    | 
-|    |  DID  |<--+-----+-->|  DID  |    | 
-|    +------+    |     |    +------+    | 
-|                |     |                | 
-+----------------+     +----------------+ 
++----------------+     +----------------+
+|                |     |                |
+|    DNS Server  |     |   Web Server   |
+|                |     |                |
+|    +------+    |     |    +------+    |
+|    |  DID  |<--+-----+-->|  DID  |    |
+|    +------+    |     |    +------+    |
+|                |     |                |
++----------------+     +----------------+
 
 The DNS Server and Web Server represent two separate sets of infrastructure, repudiating the same information. Much in the same way MFA and 2FA work to increase the assurance that a user is who they say they are, the same principle can also be applied to DIDs.
 
-### Specifically for did:web
+## Specifically for did:web
 
 With did:web, there’s an inherent link between the DNS needed to resolve the associated DID document and the domain where the relevant supporting DNS records are located. This means that the domain specified by the did:web identifier (for example, did:web:**example.ca**) is also the location where you can find the supporting DNS records.
 
-### Other DID methods
+## Other DID methods
 
 In the case of other DID methods, the association between a DID and a DNS domain is still possible although less obvious than with the aformentioned did:web. The W3C DID Core spec supports multiple ways of creating the association between a DID to a domain. This is most intuitively accomplished using one of two different fields.
 
@@ -247,17 +247,17 @@ Using the new DNS records and proof object in the DID document, we can enable a 
 2. **Verification of the DID:** The user verifies the DID is represented as a URI record in the associated domain.
    1. In the case of did:web, the domain to be queried is indicated by the last segment of the did. ex. **did:web:example.ca -> _did.example.ca**
    2. In the case of other did methods, the domain to be queried is indicated by the value held in the "alsoKnownAs" or "service" fields.
-      1. ex. 
+      1. ex.
       ```javascript
       {"alsoKnownAs": "example.ca"} -> _did.example.ca
        ```
-      2. ex. 
+      2. ex.
       ```javascript
       {"services": [{
          "id":"did:example:123abc#linked-domain",
          "type": "LinkedDomains",
          "serviceEndpoint": "https://example.ca" -> _did.example.ca
-         }] 
+         }]
       }
       ```
 3. **Verification of the PKI:** With the claimed association between the DID and the domain verified, the user would then proceed to verify the key material between the DID and the domain.
@@ -273,7 +273,7 @@ TODO Security
 
 # IANA Considerations
 
-Per [@!RFC8552], IANA is requested to add the following entries to the
+Per {{!RFC8552}}, IANA is requested to add the following entries to the
 "Underscored and Globally Scoped DNS Node Names" registry:
 
     +---------+------------+-------------------------------------------+
