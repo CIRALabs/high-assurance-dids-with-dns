@@ -1,0 +1,255 @@
+
+
+
+
+Network Working Group                                              Jesse
+Internet-Draft                                    Your Organization Here
+Intended status: Informational                           2 February 2024
+Expires: 5 August 2024
+
+
+                           TODO - Your title
+               draft-carter-high-assurance-did-web-latest
+
+Abstract
+
+   TODO Abstract
+
+About This Document
+
+   This note is to be removed before publishing as an RFC.
+
+   The latest revision of this draft can be found at
+   https://CIRALabs.github.io/high-assurance-did-web/draft-carter-high-
+   assurance-did-web.html.  Status information for this document may be
+   found at https://datatracker.ietf.org/doc/draft-carter-high-
+   assurance-did-web/.
+
+   Source for this draft and an issue tracker can be found at
+   https://github.com/CIRALabs/high-assurance-did-web.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 5 August 2024.
+
+Copyright Notice
+
+   Copyright (c) 2024 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
+
+Table of Contents
+
+   1.  Introduction
+   2.  Conventions and Definitions
+   3.  Control Requirements
+   4.  Levels of Assurance
+   5.  Security Considerations
+   6.  IANA Considerations
+   7.  Normative References
+   Acknowledgments
+   Author's Address
+
+1.  Introduction
+
+   TODO Introduction
+
+2.  Conventions and Definitions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+3.  Control Requirements
+
+   This section defines a simple framework to define a set of technical
+   controls that can be implemented and mapped into levels of assurance
+   for did:web identifiers.
+
+   To assist in decision-making and implementation, The controls are
+   ordered in increasing level of security assurance and are grouped
+   into levels of assurance from *LOW-* to *HIGH+*
+
+   *  *Issuing Authority* is the entity accountable for the did:web
+      identifier.
+
+   *  *Issuing Service* is the entity responsible for operating the
+      did:web identifier insfrastructure.
+
+   In many cases the *Issuing Authority* may delegate elements of
+   providing a high assurance did:web identitifier to an *Issuing
+   Service* that may be a commercial provider.
+
+   In the simplest case, the *Issuing Authority* can be regarded as the
+   same as the *Issuing Service*.
+
+   Note that Controls 9, 10, and 11 CANNOT BE DELEGATED to an *Issuing
+   Service*
+
+   11 technical controls are defined.  These controls would be
+   implemented in order of precedence for an increasing level of
+   security assurance. (e.g., Control No.  N would need to be
+   implemented before implementing Control No.  N+1)
+
+    +=========+============+==========================================+
+    | Control | Control    | Description                              |
+    | No.     | Name       |                                          |
+    +=========+============+==========================================+
+    | 1       | DID        | The Issuing Service MUST control the     |
+    |         | Resource   | resource that generates the DID          |
+    |         | Control    | document. (i.e., website)                |
+    +---------+------------+------------------------------------------+
+    | 2       | DID        | The Issuing Service MUST have the        |
+    |         | Document   | ability to do CRUD operations on the DID |
+    |         | Management | document.                                |
+    +---------+------------+------------------------------------------+
+    | 3       | DID        | The Issuing Service MUST ensure the data |
+    |         | Document   | integrity of the DID document by         |
+    |         | Data       | cryptographic means, typically a digital |
+    |         | Integrity  | signature or other means.  The use of    |
+    |         |            | approved or established cryptographic    |
+    |         |            | algorithmsis HIGHLY RECOMMENDED          |
+    +---------+------------+------------------------------------------+
+    | 4       | DID        | The Issuing Service MUST control the     |
+    |         | Document   | keys required to sign the DID document.  |
+    |         | Key        |                                          |
+    |         | Control    |                                          |
+    +---------+------------+------------------------------------------+
+    | 5       | DID        | With proper delegation from the Issuing  |
+    |         | Document   | Authority, the DID Document signing key  |
+    |         | Key        | MAY be generated by the Issuing Service. |
+    |         | Generation | Otherwise, the signing key must be       |
+    |         |            | generated by the Issuing Authority.      |
+    +---------+------------+------------------------------------------+
+    | 6       | Domain     | The Issuing Service MUST have control of |
+    |         | Zone       | the domain zone (or subdomain zone).If   |
+    |         | Control    | direct control of the domain is not      |
+    |         |            | feasible, the use of an accredited DNS   |
+    |         |            | provider is HIGHLY RECOMMENDED           |
+    +---------+------------+------------------------------------------+
+    | 7       | Domain     | There MUST be domain zone records that   |
+    |         | Zone       | map the necessary URI, TLSA, CERT and/or |
+    |         | Mapping    | TXT records to the specified did:web     |
+    |         |            | identifier.                              |
+    +---------+------------+------------------------------------------+
+    | 8       | Domain     | The domain zone records MUST be signed   |
+    |         | Zone       | according to DNSSEC.  (RRSIG)            |
+    |         | Signing    |                                          |
+    +---------+------------+------------------------------------------+
+    | 9       | Domain     | The Issuing Authority MUST have control  |
+    |         | Zone       | over the domain zone keys used for       |
+    |         | Signing    | signing and delegation.  (KSK and ZSK)   |
+    |         | Key        |                                          |
+    |         | Control    |                                          |
+    +---------+------------+------------------------------------------+
+    | 10      | Domain     | The signing keys MUST be generated under |
+    |         | Zone       | the control of the Issuing Authority.    |
+    |         | Signing    |                                          |
+    |         | Key        |                                          |
+    |         | Generation |                                          |
+    +---------+------------+------------------------------------------+
+    | 11      | Hardware   | A FIPS 140-2 compliant hardware security |
+    |         | Security   | module must be under the control of the  |
+    |         | Module     | Issuing Authority.                       |
+    +---------+------------+------------------------------------------+
+
+                                  Table 1
+
+4.  Levels of Assurance
+
+   Many trust frameworks specify levels of assurance to assist in
+   determing which controls must be implemented.
+
+   The following table is not a definitive mapping to trust framework
+   levels of assurance.  It is intended to assist in determing mappings
+   by grouping the controls within a range from *LOW-* to *HIGH+*
+   relating to the appropriate risk level.  Note that controls are
+   additive)in nature. (i.e.,, controls of the preceding level must be
+   fulfilled).
+
+      +===========+==========+=====================================+
+      | Level of  | Controls | Description                         |
+      | Assurance |          |                                     |
+      +===========+==========+=====================================+
+      | *LOW-*    | Control  | SHOULD only be used for low risk    |
+      |           | 1        | transactions where attribution to   |
+      |           |          | originator is desireable.           |
+      +-----------+----------+-------------------------------------+
+      | *LOW*     | Control  | SHOULD only be used for lower risk  |
+      |           | 2        | transactions where establishing the |
+      |           |          | accountablity of the originator is  |
+      |           |          | desirable.                          |
+      +-----------+----------+-------------------------------------+
+      | *MEDIUM*  | Controls | MAY be used for medium risk         |
+      |           | 3, 4 and | commercial transactions, such as    |
+      |           | 5        | correspondence, proposals, etc.     |
+      +-----------+----------+-------------------------------------+
+      | *MEDIUM+* | Controls | MAY be used for higher risk         |
+      |           | 6 and 7  | transcations, such as signing and   |
+      |           |          | verifying invoices, contracts, or   |
+      |           |          | official/legal docmentation         |
+      +-----------+----------+-------------------------------------+
+      | *HIGH*    | Controls | MUST be high risk transactions,     |
+      |           | 8, 9 and | such as government transactions for |
+      |           | 10       | signing and verifying licenses,     |
+      |           |          | certifications or identification    |
+      +-----------+----------+-------------------------------------+
+      | *HIGH+*   | Control  | MUST be used for extremely high     |
+      |           | 11       | risk transactions where there may   |
+      |           |          | be systemic or national security    |
+      |           |          | implications                        |
+      +-----------+----------+-------------------------------------+
+
+                                 Table 2
+
+5.  Security Considerations
+
+   TODO Security
+
+6.  IANA Considerations
+
+   This document has no IANA actions.
+
+7.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/rfc/rfc2119>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+Acknowledgments
+
+   TODO acknowledge.
+
+Author's Address
+
+   Jesse
+   Your Organization Here
+   Email: 43359255+jessecarter111@users.noreply.github.com
