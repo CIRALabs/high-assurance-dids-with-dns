@@ -4,11 +4,11 @@
 
 Network Working Group                                              Jesse
 Internet-Draft                                    Your Organization Here
-Intended status: Informational                           1 February 2024
-Expires: 4 August 2024
+Intended status: Informational                           2 February 2024
+Expires: 5 August 2024
 
 
-                           TODO - Your title
+                         TODO - This is a test
                draft-carter-high-assurance-did-web-latest
 
 Abstract
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 4 August 2024.
+   This Internet-Draft will expire on 5 August 2024.
 
 Copyright Notice
 
@@ -62,10 +62,12 @@ Copyright Notice
 Table of Contents
 
    1.  Introduction
-   2.  Conventions and Definitions
-   3.  Security Considerations
-   4.  IANA Considerations
-   5.  Normative References
+   2.  Requirements
+   3.  Controls
+   4.  Conventions and Definitions
+   5.  Security Considerations
+   6.  IANA Considerations
+   7.  Normative References
    Acknowledgments
    Author's Address
 
@@ -73,7 +75,15 @@ Table of Contents
 
    TODO Introduction
 
-2.  Conventions and Definitions
+2.  Requirements
+
+   TODO Introduction to Requirements section
+
+3.  Controls
+
+   TODO Introduction to Control Section
+
+4.  Conventions and Definitions
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
@@ -81,15 +91,15 @@ Table of Contents
    BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
 
-3.  Security Considerations
+5.  Security Considerations
 
    TODO Security
 
-4.  IANA Considerations
+6.  IANA Considerations
 
    This document has no IANA actions.
 
-5.  Normative References
+7.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
