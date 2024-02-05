@@ -1,0 +1,142 @@
+; File written on Mon Jan 29 08:41:10 2024
+; dnssec_signzone version 9.18.21
+example.com.		3600	IN SOA	ns1.example.com. admin.example.com. (
+					2022010101 ; serial
+					3600       ; refresh (1 hour)
+					1800       ; retry (30 minutes)
+					604800     ; expire (1 week)
+					86400      ; minimum (1 day)
+					)
+			3600	RRSIG	SOA 13 2 3600 (
+					20240228124110 20240129124110 10537 example.com.
+					Lm6ue7i6ClIc6LzqWvqC1h8K8IGg6RClxvGz
+					AXuODseHy9k5bWU1U70ccO1SJ3m//1A5LPgh
+					gkFr7r5tGrRGiQ== )
+			3600	NS	ns1.example.com.
+			3600	NS	ns2.example.com.
+			3600	RRSIG	NS 13 2 3600 (
+					20240228124110 20240129124110 10537 example.com.
+					EQ+qP8CwtVB77F/uPNt/Kp3iBP8z6FDetzEI
+					hHkfdrKVe3lROtUlbTA3KXC4MsX7ZLHOyqzu
+					3LsF3cKfLwRPSg== )
+			3600	A	192.0.2.100
+			3600	RRSIG	A 13 2 3600 (
+					20240228124110 20240129124110 10537 example.com.
+					pKq1ZYQjTdGAttH06jzyAiFgGR4ug22t6/86
+					WXCANJ/Hm3RF4uAmcz8i7fqax6dQfpet9KPx
+					nWbsbvzv8YFFFQ== )
+			3600	MX	10 mail.example.com.
+			3600	RRSIG	MX 13 2 3600 (
+					20240228124110 20240129124110 10537 example.com.
+					n0A6dOq7DpkbcdLLsqMOC0fba8HE+JkVIKo3
+					yo8rpGEPYJ+DXf7iRXRhJ7UPdatvPOnMn9o7
+					PXMEB1KMVeTzKA== )
+			3600	NSEC	_did.example.com. A NS SOA MX RRSIG NSEC DNSKEY
+			3600	RRSIG	NSEC 13 2 3600 (
+					20240228124110 20240129124110 10537 example.com.
+					5BzoSQtlzagxC7wDRvjh7EptZ2voRWUEMhsG
+					DgLX7/yipF8mWK3E6TEAjyA7c/qQPGx1Q2Tz
+					pEUrwoGj7eXEmw== )
+			3600	DNSKEY	256 3 13 (
+					d8nDfDdYzu0UXLC6jQhyiN1FavbdMLtFTq9v
+					JRafQfKggltWGV+SFlVDI79/CQiEDvmsCRCJ
+					vjPN1W4gS3ZuxA==
+					) ; ZSK; alg = ECDSAP256SHA256 ; key id = 10537
+			3600	DNSKEY	257 3 13 (
+					+OynQobO0PGvRvpQaRpkQCuMpiljGsc+9BMW
+					3TecfO+sf+D104WLVNcjGThOlYak3c9sqqGY
+					RX150IAlVa5TIg==
+					) ; KSK; alg = ECDSAP256SHA256 ; key id = 46264
+			3600	RRSIG	DNSKEY 13 2 3600 (
+					20240228124110 20240129124110 10537 example.com.
+					HGKBlDAtnuqf1vFAEoOO+xZ4JDRUiWSoUSTU
+					TwNR0WttMrZNRjCfCm/duhJKUizPqGkns8hS
+					Fcbvd82b6iri9A== )
+			3600	RRSIG	DNSKEY 13 2 3600 (
+					20240228124110 20240129124110 46264 example.com.
+					gzc1IeXCPEvJaRHskzmfsbevrIeaWobKJxpR
+					hrJaBCcDrOK5Pk0a3U24VSw10HgzD5Te1Sfc
+					kt3/VOhlU/zLqA== )
+_did:example.com.	3600	IN TXT	"a=SECP256K1 s=ECDSA p=038978f54fe42464f4c03a187e3595cf8fb50abd4ef9b65540d224cb16eb0e68e7"
+_443._tcp.example.com.	3600	IN NSEC	mail.example.com. RRSIG NSEC TLSA
+			3600	RRSIG	NSEC 13 4 3600 (
+					20240228124110 20240129124110 10537 example.com.
+					0SpdlZUNib5H+iVR+isqagOyJMFjmL+0nVI2
+					N+TGIHfWA5YxC1O9R3eYTKGZwHbavnt07qXF
+					U67wOHIC+A/Y6g== )
+			3600	TLSA	3 0 1 (
+					B0F4063808926B9DB1683694C96138D5AFAE
+					FAC027E82833F0C13F1DD6548834 )
+			3600	RRSIG	TLSA 13 4 3600 (
+					20240228124110 20240129124110 10537 example.com.
+					LVVB462JeOLeTygtHhInaMyHQYo6+levGJOf
+					XFwHtjN26OI0BKNALFw6MEPPGklF4ZuG6+bs
+					OR/nQt24e3iu/g== )
+mail.example.com.	3600	IN A	192.0.2.101
+			3600	RRSIG	A 13 3 3600 (
+					20240228124110 20240129124110 10537 example.com.
+					m7XyvWYBBHweCIfm5Fud+X+DOCC9U1U0HaBm
+					q7ghjRHw4Mx/dxfLmMFVjoXrx88cx71XYQxG
+					+cRjNBAu03u8ig== )
+			3600	NSEC	ns1.example.com. A RRSIG NSEC
+			3600	RRSIG	NSEC 13 3 3600 (
+					20240228124110 20240129124110 10537 example.com.
+					n7qZrrzU3MIFlFWzYlunvURaoVFKnla+xitC
+					Vd9V4tfI+MjJV5FJyf12R9QHI7TcZett2WzE
+					4wcy3o7aO5mILg== )
+_did.example.com.	3600	IN NSEC	_443._tcp.example.com. RRSIG NSEC TLSA URI
+			3600	RRSIG	NSEC 13 3 3600 (
+					20240228124110 20240129124110 10537 example.com.
+					6ZTr2qG0AfwIbK/wkIUAlZYOh+rQA3cNMKM3
+					/oXn4qUu9UJbQnSKtqI6r04thYt0/UQvMHsm
+					Fd/9ChxbujFiWw== )
+			3600	TLSA	3 0 1 (
+					B0F4063808926B9DB1683694C96138D5AFAE
+					FAC027E82833F0C13F1DD6548834 )
+			3600	RRSIG	TLSA 13 3 3600 (
+					20240228124110 20240129124110 10537 example.com.
+					qRJ7W4Nn791FptK+3gg6BhRA56tIcKUhxszY
+					SRomh7ZcGtQb6S8SfLTJLen6kOij5XtDiKsg
+					HajSpeRbPD8Ezw== )
+			3600	URI	0 0 "did:web:example.com"
+			3600	RRSIG	URI 13 3 3600 (
+					20240228124110 20240129124110 10537 example.com.
+					KL5hXPaWsyGj55+63WZXLKlJLwTolYz3o+0O
+					YapACyKoNLxN4fUZtv1qJeELIskDptuxiiry
+					/GrSzBi22AsD7w== )
+ns2.example.com.	3600	IN A	192.0.2.2
+			3600	RRSIG	A 13 3 3600 (
+					20240228124110 20240129124110 10537 example.com.
+					ShGESnzMtJSjU7cZcS+1olKaWc56hkHFlZeK
+					9+YmYtdP9h+YJLeBcrcjHQGRjX3NyQVjEoKD
+					WWcBTBoAKEQW3A== )
+			3600	NSEC	www.example.com. A RRSIG NSEC
+			3600	RRSIG	NSEC 13 3 3600 (
+					20240228124110 20240129124110 10537 example.com.
+					lm8SqU33F7ACDZQ6itrV2lCEhiUQUh89H3Mp
+					4/9Erm2/p+hD3H4+6ihua2js7LlM9/8VxIDZ
+					XFNnP9zV8T/Txg== )
+www.example.com.	3600	IN A	192.0.2.100
+			3600	RRSIG	A 13 3 3600 (
+					20240228124110 20240129124110 10537 example.com.
+					EJiioBwGOiL+gtP1WkYsKbu/XPZ49v9RUVah
+					bO7hwVcNWG7eX3aDzfsSeA+SVj/XIDSXGXC4
+					L/+3Yoz9tpknpQ== )
+			3600	NSEC	example.com. A RRSIG NSEC
+			3600	RRSIG	NSEC 13 3 3600 (
+					20240228124110 20240129124110 10537 example.com.
+					QFwxyKrch+O+ZbD4wGsUN8EaXaI/vGpgmmzf
+					thUx/aV4yqY3oAvKX0UI7/KBIcP1evs7RoL/
+					RctVsoBB6CUwFQ== )
+ns1.example.com.	3600	IN A	192.0.2.1
+			3600	RRSIG	A 13 3 3600 (
+					20240228124110 20240129124110 10537 example.com.
+					PO/JhRfTScVBV9sr50PzOcCJ1D5QBmj7OA3p
+					aiEBMxJOHWubFescWcDmpj8VQKWe25OI5vPt
+					x/n1xpM+RJdOqw== )
+			3600	NSEC	ns2.example.com. A RRSIG NSEC
+			3600	RRSIG	NSEC 13 3 3600 (
+					20240228124110 20240129124110 10537 example.com.
+					hnb6cimaTfqBub3sdmiJVhv9ZX2o88XfEJe1
+					SED0i/nG/o33DHfv3icxiYbeMrpDp0UT+YFG
+					5qrDWQmAaFAg8g== )
