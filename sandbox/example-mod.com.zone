@@ -1,0 +1,39 @@
+$TTL 3600      ; Default time-to-live value
+@       IN      SOA     ns1.example.com. admin.example.com. (
+                        2022010101      ; Serial
+                        3600            ; Refresh
+                        1800            ; Retry
+                        604800          ; Expire
+                        86400 )         ; Negative Cache TTL
+
+
+
+; Name Server records
+@       IN      NS      ns1.example.com.
+@       IN      NS      ns2.example.com.
+
+; A records for name servers
+ns1     IN      A       192.0.2.1
+ns2     IN      A       192.0.2.2
+
+; A record for the domain
+@       IN      A       192.0.2.100
+
+; Additional records
+www     IN      A       192.0.2.100
+mail    IN      A       192.0.2.101
+@       IN      MX 10   mail.example.com.
+
+; ------ MODIFICATIONS FOR HIGH ASSURANCE DID:WEB
+; KSK and ZSK records for signing keys
+example.com. IN DNSKEY 257 3 13 +OynQobO0PGvRvpQaRpkQCuMpiljGsc+9BMW3TecfO+sf+D104WLVNcj GThOlYak3c9sqqGYRX150IAlVa5TIg==
+example.com. IN DNSKEY 256 3 13 d8nDfDdYzu0UXLC6jQhyiN1FavbdMLtFTq9vJRafQfKggltWGV+SFlVD I79/CQiEDvmsCRCJvjPN1W4gS3ZuxA==
+; URI record for DID
+_did.example.com. IN URI 0 0 "did:web:example.com"
+; TLSA, CERT and TXT records for other certificates and public keys used for signing DID docs
+_did.example.com.	IN TLSA 3 0 1 b0f4063808926b9db1683694c96138d5afaefac027e82833f0c13f1dd6548834	
+_443._tcp.example.com. 	IN TLSA 3 0 1 b0f4063808926b9db1683694c96138d5afaefac027e82833f0c13f1dd6548834
+_pubkey:example.com. IN TXT "a=SECP256K1 s=ECDSA p=038978f54fe42464f4c03a187e3595cf8fb50abd4ef9b65540d224cb16eb0e68e7"
+
+
+

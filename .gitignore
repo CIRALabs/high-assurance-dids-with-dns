@@ -21,3 +21,6 @@ draft-carter-high-assurance-did-web.xml
 package-lock.json
 report.xml
 !requirements.txt
+/sandbox/*.key
+/sandbox/*.private
+/sandbox/*.pem

@@ -1,0 +1,25 @@
+$TTL 3600      ; Default time-to-live value
+@       IN      SOA     ns1.example.com. admin.example.com. (
+                        2022010101      ; Serial
+                        3600            ; Refresh
+                        1800            ; Retry
+                        604800          ; Expire
+                        86400 )         ; Negative Cache TTL
+
+
+; Name Server records
+@       IN      NS      ns1.example.com.
+@       IN      NS      ns2.example.com.
+
+; A records for name servers
+ns1     IN      A       192.0.2.1
+ns2     IN      A       192.0.2.2
+
+; A record for the domain
+@       IN      A       192.0.2.100
+
+; Additional records
+www     IN      A       192.0.2.100
+mail    IN      A       192.0.2.101
+@       IN      MX 10   mail.example.com.
+
