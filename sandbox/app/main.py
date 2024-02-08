@@ -39,12 +39,6 @@ app = FastAPI(  title="High Assurance did:web",
 
 
 
-    
-
-
-
-
-
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
     # return {"message": "Hello World"}
@@ -79,6 +73,8 @@ def get_did_doc(request: Request):
                     f"did:web:{request.url.hostname}"
                 ]
     }
+
+    did_doc["proof"] = None
 
 
     return did_doc
