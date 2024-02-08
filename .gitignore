@@ -28,6 +28,7 @@ report.xml
 /sandbox/*.key
 /sandbox/*.private
 /sandbox/*.pem
+.env
 
 
 sandbox/app/__pycache__/main.cpython-310.pyc

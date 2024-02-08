@@ -12,6 +12,8 @@ from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 
+from .config import Settings
+
 def query_pubkey_record(domain):
     resolver = dns.resolver.Resolver()
     resolver.use_dnssec = False
@@ -31,8 +33,12 @@ def query_pubkey_record(domain):
 
 templates = Jinja2Templates(directory="templates")
 
-app = FastAPI(  title="High Assurance did:web",
-                description="Demonstration web site",
+settings = Settings()
+
+print(settings.PRIVATE_KEY, settings.PUBLIC_KEY)
+
+app = FastAPI(  title=settings.PROJECT_TITLE,
+                description=settings.PROJECT_DESCRIPTION,
                 version="0.0.1"
 )
 
@@ -44,7 +50,7 @@ async def root(request: Request):
     # return {"message": "Hello World"}
     return templates.TemplateResponse(  "base.html", 
                                       { "request" : request,
-                                        "test" : "this is a test"
+                                        "settings" : settings
                                          })
 
 
