@@ -1,4 +1,4 @@
-# High Assurance DID WEB SANDBOX
+# SANDBOX README for High Assurance DID WEB
 
 ## Introduction
 
@@ -36,7 +36,22 @@ cd scripts
 python Demo.py
 ```
 
+## Prototype App
 
+A prototype app has been created using FastAPI. Once you have the dependencies installed and the environment configured you can run the prototype
+
+```bash
+# Switch to the sandbox directory
+% cd sandbox
+% uvicorn app.main:app --reload
+INFO:     Will watch for changes in these directories: ['/Users/trbouma/projects/cira/sandbox']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [52551] using StatReload
+INFO:     Started server process [52553]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+
+```
 
 ## Key Resources and Prior Work
 
