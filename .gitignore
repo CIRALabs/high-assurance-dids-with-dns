@@ -26,3 +26,4 @@ report.xml
 /sandbox/*.private
 /sandbox/*.pem
 
+sandbox/app/__pycache__/main.cpython-310.pyc
