@@ -38,10 +38,12 @@ python Demo.py
 
 ## Prototype App
 
-A prototype app has been created using FastAPI. Once you have the dependencies installed and the environment configured you can run the prototype
+A prototype app has been created using FastAPI. Once you have the dependencies installed and the environment configured you can run the prototype.
+
+[sandbox/app/main.py](./app/main.py) has a simple FastAPI app that serves up the ```<host_uri>/./well-known/did.json``` that is invoked by the ```did:web:<host_uri>`` method
 
 ```bash
-# Switch to the sandbox directory
+# Switch to the sandbox directory and run uvicorn
 % cd sandbox
 % uvicorn app.main:app --reload
 INFO:     Will watch for changes in these directories: ['/Users/trbouma/projects/cira/sandbox']
