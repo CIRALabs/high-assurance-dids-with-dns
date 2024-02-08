@@ -1,3 +1,7 @@
+__pycache__/
+*.py[cod]
+*$py.class
+sandbox/app/__pycache__/
 *.html
 *.pdf
 *.redxml
@@ -5,7 +9,6 @@
 *.txt
 *.upload
 *.pyc
-*~
 .tags
 /*-[0-9][0-9].xml
 /.gems/
@@ -25,5 +28,6 @@ report.xml
 /sandbox/*.key
 /sandbox/*.private
 /sandbox/*.pem
+
 
 sandbox/app/__pycache__/main.cpython-310.pyc
