@@ -4,6 +4,7 @@
 *.swp
 *.txt
 *.upload
+*.pyc
 *~
 .tags
 /*-[0-9][0-9].xml
@@ -24,3 +25,4 @@ report.xml
 /sandbox/*.key
 /sandbox/*.private
 /sandbox/*.pem
+
