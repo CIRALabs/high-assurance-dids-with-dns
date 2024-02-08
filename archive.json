@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-02-06T00:17:20.184253+00:00",
+  "timestamp": "2024-02-08T00:17:09.425469+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -120,7 +120,7 @@
       "labels": [],
       "body": "added sections in doc",
       "createdAt": "2024-02-02T21:26:23Z",
-      "updatedAt": "2024-02-05T16:21:15Z",
+      "updatedAt": "2024-02-07T03:28:36Z",
       "baseRepository": "CIRALabs/high-assurance-dids-with-dns",
       "baseRefName": "main",
       "baseRefOid": "43c9da3ffd27b5a2ebd3fe3aec72c5ada3051b99",
@@ -287,6 +287,32 @@
       "mergeCommit": {
         "oid": "6fd7ef63b0ed906600210c61029115cbe3cf3f1e"
       },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 9,
+      "id": "PR_kwDOLLNO0c5mJa50",
+      "title": "Tims wip edits - I added the sections to the new target document",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/pull/9",
+      "state": "OPEN",
+      "author": "trbouma",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-02-06T13:58:20Z",
+      "updatedAt": "2024-02-06T16:34:38Z",
+      "baseRepository": "CIRALabs/high-assurance-dids-with-dns",
+      "baseRefName": "main",
+      "baseRefOid": "6fd7ef63b0ed906600210c61029115cbe3cf3f1e",
+      "headRepository": "CIRALabs/high-assurance-dids-with-dns",
+      "headRefName": "tims-wip-edits",
+      "headRefOid": "8b13f42fb2f56110eb68ffa03a5ac38df324972f",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
       "comments": [],
       "reviews": []
     }
