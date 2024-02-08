@@ -55,6 +55,14 @@ INFO:     Application startup complete.
 
 ```
 
+You can build the corresponding docker container. Be sure to be in the ```sandbox``` folder so the right build context is used. Replace ```dockeruser``` with your account name if you plan to use docker hub
+
+```base
+docker build . -t dockeruser/hiadidweb:v0.01a --platform linux/amd64
+docker push dockeruser/hiadidweb:v0.01a 
+
+```
+
 ## Key Resources and Prior Work
 
 This project builds on and leverages prior work
