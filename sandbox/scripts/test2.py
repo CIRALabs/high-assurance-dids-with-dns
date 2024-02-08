@@ -41,6 +41,21 @@ def query_txt_record(domain):
 
     except dns.resolver.NoAnswer:
         return None
+    
+def query_pubkey_record(domain):
+    resolver = dns.resolver.Resolver()
+    resolver.use_dnssec = True
+    resolver.nameservers = ['8.8.8.8']
+    resolver.use_edns = True
+
+    try:
+        query_domain = '_pubkey.' + domain        
+        response = resolver.resolve(query_domain, 'TXT')
+        
+        return response[0]
+
+    except dns.resolver.NoAnswer:
+        return None
 
 def verify_signature(signature, message, public_key):
     try:
@@ -71,16 +86,20 @@ def download_did_document(did_web):
         
 if __name__ == "__main__":
     domain = "lncreds.ca"
+    did_web = "did:web:lncreds.ca"
     usage = 3
     selector = 1
     matching_type = 0
 
    
     
-    pubkey_record = query_txt_record(domain)
+    pubkey_record = query_pubkey_record(domain)
 
     if pubkey_record:
         print(pubkey_record)
         
     else:
         print("No matching TXT record found.")
+
+    did_doc = download_did_document(did_web)
+    print(did_doc)
