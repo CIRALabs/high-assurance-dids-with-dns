@@ -188,7 +188,7 @@ def get_user_did_doc(entity_name: str, request: Request):
                         "id": f"did:web:{request.url.hostname}:{entity_name}",
                         "controller": f"did:web:{request.url.hostname}:{entity_name}",
                         "type": "EcdsaSecp256k1RecoveryMethod2020",
-                        "publicKeyHex": dns_pubkey_str
+                        "publicKeyHex": entity_iss
                      }
                     ]              
                
