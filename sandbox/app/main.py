@@ -122,7 +122,7 @@ def get_did_doc(request: Request):
     # create a copy for signing
     did_doc_to_sign = did_doc.copy()
 
-    # remove @context header, treat everything else as payload
+    # remove header, treat everything else as payload
 
     
     del(did_doc_to_sign['header'])
@@ -149,6 +149,7 @@ def get_user_did_doc(entity_name: str, request: Request):
         return {"error": "issuing entity does not exit"}
     
 
+    ## Lookup pubkey
     if request.url.hostname == "127.0.0.1":
         dns_pubkey = query_pubkey_record("lncreds.ca")
     else:
@@ -178,7 +179,7 @@ def get_user_did_doc(entity_name: str, request: Request):
 
                 "id":       f"did:web:{request.url.hostname}:{entity_name}",
                 "iss":      dns_pubkey_str, 
-                "sub":      f"did:web:{request.url.hostname}:{entity_name}",                
+                "sub":      f"did:web:{request.url.hostname}:d{entity_name}",                
                 "iat":      current_time_int,
                 "exp":      expiry_time_int, 
 
@@ -196,9 +197,9 @@ def get_user_did_doc(entity_name: str, request: Request):
     # create a copy for signing
     did_doc_to_sign = did_doc.copy()
 
-    # remove @context header, treat everything else as payload
+    # remove header, treat everything else as payload
 
-    del(did_doc_to_sign['@context'])
+    
     del(did_doc_to_sign['header'])
 
     msg = json.dumps(did_doc_to_sign)
