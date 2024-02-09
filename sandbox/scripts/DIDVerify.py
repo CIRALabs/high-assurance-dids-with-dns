@@ -62,18 +62,14 @@ def query_pubkey_record(domain):
         return None
 
 def verify_signature(signature, message, public_key):
-    try:
-        public_key = ecdsa.keys.VerifyingKey.from_der(public_key)
-    except Exception as e:
-        print(f"Error loading key: {e}")
-        return False
+
+    public_key_obj = PublicKey(unhexlify(public_key), raw=True)
+    sig_obj = public_key_obj.ecdsa_deserialize(unhexlify(signature.encode()))
     
-    try:
-        assert public_key.verify(signature, message, hashfunc=hashlib.sha256)
-    except Exception as e:
-        print(f"Error verifying signature: {e}")
-        return False
-    return True
+    
+    return public_key_obj.ecdsa_verify(message.encode(), sig_obj, digest=hashlib.sha256)
+ 
+    
 
 def download_did_document(did_web):
     did_web_url = 'https://' + did_web.split(':')[-1] + '/.well-known/did.json'
@@ -118,12 +114,8 @@ if __name__ == "__main__":
     del did_doc["proof"]
     msg = json.dumps(did_doc)
 
-    public_key = PublicKey(unhexlify(pubkey_record_str), raw=True)
-    print(public_key.serialize().hex())
-
-    sig_obj = public_key.ecdsa_deserialize(unhexlify(sig.encode()))
-
-    result = public_key.ecdsa_verify(msg.encode(), sig_obj, digest=hashlib.sha256)
-
-    print("verfication result:", result)
+    
+    result = verify_signature(sig, msg, pubkey_record_str)
+    
+    print("verify signature result", result)
 
