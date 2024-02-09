@@ -33,8 +33,9 @@ The verification logic is as follows:
     - iss: the pubkey of the issuer
     - exp: the expiry datetime (or TTL)
     - signature: the signature required to verify the did doc
-  - remove sections from did_doc that are not siged
-    - ```"@context", "header", and "signature"
+  - remove sections from did_doc that are not signed
+    - these sections can be treated as metadata, and removed before signature verification.
+    - ```"@context", "header", and "signature"```
   - Checke to see if iss == pubkey record looked up in DNS/DNSSEC
   - Check to see if did doc is not expired
   - Check remaining payload if propertly signed with signature
