@@ -109,7 +109,7 @@ def verify_did_doc(did_doc, did_web):
     except:
         print("Not a valid did doc!")
         return False
-
+    print("OK: Valid did doc")
     # Remove sections that are not signed
     
     del did_doc["header"]
@@ -123,6 +123,7 @@ def verify_did_doc(did_doc, did_web):
     except:
         return False
     
+    print("OK: Valid public key")
     # check to see if did doc is expired
     current_time_int = int(datetime.utcnow().timestamp())
     
@@ -130,6 +131,8 @@ def verify_did_doc(did_doc, did_web):
         assert current_time_int < exp
     except:
         return False
+    print("OK: Not expired.")
+    print(pubkey_record_str, iss)
 
     public_key_obj = PublicKey(unhexlify(pubkey_record_str), raw=True)
     sig_obj = public_key_obj.ecdsa_deserialize(unhexlify(signature.encode()))
@@ -156,7 +159,7 @@ def download_did_document(did_web):
         
 if __name__ == "__main__":
     
-    did_web = "did:web:lncreds.ca"  
+    did_web = "did:web:lncreds.ca:examplecorp"  
 
     did_doc = download_did_document(did_web)
     
