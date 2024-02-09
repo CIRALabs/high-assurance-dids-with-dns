@@ -15,6 +15,22 @@ from binascii import unhexlify
 from datetime import datetime
 from urllib.parse import urlparse
 
+def did_web_to_url(did_web):
+    # Routine to transform did_web into corresponing url
+
+    did_web_url = did_web.replace(":", "/").replace('did/web/', "https://")
+    
+    parsed_url = urlparse(did_web_url)
+    if parsed_url.path == '':
+        did_web_url = did_web_url + '/.well-known/did.json'
+    else:
+        did_web_url = did_web_url + "/did.json"    
+    
+    print("did_web_url:", did_web_url)
+
+    # did_web_url =     'https://' + did_web.split(':')[-1] + '/.well-known/did.json'
+    return did_web_url
+
 def query_tlsa_record(domain, usage, selector, matching_type):
     resolver = dns.resolver.Resolver()
     resolver.use_dnssec = True
@@ -72,7 +88,18 @@ def verify_signature(signature, message, public_key):
     
     return public_key_obj.ecdsa_verify(message.encode(), sig_obj, digest=hashlib.sha256)
 
-def verify_did_doc(did_doc, public_key):
+def verify_did_doc(did_doc, did_web):
+
+    domain = urlparse(did_web_to_url(did_web)).hostname
+    pubkey_record = query_pubkey_record(domain)
+   
+
+    if pubkey_record:
+        pubkey_record_str = str(pubkey_record).strip("\"")
+        print("_pubkey record:", pubkey_record_str)        
+    else:
+        print("No matching pubkey record found.")
+        return False
 
     try:
         signature = did_doc['signature']
@@ -84,7 +111,7 @@ def verify_did_doc(did_doc, public_key):
         return False
 
     # Remove sections that are not signed
-    del did_doc["@context"]
+    
     del did_doc["header"]
     del did_doc["signature"]
     # Dump resulting for signature check
@@ -92,7 +119,7 @@ def verify_did_doc(did_doc, public_key):
 
     # check to see if right key
     try:
-        assert iss == public_key
+        assert iss == pubkey_record_str
     except:
         return False
     
@@ -104,28 +131,14 @@ def verify_did_doc(did_doc, public_key):
     except:
         return False
 
-    public_key_obj = PublicKey(unhexlify(public_key), raw=True)
+    public_key_obj = PublicKey(unhexlify(pubkey_record_str), raw=True)
     sig_obj = public_key_obj.ecdsa_deserialize(unhexlify(signature.encode()))
     
     
     return public_key_obj.ecdsa_verify(message.encode(), sig_obj, digest=hashlib.sha256)
  
 
-def did_web_to_url(did_web):
-    # Routine to transform did_web into corresponing url
 
-    did_web_url = did_web.replace(":", "/").replace('did/web/', "https://")
-    
-    parsed_url = urlparse(did_web_url)
-    if parsed_url.path == '':
-        did_web_url = did_web_url + './well-known/did.json'
-    else:
-        did_web_url = did_web_url + "/did.json"    
-    
-    print("did_web_url:", did_web_url)
-
-    # did_web_url =     'https://' + did_web.split(':')[-1] + '/.well-known/did.json'
-    return did_web_url
 
 def download_did_document(did_web):
 
@@ -143,27 +156,15 @@ def download_did_document(did_web):
         
 if __name__ == "__main__":
     
-    did_web = "did:web:lncreds.ca:examplecorp"
-   
-
-    domain = urlparse(did_web_to_url(did_web)).hostname
-
-    # Independently look up the pubkey in DNS
-    pubkey_record = query_pubkey_record(domain)
-
-    if pubkey_record:
-        pubkey_record_str = str(pubkey_record).strip("\"")
-        print(pubkey_record_str)
-        
-    else:
-        print("No matching pubkey record found.")
+    did_web = "did:web:lncreds.ca"  
 
     did_doc = download_did_document(did_web)
-    print(did_doc)
+    
+    print(json.dumps(did_doc, indent=4))
 
 
     # verify did doc using pubkey that was looked up on DNS
-    result = verify_did_doc(did_doc, pubkey_record_str)
+    result = verify_did_doc(did_doc, did_web)
 
     print("verify did doc", result)
 

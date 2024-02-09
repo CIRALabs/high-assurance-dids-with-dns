@@ -124,7 +124,7 @@ def get_did_doc(request: Request):
 
     # remove @context header, treat everything else as payload
 
-    del(did_doc_to_sign['@context'])
+    
     del(did_doc_to_sign['header'])
 
     msg = json.dumps(did_doc_to_sign)
