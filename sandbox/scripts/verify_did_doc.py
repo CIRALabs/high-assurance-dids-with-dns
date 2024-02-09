@@ -68,6 +68,22 @@ def verify_signature(signature, message, public_key):
     
     
     return public_key_obj.ecdsa_verify(message.encode(), sig_obj, digest=hashlib.sha256)
+
+def verify_did_doc(did_doc, public_key):
+
+    signature = did_doc['signature']
+    iss = did_doc['iss']
+    del did_doc["header"]
+    del did_doc["signature"]
+    message = json.dumps(did_doc)
+
+    assert iss == public_key
+
+    public_key_obj = PublicKey(unhexlify(public_key), raw=True)
+    sig_obj = public_key_obj.ecdsa_deserialize(unhexlify(signature.encode()))
+    
+    
+    return public_key_obj.ecdsa_verify(message.encode(), sig_obj, digest=hashlib.sha256)
  
     
 
@@ -100,22 +116,15 @@ if __name__ == "__main__":
         print(pubkey_record_str)
         
     else:
-        print("No matching TXT record found.")
+        print("No matching pubkey record found.")
 
     did_doc = download_did_document(did_web)
     print(did_doc)
 
-    # Check to see if pubkey in DID doc is the same as what is in DNS
-    assert did_doc['pubkey'] == pubkey_record_str
 
-    # Do verification
-    sig = did_doc['proof']
-    pubkey = did_doc['pubkey']
-    del did_doc["proof"]
-    msg = json.dumps(did_doc)
+    # verify did doc using pubkey that was looked up on DNS
+    result = verify_did_doc(did_doc, pubkey_record_str)
 
-    
-    result = verify_signature(sig, msg, pubkey_record_str)
-    
-    print("verify signature result", result)
+    print("verify did doc", result)
+
 

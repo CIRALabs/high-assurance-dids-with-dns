@@ -15,6 +15,8 @@ from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 
+from datetime import datetime, timedelta
+
 from .config import Settings
 
 def query_pubkey_record(domain):
@@ -81,19 +83,49 @@ def get_did_doc(request: Request):
     except:
         return {"error": "records do not match!"}
     
+    current_time_int = int(datetime.utcnow().timestamp())
+    expiry_time_int = int((datetime.utcnow() + timedelta(seconds=3600)).timestamp())
+
     did_doc = {
-                
-                "id": f"did:web:{request.url.hostname}",
-                "pubkey": dns_pubkey_str                
+                "@context": 
+                    ["https://www.w3.org/ns/did/v1"], 
+
+                "header": {
+                    "typ":     "DID",
+                    "alg":      "SECP256K1ECDSA",
+                },
+
+                "id":       f"did:web:{request.url.hostname}",
+                "iss":      dns_pubkey_str, 
+                "sub":      f"did:web:{request.url.hostname}",                
+                "iat":      current_time_int,
+                "exp":      expiry_time_int, 
+
+                "verificationMethod": 
+                    [{
+                        "id": f"did:web:{request.url.hostname}",
+                        "controller": f"did:web:{request.url.hostname}",
+                        "type": "EcdsaSecp256k1RecoveryMethod2020",
+                        "publicKeyHex": dns_pubkey_str
+                     }
+                    ]              
                
     }
 
-    msg = json.dumps(did_doc)
+    # create a copy for signing
+    did_doc_to_sign = did_doc.copy()
+
+    # remove header, treat everything else as payload
+
+    del(did_doc_to_sign['header'])
+
+    msg = json.dumps(did_doc_to_sign)
     sig = private_key.ecdsa_sign(msg.encode())
     
     sig_hex= private_key.ecdsa_serialize(sig).hex()
 
-    did_doc["proof"] = sig_hex
+    # add in resulting signature to the original did doc
+    did_doc["signature"] = sig_hex
 
 
     return did_doc
