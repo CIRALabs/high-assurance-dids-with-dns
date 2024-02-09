@@ -13,6 +13,7 @@ from secp256k1 import PrivateKey, PublicKey
 from binascii import unhexlify
 
 from datetime import datetime
+from urllib.parse import urlparse
 
 def query_tlsa_record(domain, usage, selector, matching_type):
     resolver = dns.resolver.Resolver()
@@ -73,10 +74,14 @@ def verify_signature(signature, message, public_key):
 
 def verify_did_doc(did_doc, public_key):
 
-    signature = did_doc['signature']
-    iss = did_doc['iss']
-    exp = did_doc['exp']
-    iat = did_doc['iat']
+    try:
+        signature = did_doc['signature']
+        iss = did_doc['iss']
+        exp = did_doc['exp']
+        iat = did_doc['iat']
+    except:
+        print("Not a valid did doc!")
+        return False
 
     # Remove sections that are not signed
     del did_doc["@context"]
@@ -105,10 +110,26 @@ def verify_did_doc(did_doc, public_key):
     
     return public_key_obj.ecdsa_verify(message.encode(), sig_obj, digest=hashlib.sha256)
  
+
+def did_web_to_url(did_web):
+    # Routine to transform did_web into corresponing url
+
+    did_web_url = did_web.replace(":", "/").replace('did/web/', "https://")
     
+    parsed_url = urlparse(did_web_url)
+    if parsed_url.path == '':
+        did_web_url = did_web_url + './well-known/did.json'
+    else:
+        did_web_url = did_web_url + "/did.json"    
+    
+    print("did_web_url:", did_web_url)
+
+    # did_web_url =     'https://' + did_web.split(':')[-1] + '/.well-known/did.json'
+    return did_web_url
 
 def download_did_document(did_web):
-    did_web_url = 'https://' + did_web.split(':')[-1] + '/.well-known/did.json'
+
+    did_web_url = did_web_to_url(did_web)
     try:
         response = requests.get(did_web_url)
         if response.status_code == 200:
@@ -121,13 +142,12 @@ def download_did_document(did_web):
         return None
         
 if __name__ == "__main__":
-    domain = "lncreds.ca"
-    did_web = "did:web:lncreds.ca"
-    usage = 3
-    selector = 1
-    matching_type = 0
-
+    
+    did_web = "did:web:lncreds.ca:examplecorp"
    
+
+    domain = urlparse(did_web_to_url(did_web)).hostname
+
     # Independently look up the pubkey in DNS
     pubkey_record = query_pubkey_record(domain)
 
