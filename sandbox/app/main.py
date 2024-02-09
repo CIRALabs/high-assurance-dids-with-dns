@@ -84,7 +84,7 @@ def get_did_doc(request: Request):
         return {"error": "records do not match!"}
     
     current_time_int = int(datetime.utcnow().timestamp())
-    expiry_time_int = int((datetime.utcnow() + timedelta(seconds=3600)).timestamp())
+    expiry_time_int = int((datetime.utcnow() + timedelta(seconds=settings.TTL)).timestamp())
 
     did_doc = {
                 "@context": 
@@ -115,8 +115,9 @@ def get_did_doc(request: Request):
     # create a copy for signing
     did_doc_to_sign = did_doc.copy()
 
-    # remove header, treat everything else as payload
+    # remove @context header, treat everything else as payload
 
+    del(did_doc_to_sign['@context'])
     del(did_doc_to_sign['header'])
 
     msg = json.dumps(did_doc_to_sign)

@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     PUBLIC_KEY: str = "nothing"
     PROJECT_TITLE: str = "Project Title"
     PROJECT_DESCRIPTION: str = "Project Description"
+    TTL: int = 3600
 
     model_config = SettingsConfigDict(env_file=".env")
    

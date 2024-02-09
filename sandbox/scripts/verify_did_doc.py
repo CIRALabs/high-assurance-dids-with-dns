@@ -12,6 +12,8 @@ import dns.rdata
 from secp256k1 import PrivateKey, PublicKey
 from binascii import unhexlify
 
+from datetime import datetime
+
 def query_tlsa_record(domain, usage, selector, matching_type):
     resolver = dns.resolver.Resolver()
     resolver.use_dnssec = True
@@ -73,11 +75,29 @@ def verify_did_doc(did_doc, public_key):
 
     signature = did_doc['signature']
     iss = did_doc['iss']
+    exp = did_doc['exp']
+    iat = did_doc['iat']
+
+    # Remove sections that are not signed
+    del did_doc["@context"]
     del did_doc["header"]
     del did_doc["signature"]
+    # Dump resulting for signature check
     message = json.dumps(did_doc)
 
-    assert iss == public_key
+    # check to see if right key
+    try:
+        assert iss == public_key
+    except:
+        return False
+    
+    # check to see if did doc is expired
+    current_time_int = int(datetime.utcnow().timestamp())
+    
+    try:
+        assert current_time_int < exp
+    except:
+        return False
 
     public_key_obj = PublicKey(unhexlify(public_key), raw=True)
     sig_obj = public_key_obj.ecdsa_deserialize(unhexlify(signature.encode()))
