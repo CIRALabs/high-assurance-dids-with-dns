@@ -165,10 +165,10 @@ You can add in other certificates and public keys as required. You can use the C
 
 Many ecosystems use the SECP256K1 32 byte hex string format for a public key, and newer signature algorithns such a ECDSA or SCHNORR
 
-You can add in other certificates or public keys. In this example a 32byte hex string representing the public key of a SECP256K1 and SCHNORR signature algorith. This can be specified  as a TXT record, as below
+You can add in other certificates or public keys. In this example a 32byte hex string representing a SECP256K1 public key. This can be specified  as a TXT record, as below
 
 ```bash
-_did:example.com. IN TXT "a=SECP256K1 s=ECDSA p=038978f54fe42464f4c03a187e3595cf8fb50abd4ef9b65540d224cb16eb0e68e7"
+_pubkey:example.com. IN TXT "038978f54fe42464f4c03a187e3595cf8fb50abd4ef9b65540d224cb16eb0e68e7"
 ```
 
 ## STEP 6: Confirm Zone File
