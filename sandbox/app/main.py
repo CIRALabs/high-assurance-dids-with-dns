@@ -8,6 +8,9 @@ import dns.message
 import dns.rdatatype
 import dns.rdata
 
+from secp256k1 import PrivateKey, PublicKey
+from binascii import unhexlify
+
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
@@ -37,6 +40,11 @@ settings = Settings()
 
 print(settings.PRIVATE_KEY, settings.PUBLIC_KEY)
 
+private_key = PrivateKey(unhexlify(settings.PRIVATE_KEY))
+public_key_hex = private_key.pubkey.serialize().hex()
+
+
+
 app = FastAPI(  title=settings.PROJECT_TITLE,
                 description=settings.PROJECT_DESCRIPTION,
                 version="0.0.1"
@@ -59,28 +67,33 @@ def get_did_doc(request: Request):
 
     ## Lookup pubkey
     if request.url.hostname == "127.0.0.1":
-        pubkey = query_pubkey_record("lncreds.ca")
+        dns_pubkey = query_pubkey_record("lncreds.ca")
     else:
-        pubkey = query_pubkey_record(request.url.hostname)
+        dns_pubkey = query_pubkey_record(request.url.hostname)
 
-    pubkey_str = str(pubkey).strip("\"")
+    dns_pubkey_str = str(dns_pubkey).strip("\"")
+
+    print(dns_pubkey_str, public_key_hex)
+
+    # Do a check against the 
+    try:
+        assert dns_pubkey_str == public_key_hex
+    except:
+        return {"error": "records do not match!"}
     
     did_doc = {
-                "@context": ["https://www.w3.org/ns/did/v1", 
-                "https://w3id.org/security/suites/secp256k1recovery-2020/v2"],
+                
                 "id": f"did:web:{request.url.hostname}",
-                 "verificationMethod": [{
-                    "id": f"did:web:{request.url.hostname}",
-                    "pubkey": pubkey_str
-                    
-                   
-                    }],
-                "authentication": [
-                    f"did:web:{request.url.hostname}"
-                ]
+                "pubkey": dns_pubkey_str                
+               
     }
 
-    did_doc["proof"] = None
+    msg = json.dumps(did_doc)
+    sig = private_key.ecdsa_sign(msg.encode())
+    
+    sig_hex= private_key.ecdsa_serialize(sig).hex()
+
+    did_doc["proof"] = sig_hex
 
 
     return did_doc
