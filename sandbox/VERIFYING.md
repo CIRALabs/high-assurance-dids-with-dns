@@ -24,9 +24,10 @@ The verification logic is as follows:
   - domain name is: ```lncreds.ca```
   - the corresponding did:web is ```did:web:lncreds.ca```
 - Look up pubkey record in DNS/DNSSEC
-  - the corresponding pubkey record is a TXT record at _pubkey.
+  - the corresponding pubkey record is a TXT record at _pubkey. This pubkey is set by the domain owner and can be independently set from the website operator serving the did:web identifier.
 - Download the did doc
   - download the did doc from the REST endpoin derived from the did:web identitier
+  - if DNSSEC check against corresponding RRSIG record (not implemented yet)
 - Verify the did doc   
   - extract elements required for verification
     - iss: the pubkey of the issuer
