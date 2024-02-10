@@ -15,10 +15,15 @@ from binascii import unhexlify
 from datetime import datetime
 from urllib.parse import urlparse
 
+import logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
 def did_web_to_url(did_web):
     # Routine to transform did_web into corresponing url
 
-    did_web_url = did_web.replace(":", "/").replace('did/web/', "https://")
+    # replace colon with slash and encoded colon with colon
+
+    did_web_url = did_web.replace(":", "/").replace('did/web/', "https://").replace('%3A',':')
     
     parsed_url = urlparse(did_web_url)
     if parsed_url.path == '':
@@ -26,6 +31,11 @@ def did_web_to_url(did_web):
     else:
         did_web_url = did_web_url + "/did.json"    
     
+    # strip out fragment and params
+    
+    did_web_url = did_web_url.replace('#'+ parsed_url.fragment,'').replace(parsed_url.query,'').replace('?','')    
+    
+
     print("did_web_url:", did_web_url)
 
     # did_web_url =     'https://' + did_web.split(':')[-1] + '/.well-known/did.json'
@@ -88,20 +98,37 @@ def verify_signature(signature, message, public_key):
     
     return public_key_obj.ecdsa_verify(message.encode(), sig_obj, digest=hashlib.sha256)
 
-def verify_did_doc(did_doc, did_web):
+def verify_did(did_web):
 
-    # Step 1: Extract domain from did:web identifier
+    # Step 1 get the did doc
+
+    try:
+        did_doc = download_did_document(did_web)
+        
+        logging.debug("OK:" + json.dumps(did_doc, indent=4))
+    except:
+        return False
+    
+    # Step 2 need to figure out what type of did we are handling
+    # This can be determined by inspecting the did doc
+
+    # Step XX: Extract dns domain from did:web identifier
+
     domain = urlparse(did_web_to_url(did_web)).hostname
 
-    # Step 2: Get public key from DNS/DNSSEC record
+
+
+    # Step XX: Get public key from DNS/DNSSEC record
+    # Change into a more generic function
+    
     pubkey_record = query_pubkey_record(domain)
    
 
     if pubkey_record:
         pubkey_record_str = str(pubkey_record).strip("\"")
-        print("_pubkey record:", pubkey_record_str)        
+        logging.debug("OK: _pubkey record: " + pubkey_record_str)        
     else:
-        print("No matching pubkey record found.")
+        logging.error("No matching pubkey record found.")
         return False
 
     # Step 3: Extract signature, iss,and exp from did doc
@@ -111,9 +138,10 @@ def verify_did_doc(did_doc, did_web):
         exp = did_doc['exp']
         
     except:
-        print("Not a valid did doc!")
+        logging.error("Not a valid did doc!")
         return False
-    print("OK: Valid did doc")
+    
+    logging.debug("OK: Valid did doc")
     # Remove sections that are not signed
 
     # Step 4: Remove non-payload data for signature verification
@@ -129,7 +157,7 @@ def verify_did_doc(did_doc, did_web):
     except:
         return False
     
-    print("OK: Valid public key")
+    logging.debug("OK: Valid public key")
 
     # Step 6: Check to see if did doc is expired
     current_time_int = int(datetime.utcnow().timestamp())
@@ -138,8 +166,8 @@ def verify_did_doc(did_doc, did_web):
         assert current_time_int < exp
     except:
         return False
-    print("OK: Not expired.")
-    print(pubkey_record_str, iss)
+    logging.debug("OK: DID doc not expired.")
+    logging.debug(f"OK: _pubkey {pubkey_record_str} is same as iss: {iss}")
 
     # Step 7: Verify the did doc
     public_key_obj = PublicKey(unhexlify(pubkey_record_str), raw=True)
@@ -165,17 +193,14 @@ def download_did_document(did_web):
         return None
         
 if __name__ == "__main__":
+
+    # verify_did confirms whether it is a high assurance did
     
-    did_web = "did:web:lncreds.ca:examplecorp"  
-
-    did_doc = download_did_document(did_web)
+    did_web = "did:web:lncreds.ca:xyzfoundation"  
+    # did_web = "did:web:trustregistry.ca"
+   
     
-    print(json.dumps(did_doc, indent=4))
-
-
-    # verify did doc using pubkey that was looked up on DNS
-    result = verify_did_doc(did_doc, did_web)
-
-    print("verify did doc", result)
+    result = verify_did(did_web)
+    print("verify did:", result)
 
 

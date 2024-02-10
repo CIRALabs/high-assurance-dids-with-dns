@@ -98,8 +98,8 @@ def get_did_doc(request: Request):
                     ["https://www.w3.org/ns/did/v1", "https://w3id.org/security/suites/secp256k1recovery-2020"], 
 
                 "header": {
-                    "typ":     "DID",
-                    "alg":      "SECP256K1ECDSA",
+                    "typ":     "pubkey",
+                    "alg":      "secp256k1ecdsa",
                 },
 
                 "id":       f"did:web:{request.url.hostname}",
@@ -173,13 +173,13 @@ def get_user_did_doc(entity_name: str, request: Request):
                     ["https://www.w3.org/ns/did/v1", "https://w3id.org/security/suites/secp256k1recovery-2020"], 
 
                 "header": {
-                    "typ":     "DID",
-                    "alg":      "SECP256K1ECDSA",
+                    "typ":     "pubkey",
+                    "alg":      "secp256k1ecdsa",
                 },
 
                 "id":       f"did:web:{request.url.hostname}:{entity_name}",
                 "iss":      dns_pubkey_str, 
-                "sub":      f"did:web:{request.url.hostname}:d{entity_name}",                
+                "sub":      f"did:web:{request.url.hostname}:{entity_name}",                
                 "iat":      current_time_int,
                 "exp":      expiry_time_int, 
 
