@@ -120,7 +120,7 @@ def verify_did(did_web):
 
     # Step XX: Get public key from DNS/DNSSEC record
     # Change into a more generic function
-    
+
     pubkey_record = query_pubkey_record(domain)
    
 
@@ -196,11 +196,21 @@ if __name__ == "__main__":
 
     # verify_did confirms whether it is a high assurance did
     
-    did_web = "did:web:lncreds.ca:xyzfoundation"  
-    # did_web = "did:web:trustregistry.ca"
+     
+    # did_web = 
    
-    
-    result = verify_did(did_web)
-    print("verify did:", result)
+    did_test = [    "did:web:lncreds.ca",
+                   "did:web:lncreds.ca:examplecorp",
+                   # "did:web:lncreds.ca:xyzfoundation",
+                   # "did:web:lncreds.ca:localagency",
+                   "did:web:lncreds.ca:localagency#key1",
+                   # "did:web:trustregistry.ca"
+                
+
+    ]    
+
+    for did_web in did_test:
+        result = verify_did(did_web)
+        print(f"verify did {did_web}:", result)
 
 
