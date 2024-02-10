@@ -39,6 +39,11 @@ author:
    name: Mathieu Glaude
    org: NorthernBlock
    email: mathieu@northernblock.io
+-
+   ins: T. Bouma
+   name: Tim Bouma
+   org: Digital Governance Council
+   email: tim.bouma@dgc-cgn.org
 
 informative:
    Self-Sovereign-Identity:
