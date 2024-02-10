@@ -41,6 +41,18 @@ def did_web_to_url(did_web):
     # did_web_url =     'https://' + did_web.split(':')[-1] + '/.well-known/did.json'
     return did_web_url
 
+def did_doc_handler(did_doc):
+    #This function inspects the did_doc to determine which keys to use for verifcatin
+
+    logging.debug("did doc handler")
+
+    try:
+        did_doc['header']['type']
+    except:
+        pass
+
+    return True
+
 def query_tlsa_record(domain, usage, selector, matching_type):
     resolver = dns.resolver.Resolver()
     resolver.use_dnssec = True
@@ -111,6 +123,7 @@ def verify_did(did_web):
     
     # Step 2 need to figure out what type of did we are handling
     # This can be determined by inspecting the did doc
+    did_doc_handler(did_doc)
 
     # Step XX: Extract dns domain from did:web identifier
 
@@ -152,12 +165,13 @@ def verify_did(did_web):
     message = json.dumps(did_doc)
 
     #  Step 5: Check to see if iss key is the same as from DNS
-    try:
-        assert iss == pubkey_record_str
-    except:
-        return False
-    
-    logging.debug("OK: Valid public key")
+    # Note: iss is now the did instead of the pubkey, so this step is unnecessary
+    # try:
+    #     assert iss == pubkey_record_str
+    # except:
+    #    return False    
+    # logging.debug("OK: Valid public key")
+    # logging.debug(f"OK: _pubkey {pubkey_record_str} is same as iss: {iss}")
 
     # Step 6: Check to see if did doc is expired
     current_time_int = int(datetime.utcnow().timestamp())
@@ -167,7 +181,7 @@ def verify_did(did_web):
     except:
         return False
     logging.debug("OK: DID doc not expired.")
-    logging.debug(f"OK: _pubkey {pubkey_record_str} is same as iss: {iss}")
+    
 
     # Step 7: Verify the did doc
     public_key_obj = PublicKey(unhexlify(pubkey_record_str), raw=True)
@@ -194,17 +208,18 @@ def download_did_document(did_web):
         
 if __name__ == "__main__":
 
-    # verify_did confirms whether it is a high assurance did
+    # verify_did confirms if it is a high assurance did
     
      
     # did_web = 
    
-    did_test = [    "did:web:lncreds.ca",
-                   "did:web:lncreds.ca:examplecorp",
+    did_test = [   # "did:web:lncreds.ca",
+                   # "did:web:lncreds.ca:examplecorp",
                    # "did:web:lncreds.ca:xyzfoundation",
                    # "did:web:lncreds.ca:localagency",
-                   "did:web:lncreds.ca:localagency#key1",
+                   # "did:web:lncreds.ca:localagency#key1",
                    # "did:web:trustregistry.ca"
+                   "did:web:lncreds.ca:continuumloop", 
                 
 
     ]    
