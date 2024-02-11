@@ -19,15 +19,22 @@ from datetime import datetime, timedelta
 
 from .config import Settings
 
-# create a fake_db for users
-user_db = {}
+# Initialize issuer database
+issuer_db = {}
+with open('app/data/issuer.json', "r") as file:
+    user_data = json.load(file)
+for each in user_data['users']:
+    issuer_db[each['issuer']] = [each['privkey']]
 
 
 # Initialize user database
+user_db = {}
 with open('app/data/users.json', "r") as file:
     user_data = json.load(file)
 for each in user_data['users']:
     user_db[each['user']] = [each['pubkey']]
+
+
 
 def query_pubkey_record(domain):
     resolver = dns.resolver.Resolver()

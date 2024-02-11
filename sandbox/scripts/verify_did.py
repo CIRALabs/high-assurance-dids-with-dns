@@ -15,7 +15,7 @@ from secp256k1 import PrivateKey, PublicKey
 from binascii import unhexlify
 
 from datetime import datetime
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
 
 import logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -98,11 +98,32 @@ def query_pubkey_record(domain):
     try:
         query_domain = '_pubkey.' + domain        
         response = resolver.resolve(query_domain, 'TXT')
+        pubkey_record = str(response[0]).replace("\"", '')
         
-        return response[0]
+        return pubkey_record
 
     except dns.resolver.NoAnswer:
         return None
+    
+def query_cert_record(domain):
+    resolver = dns.resolver.Resolver()
+    resolver.use_dnssec = True
+    resolver.nameservers = ['8.8.8.8']
+    resolver.use_edns = True
+
+    try:
+        query_domain = '_cert.' + domain        
+        response = resolver.resolve(query_domain, 'TXT')
+        certificate_record= str(response[0]).strip("\"")
+        parsed_record = urlparse(certificate_record)
+        parsed_dict = parse_qs(parsed_record.query)
+        certificate_key = parsed_dict['kid'][0].strip().replace("\"",'')
+        certificate_path = parsed_record.path
+        print(certificate_key,certificate_path)
+        return certificate_key, certificate_path, 
+
+    except dns.resolver.NoAnswer:
+        return None, None
 
 def verify_signature(signature, message, public_key):
     # Signature verfication routuine for pubkey
@@ -162,14 +183,16 @@ def verify_did(did_web):
         # Step XX: Get public key from DNS/DNSSEC record
         # Change into a more generic function
 
-        pubkey_record = query_pubkey_record(domain)
+        # pubkey_record = query_pubkey_record(domain)
+        certificate_key, certificate_path = query_cert_record(domain)
+        logging.debug("OK: " + certificate_key + certificate_path)
    
 
-        if pubkey_record:
-            pubkey_record_str = str(pubkey_record).strip("\"")
-            logging.debug("OK: _pubkey record: " + pubkey_record_str)        
+        if certificate_key:
+            
+            logging.debug("OK: _cert record: " + certificate_key)        
         else:
-            logging.error("No matching pubkey record found.")
+            logging.error("No matching cert record found.")
             return False
 
         # Step 3: Extract signature, iss,and exp from did doc
@@ -213,7 +236,7 @@ def verify_did(did_web):
         
 
         # Step 7: Verify the did doc
-        public_key_obj = PublicKey(unhexlify(pubkey_record_str), raw=True)
+        public_key_obj = PublicKey(unhexlify(certificate_key), raw=True)
         sig_obj = public_key_obj.ecdsa_deserialize(unhexlify(signature.encode()))
 
     else: # This is for the TLSA record
@@ -272,10 +295,8 @@ if __name__ == "__main__":
     # did_web = 
    
     did_test = [   "did:web:lncreds.ca",
-                   "did:web:trustregistry.ca",
-                   "did:web:lncreds.ca:examplecorp",
-                   "did:web:trustregistry.ca",
-                    "did:web:lncreds.ca:continuumloop",
+                   
+                   
                 
 
                 ]    
@@ -286,4 +307,4 @@ if __name__ == "__main__":
         result = verify_did(each_did)
         print(f"verify did {each_did}:", result)
 
-
+    print(query_cert_record('lncreds.ca'))
