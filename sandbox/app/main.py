@@ -19,15 +19,15 @@ from datetime import datetime, timedelta
 
 from .config import Settings
 
-# create a fake_db for examples
-fake_db = {}
-fake_db['examplecorp'] =    {"iss": "026952458d60fa6eba68f8b50e15c4a6bf8c82a71b5502ef650ecd79c0c38a64f6"}
-fake_db['xyzfoundation'] =  {"iss": "02300d753f822691b63c0c79134aa2069c946768600a3fb32b6078b8209e75d203"}
-fake_db['localagency'] =    {"iss": "037de6dde204fb824af74be5421ad7104f02d14636402e53fdf26289ab9bac8911"}
-fake_db['continuumloop'] =    {"iss": "0219a49c1a050ca04fedae9b73f20e58d3985f7a710b954439cd85aeac36882f7c"}
+# create a fake_db for users
+user_db = {}
 
 
-
+# Initialize user database
+with open('app/data/users.json', "r") as file:
+    user_data = json.load(file)
+for each in user_data['users']:
+    user_db[each['user']] = [each['pubkey']]
 
 def query_pubkey_record(domain):
     resolver = dns.resolver.Resolver()
@@ -149,7 +149,7 @@ def get_user_did_doc(entity_name: str, request: Request):
     
 
     try:
-        entity_iss = fake_db[entity_name]['iss']
+        entity_iss = user_db[entity_name]
         ## Lookup pubkey
     except:
         return {"error": "issuing entity does not exit"}
