@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-02-08T00:17:09.425469+00:00",
+  "timestamp": "2024-02-11T00:19:17.581869+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -49,7 +49,24 @@
       "color": "ffffff"
     }
   ],
-  "issues": [],
+  "issues": [
+    {
+      "number": 12,
+      "id": "I_kwDOLLNO0c5-4YE4",
+      "title": "Need way to determine keys and key type used by issuer of DID document",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/12",
+      "state": "OPEN",
+      "author": "trbouma",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "In creating the signed did doc, I needed some more information about keys, algorithms, etc. In reviewing the W3C DID spec, I felt it was simpler to adopt JWT conventons of \"header\", \"payload and \"signature\".\r\n\r\nIn the example below you can see how I implemented. I also used the registered claim types defined by JWT.\r\n\r\nIn the did doc, there is now a \"header\" section with \"type\" and \"alg\". In the example below, this is what I put it the header to indicate that I am using a pubkey using the ecdsa signing algorithm. I store this in a TXT record _pubkey.domain.com.\r\n\r\nIn following the JWT convention, I also decided to use the \"signature\" section instead of using \"proof\" section because the necessary information can now be indicated in the \"header\" section, so the \"proof\" information would be redundant.\r\n\r\nIn signing the did doc, I remove the \"header\" section, treat the balance as the \"payload\", generate the signature and add in the resulting \"signature\" section before transmitting the did_doc\r\n\r\nWhen verifying the transmitted did doc. I inspect the header for what I need to do, extract the signature from the signature section, and then remove \"header\" and \"signature \" for verification.\r\n\r\n\r\n\r\n\r\n```bash\r\n{\r\n    \"@context\": [\r\n        \"https://www.w3.org/ns/did/v1\",\r\n        \"https://w3id.org/security/suites/secp256k1recovery-2020\"\r\n    ],\r\n    \"header\": {\r\n        \"typ\": \"pubkey\",\r\n        \"alg\": \"secp256k1ecdsa\"\r\n    },\r\n    \"id\": \"did:web:lncreds.ca:continuumloop\",\r\n    \"iss\": \"did:web:lncreds.ca\",\r\n    \"sub\": \"did:web:lncreds.ca:continuumloop\",\r\n    \"iat\": 1707614608,\r\n    \"exp\": 1707618208,\r\n    \"verificationMethod\": [\r\n        {\r\n            \"id\": \"did:web:lncreds.ca:continuumloop\",\r\n            \"controller\": \"did:web:lncreds.ca:continuumloop\",\r\n            \"type\": \"EcdsaSecp256k1RecoveryMethod2020\",\r\n            \"publicKeyHex\": \"0219a49c1a050ca04fedae9b73f20e58d3985f7a710b954439cd85aeac36882f7c\"\r\n        }\r\n    ],\r\n    \"signature\": \"3045022100db75ad005711de7c3d0cfd7668b0a1e8e6e117eaf444a101f90e8e8191a60ccb0220789598c984297a6b9db4bfc7bf198f385f6477b4f8f1de368786de8573bf9234\"\r\n}\r\n```\r\n\r\nI propose that we use the \"header\" section to indicate how to get the right key for verification. In addition to the pubkey approach I have been using, we need to have an indication for TLSA certificate types and their parameters. Something like:\r\n```bash\r\n\"header\": {\r\n        \"typ\": \"tlsa\",\r\n        \"...\": \"...\"\r\n    },\r\n```\r\nI am not sure what the other header parameters should be yet.\r\n\r\nAlso,  I added in expiry which is similar to TTL (using 3600, or an hour).\r\n\r\nAnyway this issue is intended to capture the discussion.",
+      "createdAt": "2024-02-10T20:42:39Z",
+      "updatedAt": "2024-02-10T20:52:37Z",
+      "closedAt": null,
+      "comments": []
+    }
+  ],
   "pulls": [
     {
       "number": 1,
@@ -313,6 +330,62 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 10,
+      "id": "PR_kwDOLLNO0c5mY5xM",
+      "title": "added fastapi example",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/pull/10",
+      "state": "MERGED",
+      "author": "trbouma",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "working on a fastapi example",
+      "createdAt": "2024-02-08T15:13:27Z",
+      "updatedAt": "2024-02-09T20:31:48Z",
+      "baseRepository": "CIRALabs/high-assurance-dids-with-dns",
+      "baseRefName": "main",
+      "baseRefOid": "6fd7ef63b0ed906600210c61029115cbe3cf3f1e",
+      "headRepository": "CIRALabs/high-assurance-dids-with-dns",
+      "headRefName": "sandbox",
+      "headRefOid": "2c46f58c0a42c9b119f520e64895fe12964c6f64",
+      "closedAt": "2024-02-09T20:31:48Z",
+      "mergedAt": "2024-02-09T20:31:48Z",
+      "mergedBy": "jessecarter111",
+      "mergeCommit": {
+        "oid": "4e4a8543d29f6b532ff8dc6744a3e3a9cc8a1da1"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 11,
+      "id": "PR_kwDOLLNO0c5mhYUg",
+      "title": "Sandbox",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/pull/11",
+      "state": "MERGED",
+      "author": "trbouma",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "the latest",
+      "createdAt": "2024-02-09T21:49:49Z",
+      "updatedAt": "2024-02-09T21:52:01Z",
+      "baseRepository": "CIRALabs/high-assurance-dids-with-dns",
+      "baseRefName": "main",
+      "baseRefOid": "4e4a8543d29f6b532ff8dc6744a3e3a9cc8a1da1",
+      "headRepository": "CIRALabs/high-assurance-dids-with-dns",
+      "headRefName": "sandbox",
+      "headRefOid": "430e3cc7109618fd73926ddbba835e361503de3c",
+      "closedAt": "2024-02-09T21:52:00Z",
+      "mergedAt": "2024-02-09T21:52:00Z",
+      "mergedBy": "jessecarter111",
+      "mergeCommit": {
+        "oid": "1c41bb97c33662582d37848c6e1fc6cfd11b2cb8"
+      },
       "comments": [],
       "reviews": []
     }
