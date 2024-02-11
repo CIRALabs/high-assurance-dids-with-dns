@@ -81,7 +81,10 @@ def get_did_doc(request: Request):
     if request.url.hostname == "127.0.0.1":
         dns_pubkey = query_pubkey_record("lncreds.ca")
     else:
-        dns_pubkey = query_pubkey_record(request.url.hostname)
+        try:
+            dns_pubkey = query_pubkey_record(request.url.hostname)
+        except:
+            return {"error": "pubkey record does not exist!"}
 
     dns_pubkey_str = str(dns_pubkey).strip("\"")
 

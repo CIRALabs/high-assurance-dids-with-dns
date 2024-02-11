@@ -9,6 +9,8 @@ import dns.rdatatype
 import dns.rdata
 
 
+
+
 from secp256k1 import PrivateKey, PublicKey
 from binascii import unhexlify
 
@@ -103,12 +105,25 @@ def query_pubkey_record(domain):
         return None
 
 def verify_signature(signature, message, public_key):
-
+    # Signature verfication routuine for pubkey
     public_key_obj = PublicKey(unhexlify(public_key), raw=True)
     sig_obj = public_key_obj.ecdsa_deserialize(unhexlify(signature.encode()))
     
-    
     return public_key_obj.ecdsa_verify(message.encode(), sig_obj, digest=hashlib.sha256)
+
+def verify_ecdsa_signature(signature, message, public_key):
+    # Signature verfication routuine for TLSA record
+    try:
+        public_key = ecdsa.keys.VerifyingKey.from_der(public_key)
+    except Exception as e:
+        print(f"Error loading key: {e}")
+        return False
+    try:
+        assert public_key.verify(signature, message, hashfunc=hashlib.sha256)
+    except Exception as e:
+        print(f"Error verifying signature: {e}")
+        return False
+    return True
 
 def verify_did(did_web):
 
@@ -123,70 +138,113 @@ def verify_did(did_web):
     
     # Step 2 need to figure out what type of did we are handling
     # This can be determined by inspecting the did doc
-    did_doc_handler(did_doc)
+    # Not sure if I need this function yet
+    # did_doc_handler(did_doc)
 
     # Step XX: Extract dns domain from did:web identifier
 
     domain = urlparse(did_web_to_url(did_web)).hostname
 
+    # Step XX: inspect did doc to determine how to lookup be
+    # pubkey in TXT record
+    # TLSA in TLSA record
+    # if there is header, we know it is a pubkey, otherwise TLSA record
 
+    # header = did_doc.get('header', None)
+    try:
+        header = did_doc['header']
+    except:
+        header = None
 
-    # Step XX: Get public key from DNS/DNSSEC record
-    # Change into a more generic function
+    if header:
+        logging.debug("OK: look for pubkey record for verification")
 
-    pubkey_record = query_pubkey_record(domain)
+        # Step XX: Get public key from DNS/DNSSEC record
+        # Change into a more generic function
+
+        pubkey_record = query_pubkey_record(domain)
    
 
-    if pubkey_record:
-        pubkey_record_str = str(pubkey_record).strip("\"")
-        logging.debug("OK: _pubkey record: " + pubkey_record_str)        
-    else:
-        logging.error("No matching pubkey record found.")
-        return False
+        if pubkey_record:
+            pubkey_record_str = str(pubkey_record).strip("\"")
+            logging.debug("OK: _pubkey record: " + pubkey_record_str)        
+        else:
+            logging.error("No matching pubkey record found.")
+            return False
 
-    # Step 3: Extract signature, iss,and exp from did doc
-    try:
-        signature = did_doc['signature']
-        iss = did_doc['iss']
-        exp = did_doc['exp']
+        # Step 3: Extract signature, iss,and exp from did doc
+        try:
+            signature = did_doc['signature']
+            iss = did_doc['iss']
+            exp = did_doc['exp']
+            
+        except:
+            logging.error("Not a valid did doc!")
+            return False
         
-    except:
-        logging.error("Not a valid did doc!")
-        return False
-    
-    logging.debug("OK: Valid did doc")
-    # Remove sections that are not signed
+        logging.debug("OK: Valid did doc")
+        # Remove sections that are not signed
 
-    # Step 4: Remove non-payload data for signature verification
-    
-    del did_doc["header"]
-    del did_doc["signature"]
-    # Dump resulting for signature check
-    message = json.dumps(did_doc)
-
-    #  Step 5: Check to see if iss key is the same as from DNS
-    # Note: iss is now the did instead of the pubkey, so this step is unnecessary
-    # try:
-    #     assert iss == pubkey_record_str
-    # except:
-    #    return False    
-    # logging.debug("OK: Valid public key")
-    # logging.debug(f"OK: _pubkey {pubkey_record_str} is same as iss: {iss}")
-
-    # Step 6: Check to see if did doc is expired
-    current_time_int = int(datetime.utcnow().timestamp())
-    
-    try:
-        assert current_time_int < exp
-    except:
-        return False
-    logging.debug("OK: DID doc not expired.")
-    
-
-    # Step 7: Verify the did doc
-    public_key_obj = PublicKey(unhexlify(pubkey_record_str), raw=True)
-    sig_obj = public_key_obj.ecdsa_deserialize(unhexlify(signature.encode()))
+        # Step 4: Remove non-payload data for signature verification
         
+        del did_doc["header"]
+        del did_doc["signature"]
+        # Dump resulting for signature check
+        message = json.dumps(did_doc)
+
+        #  Step 5: Check to see if iss key is the same as from DNS
+        # Note: iss is now the did instead of the pubkey, so this step is unnecessary
+        # try:
+        #     assert iss == pubkey_record_str
+        # except:
+        #    return False    
+        # logging.debug("OK: Valid public key")
+        # logging.debug(f"OK: _pubkey {pubkey_record_str} is same as iss: {iss}")
+
+        # Step 6: Check to see if did doc is expired
+        current_time_int = int(datetime.utcnow().timestamp())
+        
+        try:
+            assert current_time_int < exp
+        except:
+            
+            return False
+        logging.debug("OK: DID doc not expired.")
+        
+
+        # Step 7: Verify the did doc
+        public_key_obj = PublicKey(unhexlify(pubkey_record_str), raw=True)
+        sig_obj = public_key_obj.ecdsa_deserialize(unhexlify(signature.encode()))
+
+    else: # This is for the TLSA record
+        logging.debug("OK: look for TLSA record for verification")
+        # Parameters for looking up TLSA record
+        usage = 3
+        selector = 1
+        matching_type = 0
+
+        tlsa_record = query_tlsa_record(domain, usage, selector, matching_type)
+
+        if tlsa_record:
+            public_key = tlsa_record.cert
+            print("public key from TLSA record: ", public_key)
+            signature = did_doc["proof"]["proofValue"]
+            print("signature from did doc: ", signature)
+            del did_doc["proof"]
+            print(json.dumps(did_doc, indent=4))
+            msg = json.dumps(did_doc)
+            if verify_ecdsa_signature(base58.b58decode(signature), msg.encode(), public_key):
+                print("Signature verified successfully.")
+                return True
+            else:
+                print("Signature verification failed.")
+                return False
+        else:
+            print("No matching TLSA record found.")
+            return False
+        
+        return False
+       
     return public_key_obj.ecdsa_verify(message.encode(), sig_obj, digest=hashlib.sha256)
  
 
@@ -213,19 +271,19 @@ if __name__ == "__main__":
      
     # did_web = 
    
-    did_test = [   # "did:web:lncreds.ca",
-                   # "did:web:lncreds.ca:examplecorp",
-                   # "did:web:lncreds.ca:xyzfoundation",
-                   # "did:web:lncreds.ca:localagency",
-                   # "did:web:lncreds.ca:localagency#key1",
-                   # "did:web:trustregistry.ca"
-                   "did:web:lncreds.ca:continuumloop", 
+    did_test = [   "did:web:lncreds.ca",
+                   "did:web:trustregistry.ca",
+                   "did:web:lncreds.ca:examplecorp",
+                   "did:web:trustregistry.ca",
+                    "did:web:lncreds.ca:continuumloop",
                 
 
-    ]    
+                ]    
 
-    for did_web in did_test:
-        result = verify_did(did_web)
-        print(f"verify did {did_web}:", result)
+    
+    for each_did in did_test:
+        print(each_did)
+        result = verify_did(each_did)
+        print(f"verify did {each_did}:", result)
 
 

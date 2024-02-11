@@ -1,0 +1,6 @@
+[
+    {"domain": "127.0.0.1", "privkey":"hexstring" },
+    {"domain": "lncreds.ca", "privkey":"hexstring" },
+    {"domain": "lncache.ca", "privkey":"hextstring" },
+
+]
