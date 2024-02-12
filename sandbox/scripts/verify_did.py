@@ -84,6 +84,7 @@ def query_txt_record(domain):
         query_domain = '_cert.' + domain        
         response = resolver.resolve(query_domain, 'TXT')
         
+        
         return response[0]
 
     except dns.resolver.NoAnswer:

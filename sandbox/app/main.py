@@ -99,7 +99,7 @@ app = FastAPI(  title=settings.PROJECT_TITLE,
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
     # return {"message": "Hello World"}
-    return templates.TemplateResponse(  "base.html", 
+    return templates.TemplateResponse(  "home.html", 
                                       { "request" : request,
                                         "settings" : settings
                                          })

@@ -32,6 +32,6 @@ def query_cert_record(domain):
     
 
 if __name__ == "__main__":
-    domain = "lncreds.ca"
+    domain = "trustroot.ca"
     certificate_key, certificate_path = query_cert_record(domain)
     print(f"OK: certificate key: {certificate_key}  certificate path: {certificate_path}" )
