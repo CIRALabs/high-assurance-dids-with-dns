@@ -21,7 +21,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def did_web_to_url(did_web):
-    # Routine to transform did_web into corresponing url
+    # Routine to transform did_web into corresponding url
 
     # replace colon with slash and encoded colon with colon
 
@@ -294,13 +294,11 @@ if __name__ == "__main__":
      
     # did_web = 
    
-    did_test = [    "did:web:lncache.ca:examplecorp",
-                    
-                    
-                
-                   
-                   
-                
+    did_test = [    "did:web:lncreds.ca",
+                    "did:web:lncache.ca:trbouma",
+                    "did:web:lncreds.ca:trbouma",
+                    "did:web:trustregistry.ca",
+                    "did:web:lncache.ca:examplecorp",
 
                 ]    
 
