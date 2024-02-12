@@ -98,11 +98,11 @@ This document outlines a method for improving the authenticity, discoverability,
 
 In the ever-evolving digital world, the need for secure and verifiable identities is paramount. DIDs have emerged as a promising solution, providing a globally unique, persistent identifier that does not require a centralized registration authority. However, like any technology, DIDs face challenges in terms of authenticity, discoverability, and portability.
 
-This is where the Domain Name System (DNS), a well-established and globally distributed internet directory service, comes into play. By leveraging the existing DNS infrastructure, we can enhance the verification process of DIDs. Specifically, we can use Transport Layer Security Authentication (TLSA) and Uniform Resource Identifier (URI) DNS records to add an additional layer of verification.
+This is where the Domain Name System (DNS), a well-established and globally distributed internet directory service, comes into play. By leveraging the existing DNS infrastructure, we can enhance the verification process of DIDs. Specifically, we can use Transport Layer Security Authentication (TLSA) and Uniform Resource Identifier (URI) DNS records to add an additional layer of verification and authenticity to DIDs.
 
 TLSA records in DNS allow us to associate a certificate or public key with the domain name where the record is found, thus providing a form of certificate pinning. URI records, on the other hand, provide a way to publish mappings from hostnames to URIs, such as DIDs.
 
-By storing crucial information about a DID, such as the DID itself and its Public Key Infrastructure (PKI), in these DNS records, we can provide a verifier with a simple yet effective method to cryptographically verify a DID. This not only ensures the authenticity of the DID document but also allows for it interaction with material signed by the DID without access to the DID document itself.
+By storing crucial information about a DID, such as the DID itself and its Public Key Infrastructure (PKI) in these DNS records, we can provide a verifier with a simple yet effective method to cryptographically verify a DID. This not only ensures the authenticity of the DID document but also allows for interaction with material signed by the DID without access to the DID document itself.
 
 In essence, the integration of DIDs with DNS, specifically through the use of TLSA and URI records, provides a robust solution to some of the challenges faced by DIDs, paving the way for a more secure and trustworthy digital identity landscape.
 
@@ -118,9 +118,12 @@ The DNS can provide an additional layer of authenticity to a DID by acting as a 
 |                |     |                |
 |    DNS Server  |     |   Web Server   |
 |                |     |                |
-|    +------+    |     |    +------+    |
-|    |  DID  |<--+-----+-->|  DID  |    |
-|    +------+    |     |    +------+    |
+|   +-------+    |     |   +-------+    |
+|   |  DID  |<--+------+-->|  DID  |    |
+|   +-------+    |     |   +-------+    |
+|   +-------+    |     |   +-------+    |
+|   |  PKI  |<---+-----+-->|  PKI  |    |
+|   +-------+    |     |   +-------+    |
 |                |     |                |
 +----------------+     +----------------+
 
@@ -272,6 +275,52 @@ Using the new DNS records and proof object in the DID document, we can enable a 
    1. This can be accomplished by using either the verificationMethod directly from the did document, or using the key material stored in the TLSA record. Using the TLSA record would provide a higher level of assurance as this confirms the key material is being accurately represented accross 2 different domains, both at the DID document level and the DNS level.
    2. As mentioned above, if using the TLSA record, some conversion will be necessary to convert the DER format public key to whatever is required by the proof's cryptosuite.
 
+# Control Requirements
+
+This section defines a simple framework to define a set of technical controls that can be implemented and mapped into levels of assurance for did:web identifiers.
+
+To assist in decision-making and implementation, The controls are ordered in increasing level of security assurance and are grouped into levels of assurance from **LOW-** to **HIGH+**
+
+- **Issuing Authority** is the entity accountable for the did:web identifier.
+- **Issuing Service** is the entity responsible for operating the did:web identifier insfrastructure.
+
+In many cases the **Issuing Authority** may delegate elements of providing a high assurance did:web identitifier to an **Issuing Service** that may be a commercial provider.
+
+In the simplest case, the **Issuing Authority** can be regarded as the same as the **Issuing Service**.
+
+Note that Controls 9, 10, and 11 CANNOT BE DELEGATED to an **Issuing Service**
+
+11 technical controls are defined. These controls would be implemented in order of precedence for an increasing level of security assurance. (e.g., Control No. N would need to be implemented before implementing Control No. N+1)
+
+|Control No.|Control Name|Description|
+|--|---|---|
+|1|DID Resource Control|The Issuing Service MUST control the resource that generates the DID document. (i.e., website)|
+|2|DID Document Management|The Issuing Service MUST have the ability to do CRUD operations on the DID document.|
+|3|DID Document Data Integrity|The Issuing Service MUST ensure the data integrity of the DID document by cryptographic means, typically a digital signature or other means. The use of approved or established cryptographic algorithmsis HIGHLY RECOMMENDED|
+|4|DID Document Key Control|The Issuing Service MUST control the keys required to sign the DID document.|
+|5|DID Document Key Generation|With proper delegation from the Issuing Authority, the DID Document signing key MAY be generated by the Issuing Service. Otherwise, the signing key must be generated by the Issuing Authority.|
+|6|Domain Zone Control|The Issuing Service MUST have control of the domain zone (or subdomain zone).If direct control of the domain is not feasible, the use of an accredited DNS provider is HIGHLY RECOMMENDED|
+|7|Domain Zone Mapping|There MUST be domain zone records that map the necessary URI, TLSA, CERT and/or TXT records to the specified did:web identifier.|
+|8|Domain Zone Signing|The domain zone records MUST be signed according to DNSSEC. (RRSIG)|
+|9|Domain Zone Signing Key Control|The Issuing Authority MUST have control over the domain zone keys used for signing and delegation. (KSK and ZSK)|
+|10|Domain Zone Signing Key Generation|The signing keys MUST be generated under the control of the Issuing Authority.|
+|11|Hardware Security Module|A FIPS 140-2 compliant hardware security module must be under the control of the Issuing Authority.|
+
+# Levels of Assurance
+
+Many trust frameworks specify levels of assurance to assist in determing which controls must be implemented.
+
+The following table is not a definitive mapping to trust framework levels of assurance. It is intended to assist in determing mappings by grouping the controls within a range from **LOW-** to **HIGH+** relating to the appropriate risk level. Note that controls are additive) in nature. (i.e.,, controls of the preceding level must be fulfilled).
+
+|Level of Assurance|Controls|Description|
+|---|---|---|
+|**LOW-**| Control 1|SHOULD only be used for low risk transactions where attribution to originator is desireable.|
+|**LOW**|Control 2|SHOULD only be used for lower risk transactions where establishing the accountablity of the originator is desirable.|
+|**MEDIUM**|Controls 3, 4 and 5|MAY be used for medium risk commercial transactions, such as correspondence, proposals, etc.|
+|**MEDIUM+**| Controls 6 and 7|MAY be used for higher risk transcations, such as signing and verifying invoices, contracts, or official/legal docmentation|
+|**HIGH**| Controls 8, 9 and 10|MUST be high risk transactions, such as government transactions for signing and verifying licenses, certifications or identification|
+|**HIGH+**| Control 11|MUST be used for extremely high risk transactions where there may be systemic or national security implications|
+
 # Security Considerations
 
 TODO Security
@@ -287,7 +336,6 @@ Per {{!RFC8552}}, IANA is requested to add the following entries to the
     | TLSA    | _did       | [draft-ietf-high-assurance-dids-with-dns] |
     | URI     | _did       | [draft-mayrhofer-did-dns-01]              |
     +---------+------------+------------------------------------------+.
-
 
 --- back
 
