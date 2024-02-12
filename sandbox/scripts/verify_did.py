@@ -294,7 +294,10 @@ if __name__ == "__main__":
      
     # did_web = 
    
-    did_test = [   "did:web:lncreds.ca",
+    did_test = [    "did:web:lncache.ca:examplecorp",
+                    
+                    
+                
                    
                    
                 
@@ -307,4 +310,4 @@ if __name__ == "__main__":
         result = verify_did(each_did)
         print(f"verify did {each_did}:", result)
 
-    print(query_cert_record('lncreds.ca'))
+    

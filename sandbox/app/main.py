@@ -11,6 +11,8 @@ import dns.rdata
 from secp256k1 import PrivateKey, PublicKey
 from binascii import unhexlify
 
+from urllib.parse import urlparse, parse_qs
+
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
@@ -21,10 +23,11 @@ from .config import Settings
 
 # Initialize issuer database
 issuer_db = {}
-with open('app/data/issuer.json', "r") as file:
-    user_data = json.load(file)
-for each in user_data['users']:
-    issuer_db[each['issuer']] = [each['privkey']]
+with open('app/data/issuers.json', "r") as file:
+    issuer_data = json.load(file)
+    
+for each in issuer_data['issuers']:
+    issuer_db[each['domain']] = [each['privkey']]
 
 
 # Initialize user database
@@ -52,15 +55,36 @@ def query_pubkey_record(domain):
     except dns.resolver.NoAnswer:
         return None
 
+def query_cert_record(domain):
+    resolver = dns.resolver.Resolver()
+    resolver.use_dnssec = True
+    resolver.nameservers = ['8.8.8.8']
+    resolver.use_edns = True
+
+    try:
+        query_domain = '_cert.' + domain        
+        response = resolver.resolve(query_domain, 'TXT')
+        certificate_record= str(response[0]).strip("\"")
+        parsed_record = urlparse(certificate_record)
+        parsed_dict = parse_qs(parsed_record.query)
+        certificate_key = parsed_dict['kid'][0].strip().replace("\"",'')
+        certificate_path = parsed_record.path
+        print(certificate_key,certificate_path)
+        return certificate_key, certificate_path, 
+
+    except dns.resolver.NoAnswer:
+        return None, None
 
 templates = Jinja2Templates(directory="templates")
 
 settings = Settings()
 
-print(settings.PRIVATE_KEY, settings.PUBLIC_KEY)
 
-private_key = PrivateKey(unhexlify(settings.PRIVATE_KEY))
-public_key_hex = private_key.pubkey.serialize().hex()
+
+# print(settings.PRIVATE_KEY, settings.PUBLIC_KEY)
+
+# private_key = PrivateKey(unhexlify(settings.PRIVATE_KEY))
+# public_key_hex = private_key.pubkey.serialize().hex()
 
 
 
@@ -86,22 +110,29 @@ def get_did_doc(request: Request):
 
     ## Lookup pubkey
     if request.url.hostname == "127.0.0.1":
-        dns_pubkey = query_pubkey_record("lncreds.ca")
+        
+        certificate_key, certificate_path = query_cert_record("lncreds.ca")
+        
+        private_key = PrivateKey(unhexlify(issuer_db['lncreds.ca'][0]))
+        
     else:
         try:
-            dns_pubkey = query_pubkey_record(request.url.hostname)
+            
+            certificate_key, certificate_path = query_cert_record(request.url.hostname)
+            private_key = PrivateKey(unhexlify(issuer_db[request.url.hostname][0]))
         except:
             return {"error": "pubkey record does not exist!"}
 
-    dns_pubkey_str = str(dns_pubkey).strip("\"")
-
-    print(dns_pubkey_str, public_key_hex)
+    
+    public_key_hex = private_key.pubkey.serialize().hex()
+    print(public_key_hex, certificate_key)
 
     # Do a check against the 
     try:
-        assert dns_pubkey_str == public_key_hex
+       
+        assert certificate_key == public_key_hex
     except:
-        return {"error": "records do not match!"}
+        return {"error": "issuer record do not match dns record!"}
     
     current_time_int = int(datetime.utcnow().timestamp())
     expiry_time_int = int((datetime.utcnow() + timedelta(seconds=settings.TTL)).timestamp())
@@ -112,7 +143,7 @@ def get_did_doc(request: Request):
 
                 "header": {
                     "typ":     "pubkey",
-                    "alg":      "secp256k1ecdsa",
+                    
                 },
 
                 "id":       f"did:web:{request.url.hostname}",
@@ -126,7 +157,7 @@ def get_did_doc(request: Request):
                         "id": f"did:web:{request.url.hostname}",
                         "controller": f"did:web:{request.url.hostname}",
                         "type": "EcdsaSecp256k1RecoveryMethod2020",
-                        "publicKeyHex": dns_pubkey_str
+                        "publicKeyHex": certificate_key
                      }
                     ]              
                
@@ -164,17 +195,24 @@ def get_user_did_doc(entity_name: str, request: Request):
 
     ## Lookup pubkey
     if request.url.hostname == "127.0.0.1":
-        dns_pubkey = query_pubkey_record("lncreds.ca")
+         certificate_key, certificate_path = query_cert_record("lncreds.ca")
+         private_key = PrivateKey(unhexlify(issuer_db['lncreds.ca'][0]))
     else:
-        dns_pubkey = query_pubkey_record(request.url.hostname)
+        try:
+            
+            certificate_key, certificate_path = query_cert_record(request.url.hostname)
+            private_key = PrivateKey(unhexlify(issuer_db[request.url.hostname][0]))
+        except:
+            return {"error": "pubkey record does not exist!"}
 
-    dns_pubkey_str = str(dns_pubkey).strip("\"")
+    
+    public_key_hex = private_key.pubkey.serialize().hex()  
 
-    print(dns_pubkey_str, public_key_hex)
+    print(certificate_key, public_key_hex)
 
     # Do a check against the 
     try:
-        assert dns_pubkey_str == public_key_hex
+        assert certificate_key == public_key_hex
     except:
         return {"error": "records do not match!"}
     
@@ -187,7 +225,7 @@ def get_user_did_doc(entity_name: str, request: Request):
 
                 "header": {
                     "typ":     "pubkey",
-                    "alg":      "secp256k1ecdsa",
+                    
                 },
 
                 "id":       f"did:web:{request.url.hostname}:{entity_name}",
