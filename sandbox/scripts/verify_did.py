@@ -81,7 +81,7 @@ def query_txt_record(domain):
     resolver.use_edns = True
 
     try:
-        query_domain = '_pubkey.' + domain        
+        query_domain = '_cert.' + domain        
         response = resolver.resolve(query_domain, 'TXT')
         
         return response[0]
@@ -89,18 +89,7 @@ def query_txt_record(domain):
     except dns.resolver.NoAnswer:
         return None
     
-def query_pubkey_record(domain):
-    resolver = dns.resolver.Resolver()
-    resolver.use_dnssec = True
-    resolver.nameservers = ['8.8.8.8']
-    resolver.use_edns = True
 
-    try:
-        query_domain = '_pubkey.' + domain        
-        response = resolver.resolve(query_domain, 'TXT')
-        pubkey_record = str(response[0]).replace("\"", '')
-        
-        return pubkey_record
 
     except dns.resolver.NoAnswer:
         return None
