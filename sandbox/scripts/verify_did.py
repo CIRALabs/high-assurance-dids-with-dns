@@ -83,7 +83,7 @@ def query_txt_record(domain):
     try:
         query_domain = '_cert.' + domain        
         response = resolver.resolve(query_domain, 'TXT')
-        
+
         
         return response[0]
 
@@ -289,6 +289,7 @@ if __name__ == "__main__":
                     "did:web:lncreds.ca:trbouma",
                     "did:web:trustregistry.ca",
                     "did:web:lncache.ca:examplecorp",
+                    "did:web:trustroot.ca:trbouma",
 
                 ]    
 
