@@ -309,10 +309,8 @@ if __name__ == "__main__":
      
     # did_web = 
    
-    did_test = [    "did:web:trustroot.ca",
-                    "did:web:credentials.trustroot.ca",
-                    "did:web:trustroot.ca:examplecorp",
-                    "did:web:credentials.trustroot.ca:xyzfoundation",
+    did_test = [    "did:web:trustroot.ca"
+                   
                 
 
                 ]    

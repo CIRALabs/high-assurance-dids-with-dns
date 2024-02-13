@@ -16,6 +16,7 @@ from urllib.parse import urlparse, parse_qs
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
+import logging
 
 from datetime import datetime, timedelta
 
@@ -75,6 +76,22 @@ def query_cert_record(domain):
     except dns.resolver.NoAnswer:
         return None, None
 
+def query_did_dns_record(domain):
+    resolver = dns.resolver.Resolver()
+    resolver.use_dnssec = True
+    resolver.nameservers = ['8.8.8.8']
+    resolver.use_edns = True
+
+    try:
+        query_domain = '_did.' + domain        
+        response = resolver.resolve(query_domain, 'TXT')
+        certificate_key= str(response[0]).strip("\"")
+        logging.debug(f"OK: query_domain {query_domain} certificate_key {certificate_key}")
+        return certificate_key
+
+    except dns.resolver.NoAnswer:
+        return None, None
+    
 templates = Jinja2Templates(directory="templates")
 
 settings = Settings()
@@ -108,21 +125,18 @@ async def root(request: Request):
 @app.get("/.well-known/did.json",tags=["public"])
 def get_did_doc(request: Request):
 
-    ## Lookup pubkey
-    if request.url.hostname == "127.0.0.1":
-        
-        certificate_key, certificate_path = query_cert_record("lncreds.ca")
-        
-        private_key = PrivateKey(unhexlify(issuer_db['lncreds.ca'][0]))
-        
-    else:
-        try:
-            
-            certificate_key, certificate_path = query_cert_record(request.url.hostname)
-            private_key = PrivateKey(unhexlify(issuer_db[request.url.hostname][0]))
-        except:
-            return {"error": "pubkey record does not exist!"}
+    did_domain = request.url.hostname
+    if did_domain == "127.0.0.1":
+        did_domain = 'trustroot.ca'
 
+    try:
+        certificate_key = query_did_dns_record(did_domain)
+        private_key = PrivateKey(unhexlify(issuer_db[did_domain][0]))
+    except:
+        return {"error": "pubkey record does not exist!"}
+
+
+   
     
     public_key_hex = private_key.pubkey.serialize().hex()
     print(public_key_hex, certificate_key)
@@ -147,16 +161,16 @@ def get_did_doc(request: Request):
                     
                 },
 
-                "id":       f"did:web:{request.url.hostname}",
-                "iss":      f"did:web:{request.url.hostname}", 
-                "sub":      f"did:web:{request.url.hostname}",                
+                "id":       f"did:web:{did_domain}",
+                "iss":      f"did:web:{did_domain}", 
+                "sub":      f"did:web:{did_domain}",                
                 "iat":      current_time_int,
                 "exp":      expiry_time_int, 
 
                 "verificationMethod": 
                     [{
-                        "id": f"did:web:{request.url.hostname}",
-                        "controller": f"did:web:{request.url.hostname}",
+                        "id": f"did:web:{did_domain}",
+                        "controller": f"did:web:{did_domain}",
                         "type": "EcdsaSecp256k1RecoveryMethod2020",
                         "publicKeyHex": certificate_key
                      }
@@ -194,17 +208,15 @@ def get_user_did_doc(entity_name: str, request: Request):
         return {"error": "issuing entity does not exit"}
     
 
-    ## Lookup pubkey
-    if request.url.hostname == "127.0.0.1":
-         certificate_key, certificate_path = query_cert_record("lncreds.ca")
-         private_key = PrivateKey(unhexlify(issuer_db['lncreds.ca'][0]))
-    else:
-        try:
-            
-            certificate_key, certificate_path = query_cert_record(request.url.hostname)
-            private_key = PrivateKey(unhexlify(issuer_db[request.url.hostname][0]))
-        except:
-            return {"error": "pubkey record does not exist!"}
+    did_domain = request.url.hostname
+    if did_domain == "127.0.0.1":
+        did_domain = 'trustroot.ca'
+
+    try:
+        certificate_key = query_did_dns_record(did_domain)
+        private_key = PrivateKey(unhexlify(issuer_db[did_domain][0]))
+    except:
+        return {"error": "pubkey record does not exist!"}
 
     
     public_key_hex = private_key.pubkey.serialize().hex()  
@@ -230,16 +242,16 @@ def get_user_did_doc(entity_name: str, request: Request):
                     
                 },
 
-                "id":       f"did:web:{request.url.hostname}:{entity_name}",
-                "iss":      f"did:web:{request.url.hostname}", 
-                "sub":      f"did:web:{request.url.hostname}:{entity_name}",                
+                "id":       f"did:web:{did_domain}:{entity_name}",
+                "iss":      f"did:web:{did_domain}", 
+                "sub":      f"did:web:{did_domain}:{entity_name}",                
                 "iat":      current_time_int,
                 "exp":      expiry_time_int, 
 
                 "verificationMethod": 
                     [{
-                        "id": f"did:web:{request.url.hostname}:{entity_name}",
-                        "controller": f"did:web:{request.url.hostname}:{entity_name}",
+                        "id": f"did:web:{did_domain}:{entity_name}",
+                        "controller": f"did:web:{did_domain}:{entity_name}",
                         "type": "EcdsaSecp256k1RecoveryMethod2020",
                         "publicKeyHex": entity_iss
                      }
