@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-02-11T00:19:17.581869+00:00",
+  "timestamp": "2024-02-13T00:18:00.940447+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -63,6 +63,22 @@
       "body": "In creating the signed did doc, I needed some more information about keys, algorithms, etc. In reviewing the W3C DID spec, I felt it was simpler to adopt JWT conventons of \"header\", \"payload and \"signature\".\r\n\r\nIn the example below you can see how I implemented. I also used the registered claim types defined by JWT.\r\n\r\nIn the did doc, there is now a \"header\" section with \"type\" and \"alg\". In the example below, this is what I put it the header to indicate that I am using a pubkey using the ecdsa signing algorithm. I store this in a TXT record _pubkey.domain.com.\r\n\r\nIn following the JWT convention, I also decided to use the \"signature\" section instead of using \"proof\" section because the necessary information can now be indicated in the \"header\" section, so the \"proof\" information would be redundant.\r\n\r\nIn signing the did doc, I remove the \"header\" section, treat the balance as the \"payload\", generate the signature and add in the resulting \"signature\" section before transmitting the did_doc\r\n\r\nWhen verifying the transmitted did doc. I inspect the header for what I need to do, extract the signature from the signature section, and then remove \"header\" and \"signature \" for verification.\r\n\r\n\r\n\r\n\r\n```bash\r\n{\r\n    \"@context\": [\r\n        \"https://www.w3.org/ns/did/v1\",\r\n        \"https://w3id.org/security/suites/secp256k1recovery-2020\"\r\n    ],\r\n    \"header\": {\r\n        \"typ\": \"pubkey\",\r\n        \"alg\": \"secp256k1ecdsa\"\r\n    },\r\n    \"id\": \"did:web:lncreds.ca:continuumloop\",\r\n    \"iss\": \"did:web:lncreds.ca\",\r\n    \"sub\": \"did:web:lncreds.ca:continuumloop\",\r\n    \"iat\": 1707614608,\r\n    \"exp\": 1707618208,\r\n    \"verificationMethod\": [\r\n        {\r\n            \"id\": \"did:web:lncreds.ca:continuumloop\",\r\n            \"controller\": \"did:web:lncreds.ca:continuumloop\",\r\n            \"type\": \"EcdsaSecp256k1RecoveryMethod2020\",\r\n            \"publicKeyHex\": \"0219a49c1a050ca04fedae9b73f20e58d3985f7a710b954439cd85aeac36882f7c\"\r\n        }\r\n    ],\r\n    \"signature\": \"3045022100db75ad005711de7c3d0cfd7668b0a1e8e6e117eaf444a101f90e8e8191a60ccb0220789598c984297a6b9db4bfc7bf198f385f6477b4f8f1de368786de8573bf9234\"\r\n}\r\n```\r\n\r\nI propose that we use the \"header\" section to indicate how to get the right key for verification. In addition to the pubkey approach I have been using, we need to have an indication for TLSA certificate types and their parameters. Something like:\r\n```bash\r\n\"header\": {\r\n        \"typ\": \"tlsa\",\r\n        \"...\": \"...\"\r\n    },\r\n```\r\nI am not sure what the other header parameters should be yet.\r\n\r\nAlso,  I added in expiry which is similar to TTL (using 3600, or an hour).\r\n\r\nAnyway this issue is intended to capture the discussion.",
       "createdAt": "2024-02-10T20:42:39Z",
       "updatedAt": "2024-02-10T20:52:37Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 14,
+      "id": "I_kwDOLLNO0c5-9NxI",
+      "title": "Proposed Standardized TXT format for certis",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/14",
+      "state": "OPEN",
+      "author": "trbouma",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Proposed standardized way to add public key information in a DNS TXT record\r\nUse the URI scheme, so it can be easily parsed.\r\n\r\nTXT record in the format of ```\"cert:secp256k1/ecdsa?kid=02300d753f822691b63c0c79134aa2069c946768600a3fb32b6078b8209e75d203\"```\r\n\r\nscheme is \"cert\"\r\npath is curve/algoriithm eg.: \"secp256k1/ecdsa\", \"secp256k1/ecdsarecovery\", \"secp256k1/schnorr\", etc,\r\nquery contains parameters, e.g. \"kid\" is hex encoded string of public key.\r\n\r\nThis allows any curve/algorithm to be easily specified, and the urllib library makes it easy to parse out any additional parameters, if required.\r\n\r\nAlso use ```_cert_``` as standardized qualifier. \r\n\r\ncode snippet on how to parse.\r\n\r\n```python\r\n# Example of how to parse a TXT Record\r\nfrom urllib.parse import parse_qs\r\nfrom urllib.parse import urlparse\r\n\r\n# get record from DNS TXT record e;g., _cert.example.com\r\ncertificate_record = \"cert:secp256k1/ecdsa?kid=02300d753f822691b63c0c79134aa2069c946768600a3fb32b6078b8209e75d203\"\r\n\r\nparsed_record = urlparse(certificate_record)\r\nparsed_dict = parse_qs(parsed_record.query)\r\n\r\n# Note that parse_qs returns each parameter as a list, so need to take element [0]\r\n\r\nprint(parsed_record.path)\r\nprint(parsed_dict)\r\npubkey = parsed_dict['kid'][0]\r\n```",
+      "createdAt": "2024-02-12T11:53:13Z",
+      "updatedAt": "2024-02-12T11:53:14Z",
       "closedAt": null,
       "comments": []
     }
@@ -386,6 +402,32 @@
       "mergeCommit": {
         "oid": "1c41bb97c33662582d37848c6e1fc6cfd11b2cb8"
       },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 13,
+      "id": "PR_kwDOLLNO0c5moDgR",
+      "title": "Sandbox",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/pull/13",
+      "state": "OPEN",
+      "author": "trbouma",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "latest and greatest ",
+      "createdAt": "2024-02-12T11:38:20Z",
+      "updatedAt": "2024-02-12T19:43:54Z",
+      "baseRepository": "CIRALabs/high-assurance-dids-with-dns",
+      "baseRefName": "main",
+      "baseRefOid": "1c41bb97c33662582d37848c6e1fc6cfd11b2cb8",
+      "headRepository": "CIRALabs/high-assurance-dids-with-dns",
+      "headRefName": "sandbox",
+      "headRefOid": "5f7546ea97fe21bf6e957478608b892dc9f54cba",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
       "comments": [],
       "reviews": []
     }
