@@ -290,6 +290,7 @@ if __name__ == "__main__":
                     "did:web:trustregistry.ca",
                     "did:web:lncache.ca:examplecorp",
                     "did:web:trustroot.ca:trbouma",
+                    "did:web:credentials.trustroot.ca:examplecorp"
 
                 ]    
 
