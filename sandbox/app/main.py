@@ -142,7 +142,8 @@ def get_did_doc(request: Request):
                     ["https://www.w3.org/ns/did/v1", "https://w3id.org/security/suites/secp256k1recovery-2020"], 
 
                 "header": {
-                    "typ":     "pubkey",
+                    "typ":     "dns/did",
+                    "alg":      "secp256k1ecdsa"
                     
                 },
 
@@ -224,7 +225,8 @@ def get_user_did_doc(entity_name: str, request: Request):
                     ["https://www.w3.org/ns/did/v1", "https://w3id.org/security/suites/secp256k1recovery-2020"], 
 
                 "header": {
-                    "typ":     "pubkey",
+                    "typ":     "dns/did",
+                    "alg":      "secp256k1ecdsa"
                     
                 },
 
