@@ -115,6 +115,22 @@ def query_cert_record(domain):
     except dns.resolver.NoAnswer:
         return None, None
 
+def query_did_dns_record(domain):
+    resolver = dns.resolver.Resolver()
+    resolver.use_dnssec = True
+    resolver.nameservers = ['8.8.8.8']
+    resolver.use_edns = True
+
+    try:
+        query_domain = '_did.' + domain        
+        response = resolver.resolve(query_domain, 'TXT')
+        certificate_key= str(response[0]).strip("\"")
+        logging.debug(f"OK: query_domain {query_domain} certificate_key {certificate_key}")
+        return certificate_key
+
+    except dns.resolver.NoAnswer:
+        return None, None
+
 def verify_signature(signature, message, public_key):
     # Signature verfication routuine for pubkey
     public_key_obj = PublicKey(unhexlify(public_key), raw=True)
@@ -155,6 +171,7 @@ def verify_did(did_web):
     # Step XX: Extract dns domain from did:web identifier
 
     domain = urlparse(did_web_to_url(did_web)).hostname
+    alg = "not specified"
 
     # Step XX: inspect did doc to determine how to lookup be
     # pubkey in TXT record
@@ -168,14 +185,20 @@ def verify_did(did_web):
         header = None
 
     if header:
-        logging.debug("OK: look for pubkey record for verification")
+        logging.debug("OK: look for pubkey TXT record for verification")
 
         # Step XX: Get public key from DNS/DNSSEC record
         # Change into a more generic function
+        if header['typ'] == 'dns/did':
+            alg = header['alg']
+            certificate_key = query_did_dns_record(domain)
+            logging.debug(f"OK: {certificate_key}, {alg}")
 
-        # pubkey_record = query_pubkey_record(domain)
-        certificate_key, certificate_path = query_cert_record(domain)
-        logging.debug("OK: " + certificate_key + certificate_path)
+        
+        else:
+            # see issue 16 - the _cert can be deprecated
+            certificate_key, certificate_path = query_cert_record(domain)
+            logging.debug("OK: " + certificate_key + certificate_path)
    
 
         if certificate_key:
@@ -226,6 +249,8 @@ def verify_did(did_web):
         
 
         # Step 7: Verify the did doc
+        # We can determine from alg what curve/algorithm to use
+        logging.debug(f"OK: did doc signing and verification algorithm: {alg}")
         public_key_obj = PublicKey(unhexlify(certificate_key), raw=True)
         sig_obj = public_key_obj.ecdsa_deserialize(unhexlify(signature.encode()))
 
@@ -284,13 +309,11 @@ if __name__ == "__main__":
      
     # did_web = 
    
-    did_test = [    "did:web:lncreds.ca",
-                    "did:web:lncache.ca:trbouma",
-                    "did:web:lncreds.ca:trbouma",
-                    "did:web:trustregistry.ca",
-                    "did:web:lncache.ca:examplecorp",
-                    "did:web:trustroot.ca:trbouma",
-                    "did:web:credentials.trustroot.ca:examplecorp"
+    did_test = [    "did:web:trustroot.ca",
+                    "did:web:credentials.trustroot.ca",
+                    "did:web:trustroot.ca:examplecorp",
+                    "did:web:credentials.trustroot.ca:xyzfoundation",
+                
 
                 ]    
 
