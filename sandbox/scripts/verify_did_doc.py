@@ -8,7 +8,6 @@ import dns.message
 import dns.rdatatype
 import dns.rdata
 
-
 from secp256k1 import PrivateKey, PublicKey
 from binascii import unhexlify
 
@@ -30,6 +29,7 @@ def did_web_to_url(did_web):
 
     # did_web_url =     'https://' + did_web.split(':')[-1] + '/.well-known/did.json'
     return did_web_url
+
 
 def query_tlsa_record(domain, usage, selector, matching_type):
     resolver = dns.resolver.Resolver()
@@ -65,6 +65,7 @@ def query_txt_record(domain):
     except dns.resolver.NoAnswer:
         return None
     
+    
 def query_pubkey_record(domain):
     resolver = dns.resolver.Resolver()
     resolver.use_dnssec = True
@@ -80,20 +81,20 @@ def query_pubkey_record(domain):
     except dns.resolver.NoAnswer:
         return None
 
+
 def verify_signature(signature, message, public_key):
 
     public_key_obj = PublicKey(unhexlify(public_key), raw=True)
     sig_obj = public_key_obj.ecdsa_deserialize(unhexlify(signature.encode()))
     
-    
     return public_key_obj.ecdsa_verify(message.encode(), sig_obj, digest=hashlib.sha256)
+
 
 def verify_did_doc(did_doc, did_web):
 
     domain = urlparse(did_web_to_url(did_web)).hostname
     pubkey_record = query_pubkey_record(domain)
    
-
     if pubkey_record:
         pubkey_record_str = str(pubkey_record).strip("\"")
         print("_pubkey record:", pubkey_record_str)        
@@ -134,11 +135,8 @@ def verify_did_doc(did_doc, did_web):
     public_key_obj = PublicKey(unhexlify(pubkey_record_str), raw=True)
     sig_obj = public_key_obj.ecdsa_deserialize(unhexlify(signature.encode()))
     
-    
     return public_key_obj.ecdsa_verify(message.encode(), sig_obj, digest=hashlib.sha256)
  
-
-
 
 def download_did_document(did_web):
 
@@ -167,5 +165,3 @@ if __name__ == "__main__":
     result = verify_did_doc(did_doc, did_web)
 
     print("verify did doc", result)
-
-
