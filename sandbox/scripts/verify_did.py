@@ -28,19 +28,23 @@ def did_web_to_url(did_web):
     did_web_url = did_web.replace(":", "/").replace('did/web/', "https://").replace('%3A',':')
     
     parsed_url = urlparse(did_web_url)
-    if parsed_url.path == '':
-        did_web_url = did_web_url + '/.well-known/did.json'
-    else:
-        did_web_url = did_web_url + "/did.json"    
+   
+
+    authority = parsed_url.netloc
+    if "@" in authority:
+        authority_parts = authority.split('@')
+        did_web_url = parsed_url.scheme + "://" + authority_parts[1] + "/" + authority_parts[0] + "/did.json"
+    else:   
+        if parsed_url.path == '':
+            did_web_url = did_web_url + '/.well-known/did.json'
+        else:
+            did_web_url = did_web_url + "/did.json"   
     
-    # strip out fragment and params
-    
-    did_web_url = did_web_url.replace('#'+ parsed_url.fragment,'').replace(parsed_url.query,'').replace('?','')    
+        # strip out fragment and params    
+        did_web_url = did_web_url.replace('#'+ parsed_url.fragment,'').replace(parsed_url.query,'').replace('?','')    
     
 
-    print("did_web_url:", did_web_url)
-
-    # did_web_url =     'https://' + did_web.split(':')[-1] + '/.well-known/did.json'
+    
     return did_web_url
 
 def did_doc_handler(did_doc):
@@ -304,15 +308,15 @@ def download_did_document(did_web):
         
 if __name__ == "__main__":
 
+    logging.debug("starting...")
+
     # verify_did confirms if it is a high assurance did
     
      
     # did_web = 
    
-    did_test = [    "did:web:trustroot.ca"
-                   
-                
-
+    did_test = [    "did:web:credentials.trustroot.ca:aniltj",
+                    "did:web:aniltj@credentials.trustroot.ca"   
                 ]    
 
     
@@ -320,5 +324,6 @@ if __name__ == "__main__":
         print(each_did)
         result = verify_did(each_did)
         print(f"verify did {each_did}:", result)
+        
 
     
