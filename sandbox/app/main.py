@@ -134,6 +134,8 @@ def get_did_doc(request: Request):
     if did_domain == "127.0.0.1":
         did_domain = 'trustroot.ca'
 
+    print(issuer_db[did_domain]['privkey'])
+
     try:
         certificate_key = query_did_dns_record(did_domain)
         private_key = PrivateKey(unhexlify(issuer_db[did_domain]['privkey']))
@@ -141,7 +143,7 @@ def get_did_doc(request: Request):
         return {"error": "pubkey record does not exist!"}
 
 
-    print(issuer_db)
+    print("ISSUER", issuer_db[did_domain]['privkey'])
     
     public_key_hex = private_key.pubkey.serialize().hex()
     print(public_key_hex, certificate_key)
@@ -210,7 +212,7 @@ def get_user_did_doc(entity_name: str, request: Request):
         entity_iss = user_db[entity_name]
         ## Lookup pubkey
     except:
-        return {"error": "issuing entity does not exit"}
+        return {"error": "issuing entity does not exist"}
     
 
     did_domain = request.url.hostname

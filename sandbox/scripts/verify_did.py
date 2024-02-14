@@ -315,8 +315,8 @@ if __name__ == "__main__":
      
     # did_web = 
    
-    did_test = [    "did:web:credentials.trustroot.ca:aniltj",
-                    "did:web:aniltj@credentials.trustroot.ca"   
+    did_test = [    "did:web:community.trustroot.ca:aniltj",
+                    "did:web:aniltj@community.trustroot.ca"   
                 ]    
 
     
