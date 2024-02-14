@@ -28,7 +28,10 @@ with open('app/data/issuers.json', "r") as file:
     issuer_data = json.load(file)
     
 for each in issuer_data['issuers']:
-    issuer_db[each['domain']] = [each['privkey']]
+    domain = each['domain']
+    del each['domain']
+    issuer_db[domain] = each
+
 
 
 # Initialize user database
@@ -125,18 +128,20 @@ async def root(request: Request):
 @app.get("/.well-known/did.json",tags=["public"])
 def get_did_doc(request: Request):
 
+   
+
     did_domain = request.url.hostname
     if did_domain == "127.0.0.1":
         did_domain = 'trustroot.ca'
 
     try:
         certificate_key = query_did_dns_record(did_domain)
-        private_key = PrivateKey(unhexlify(issuer_db[did_domain][0]))
+        private_key = PrivateKey(unhexlify(issuer_db[did_domain]['privkey']))
     except:
         return {"error": "pubkey record does not exist!"}
 
 
-   
+    print(issuer_db)
     
     public_key_hex = private_key.pubkey.serialize().hex()
     print(public_key_hex, certificate_key)
@@ -156,8 +161,8 @@ def get_did_doc(request: Request):
                     ["https://www.w3.org/ns/did/v1", "https://w3id.org/security/suites/secp256k1recovery-2020"], 
 
                 "header": {
-                    "typ":     "dns/did",
-                    "alg":      "secp256k1ecdsa"
+                    "typ":     issuer_db[did_domain]['typ'],
+                    "alg":     issuer_db[did_domain]['alg']
                     
                 },
 
@@ -214,7 +219,7 @@ def get_user_did_doc(entity_name: str, request: Request):
 
     try:
         certificate_key = query_did_dns_record(did_domain)
-        private_key = PrivateKey(unhexlify(issuer_db[did_domain][0]))
+        private_key = PrivateKey(unhexlify(issuer_db[did_domain]['privkey']))
     except:
         return {"error": "pubkey record does not exist!"}
 
@@ -237,8 +242,8 @@ def get_user_did_doc(entity_name: str, request: Request):
                     ["https://www.w3.org/ns/did/v1", "https://w3id.org/security/suites/secp256k1recovery-2020"], 
 
                 "header": {
-                    "typ":     "dns/did",
-                    "alg":      "secp256k1ecdsa"
+                    "typ":     issuer_db[did_domain]['typ'],
+                    "alg":     issuer_db[did_domain]['alg']
                     
                 },
 
