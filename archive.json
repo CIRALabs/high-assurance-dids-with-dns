@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-02-13T00:18:00.940447+00:00",
+  "timestamp": "2024-02-15T00:17:23.690258+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -62,9 +62,17 @@
       "labels": [],
       "body": "In creating the signed did doc, I needed some more information about keys, algorithms, etc. In reviewing the W3C DID spec, I felt it was simpler to adopt JWT conventons of \"header\", \"payload and \"signature\".\r\n\r\nIn the example below you can see how I implemented. I also used the registered claim types defined by JWT.\r\n\r\nIn the did doc, there is now a \"header\" section with \"type\" and \"alg\". In the example below, this is what I put it the header to indicate that I am using a pubkey using the ecdsa signing algorithm. I store this in a TXT record _pubkey.domain.com.\r\n\r\nIn following the JWT convention, I also decided to use the \"signature\" section instead of using \"proof\" section because the necessary information can now be indicated in the \"header\" section, so the \"proof\" information would be redundant.\r\n\r\nIn signing the did doc, I remove the \"header\" section, treat the balance as the \"payload\", generate the signature and add in the resulting \"signature\" section before transmitting the did_doc\r\n\r\nWhen verifying the transmitted did doc. I inspect the header for what I need to do, extract the signature from the signature section, and then remove \"header\" and \"signature \" for verification.\r\n\r\n\r\n\r\n\r\n```bash\r\n{\r\n    \"@context\": [\r\n        \"https://www.w3.org/ns/did/v1\",\r\n        \"https://w3id.org/security/suites/secp256k1recovery-2020\"\r\n    ],\r\n    \"header\": {\r\n        \"typ\": \"pubkey\",\r\n        \"alg\": \"secp256k1ecdsa\"\r\n    },\r\n    \"id\": \"did:web:lncreds.ca:continuumloop\",\r\n    \"iss\": \"did:web:lncreds.ca\",\r\n    \"sub\": \"did:web:lncreds.ca:continuumloop\",\r\n    \"iat\": 1707614608,\r\n    \"exp\": 1707618208,\r\n    \"verificationMethod\": [\r\n        {\r\n            \"id\": \"did:web:lncreds.ca:continuumloop\",\r\n            \"controller\": \"did:web:lncreds.ca:continuumloop\",\r\n            \"type\": \"EcdsaSecp256k1RecoveryMethod2020\",\r\n            \"publicKeyHex\": \"0219a49c1a050ca04fedae9b73f20e58d3985f7a710b954439cd85aeac36882f7c\"\r\n        }\r\n    ],\r\n    \"signature\": \"3045022100db75ad005711de7c3d0cfd7668b0a1e8e6e117eaf444a101f90e8e8191a60ccb0220789598c984297a6b9db4bfc7bf198f385f6477b4f8f1de368786de8573bf9234\"\r\n}\r\n```\r\n\r\nI propose that we use the \"header\" section to indicate how to get the right key for verification. In addition to the pubkey approach I have been using, we need to have an indication for TLSA certificate types and their parameters. Something like:\r\n```bash\r\n\"header\": {\r\n        \"typ\": \"tlsa\",\r\n        \"...\": \"...\"\r\n    },\r\n```\r\nI am not sure what the other header parameters should be yet.\r\n\r\nAlso,  I added in expiry which is similar to TTL (using 3600, or an hour).\r\n\r\nAnyway this issue is intended to capture the discussion.",
       "createdAt": "2024-02-10T20:42:39Z",
-      "updatedAt": "2024-02-10T20:52:37Z",
+      "updatedAt": "2024-02-14T13:06:40Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "trbouma",
+          "authorAssociation": "COLLABORATOR",
+          "body": "dicussion with jesse - I think we have resolve by adding header/typ/alg to the did doc. This can be regarded as a did doc 'extension'",
+          "createdAt": "2024-02-14T13:06:39Z",
+          "updatedAt": "2024-02-14T13:06:39Z"
+        }
+      ]
     },
     {
       "number": 14,
@@ -81,6 +89,86 @@
       "updatedAt": "2024-02-12T11:53:14Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 15,
+      "id": "I_kwDOLLNO0c5_GdHS",
+      "title": "Demonstration of subdomain as root of trust",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/15",
+      "state": "OPEN",
+      "author": "trbouma",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "I was successful in deploying a subdomain as a root of trust.\r\n\r\nSee here\r\n\r\nhttps://credentials.trustroot.ca/\r\n\r\nMain steps.\r\n1. create A record to point to deployed instance of sandbox app\r\n2. create _cert.subdomain record with issuer public key material (need to generate keypair for subdomain)\r\n3. add to deployed instance of sandbox app the corresponding private key and subdomain info.\r\n4. update reverse proxy to handle subdomain\r\n5. run certbot to get TLS certificate (note this is for https only - nothing to do with issuance/verification\r\n6. optional: add users/pubkeys that are part of the subdomain root of trust\r\n7. restart deployed instance, use scripts/verify_did.py to confirm and third-party sites such as universalresolver.io to confirm.\r\n\r\nexample of third-party did doc resolution where examplecorp is part of credentials.trustroot.ca\r\n\r\nhttps://dev.uniresolver.io/#did:web:credentials.trustroot.ca:examplecorp\r\n",
+      "createdAt": "2024-02-13T14:02:58Z",
+      "updatedAt": "2024-02-13T14:04:03Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 16,
+      "id": "I_kwDOLLNO0c5_HZHz",
+      "title": "Issues to explore resolve",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/16",
+      "state": "OPEN",
+      "author": "trbouma",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Issues to explore/resolve. Some of these might require an \"ask\" from IETF and/or W3C\r\n\r\n1.  DNS record types to support high assurance DIDs\r\n\r\nDID (_did)  type for specifying did:methods to invoke other than the did:web method \r\nDID TLSA for   looking up public key material.\r\nTXT record for looking up other pubkey type.\r\n\r\n\r\n2. Adding \"header\" to DID doc to indicate info needed for verification\r\n\r\ntype for public key type, etc.\r\nalg - for a given public key type, specifying the signing algorithm, etc.\r\n\r\n3. \"signature\" versus \"proof\"\r\n\r\nAccommodate JWT conventions where additional info can be found in header\r\n\r\n4. additional attributes in did doc:\r\n\r\nAs per JWT conventions - \"iat\", \"ext\", \"iss\", etc.\r\n\r\n\r\n\r\n\r\n\r\n",
+      "createdAt": "2024-02-13T15:57:10Z",
+      "updatedAt": "2024-02-13T19:02:45Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "trbouma",
+          "authorAssociation": "COLLABORATOR",
+          "body": "After discussion, this is the proposed approach. I also discovered that many DNS providers do not support URI and/or TLSA records, so relying on those types is a significant path blocker to adoption.\r\n\r\nUse the scoping _did and TXT record to store any public key material (e.g. hex string)\r\n\r\nIn the did document, add a header section like this example:\r\n\r\n```bash\r\nheader = { \r\n\"typ\" = \"dns/did\",\r\n\"alg\" = \"secp256k1ecdsa\"\r\n}\r\n```\r\nSince the issuer knows and has registered the public key for the did doc, it can provide this information within the did doc.\r\n\r\nThe verifier checks the header - ```type=\"dns/did\"`` indicates to look up public key material at  ```_did.domain``` and ```alg=\"secp256k1ecdsa\"``` indicates to use the secp256k1 curve and ecdsa. Therefore the TXT record can be interpeted as a sec256k1 public key. ",
+          "createdAt": "2024-02-13T19:02:31Z",
+          "updatedAt": "2024-02-13T19:02:45Z"
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "id": "I_kwDOLLNO0c5_Nv26",
+      "title": "did:web uri enhancements",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/17",
+      "state": "OPEN",
+      "author": "trbouma",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "I did a close read of the IETF URI RFC 3986 and concluded that these two versions of a did:web identifier can be regarded as equivalent URNs: \r\n```bash\r\ndid:web:credentials.trustroot.ca:trbouma\r\ndid:web:trbouma@credentials.trustroot.ca\r\n```\r\n\r\nFor mass adoption I see the latter format being more popular and understandable - e.g., Verify me at: ```trbouma@credentials.trustroot.ca```  Note that it is the same static internet identifier (URN) format for email and the same format for lightning addresses. Over time, the mailto: urn got dropped, and I see the same thing happening to \"did:web\" - people will just say, \"you can verify me at trbouma@credentials.trustroot.ca\" and knowing that that context is verification (versue email or payment) whatever scheme will be prepended and whatever routine will resolve to get the necessary did material to do the verification.\r\n\r\nI have implemented in the latest commit of sandbox and have testing in the scripts/verify_did.py",
+      "createdAt": "2024-02-14T13:04:59Z",
+      "updatedAt": "2024-02-14T13:04:59Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 18,
+      "id": "I_kwDOLLNO0c5_QWns",
+      "title": "Technical prototype enhancements for multi-issuer and subdomain",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/18",
+      "state": "OPEN",
+      "author": "trbouma",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Based on our meeting this morning, I have generalized the configuration for issuers. The record for each issuer now is\r\n```bash\r\n{\"domain\": \"trustroot.ca\", \"typ\": \"dns/did\", \"alg\": \"secp256k1\",\"privkey\": \"a23..edds\"}\r\n{\"domain\": \"credentials.trustroot.ca\", \"typ\": \"dns/did\", \"alg\": \"secp256k1\",\"privkey\": \"a23..edds\"}\r\n{\"domain\": \"community.trustroot.ca\", \"typ\": \"dns/did\", \"alg\": \"secp256k1\",\"privkey\": \"a23..edds\"}\r\n```\r\nThere should be enough paramaterized info now (typ and alg) to drive the logic to figure out which record types to lookup for signing and verification. I don't think I have the typ value right yet - we'll figure that out when we start incorporating the tlsa/uri record lookups.\r\n\r\nAs you can see from the example, I have stood up another subdomain https://community.trustroot.ca, along with https://credentials.trustroot.ca, and https://trustroot.ca\r\n\r\nThese three represent independent roots of trust (i.e., issuers) as enabled by the service and which could have different assurance level requirements. For example, https://credentials.trustroot.ca could represent the highest bar (TLSA and URI records secured by DNSSEC) and the low bar could be represented by https://community.trustroot.ca for those wishing to have a better assurance but may be limited by the capabilities of their DNS provider only being able to provide TXT records with no DNSSEC.\r\n\r\nAnyway, our goal should be to enable the whole range of requirements, ranging from government to 'community' which I believe, though less secure, is a big incremental improvement over what is available now, and may be ripe for mass adoption.\r\n\r\nFinally, the technical prototype approach (i.e., one single instance to serve them all) also enables us to explore what is required to manage and delegate subdomains and understand what needs to be done to generate zone keys and signing zone files, etc.\r\n\r\n\r\n",
+      "createdAt": "2024-02-14T18:59:15Z",
+      "updatedAt": "2024-02-14T21:12:04Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "trbouma",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Putting my thinking cap on...\r\n\r\nThe \"typ\" field is used in a verify restricted context of JWTs and usually enumerates to \"JWT\" or \"JWS\". \r\n\r\nI would submit that while we can use JWT conventions (they are easy to understand), we are using them in a slightly different context. We many need to introduce \"DID\" as the  \"typ \"value (I am using \"did/dns\" right now because that's all I could think of during prototyping.\r\n\r\nThe typ file can also be used to indicate content, e.g. \"application/json\" - I was thinking about doing something like \"DID/secp256k1\" to indicate different types of DID docs but I think it is good to stick with the simple typ =\"DID\"\r\n\r\nFurther, the alg field should be sufficient to specify whatever else is necessary. We could use what the W3C has been developing, or generation but I think we should keep this separate because the VerificationMethod tells how other documents are to be signed and verified, not the did doc itself. These are two separate concerns that we should not conflate.\r\n\r\nSo I think we keep it simple like:\r\n\r\n```bash\r\n\"header\" : {\r\n\"typ\" : \"DID\"\r\n\"alg\" : \"x.509/tlsa\" or \"secp256k1/ecdsa\" or \"secp256k/schnorr\" or whatever we agree to be supported\r\n}\r\n\r\n``` \r\nWe should also use \"signature\" because it is simple and how to deal with the signature can be determined from \"header\".\r\n\r\nAnd use the other JWT registered claims to meet requirements.\r\n",
+          "createdAt": "2024-02-14T21:10:55Z",
+          "updatedAt": "2024-02-14T21:12:04Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -417,13 +505,13 @@
       "labels": [],
       "body": "latest and greatest ",
       "createdAt": "2024-02-12T11:38:20Z",
-      "updatedAt": "2024-02-12T19:43:54Z",
+      "updatedAt": "2024-02-14T18:40:39Z",
       "baseRepository": "CIRALabs/high-assurance-dids-with-dns",
       "baseRefName": "main",
       "baseRefOid": "1c41bb97c33662582d37848c6e1fc6cfd11b2cb8",
       "headRepository": "CIRALabs/high-assurance-dids-with-dns",
       "headRefName": "sandbox",
-      "headRefOid": "5f7546ea97fe21bf6e957478608b892dc9f54cba",
+      "headRefOid": "2b9b36ddb8de0ad14913bd45f764f19ce8947e27",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
