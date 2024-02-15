@@ -21,6 +21,7 @@ import logging
 from datetime import datetime, timedelta
 
 from .config import Settings
+from .verify import did_web_to_url, download_did_document
 
 # Initialize issuer database
 issuer_db = {}
@@ -284,3 +285,31 @@ def get_user_did_doc(entity_name: str, request: Request):
 
 
     return did_doc
+
+
+@app.get("/checkdid{did}",tags=["public"])
+def get_verify_did(did: str, request: Request):
+    checks = {}
+    # get validat url
+
+    # Step 1 : Get web url
+    did_web_url = did_web_to_url(did)
+    checks['did_web_url'] = did_web_url
+
+    # Step 2: Get did doc
+    did_doc = download_did_document(did)
+    
+    if did_doc == None:
+        checks['did_doc'] = "No did doc!"
+        return {"did": did, "checks": checks }
+    else:
+        checks['did_doc'] = did_doc
+
+    #Step 3: determine type of did doc and which DNS rer
+
+    if did_doc.get("header", None):
+        checks['dns_lookup-method'] = 'DNS TXT record type'
+    else:
+        checks['dns_lookup_method'] = 'DNS TLSA record type'
+
+    return {"did": did, "checks": checks }
