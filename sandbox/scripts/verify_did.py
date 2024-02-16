@@ -215,7 +215,7 @@ def verify_did(did_web):
         # Step 3: Extract signature, iss,and exp from did doc
         try:
             signature = did_doc['signature']
-            exp = did_doc['exp']
+            exp = datetime.fromisoformat(did_doc['exp'])
             
         except:
             logging.error("Not a valid did doc!")
@@ -241,10 +241,10 @@ def verify_did(did_web):
         # logging.debug(f"OK: _pubkey {pubkey_record_str} is same as iss: {iss}")
 
         # Step 6: Check to see if did doc is expired
-        current_time_int = int(datetime.utcnow().timestamp())
+        current_time = datetime.utcnow()
         
         try:
-            assert current_time_int < exp
+            assert current_time < exp
         except:
             
             return False
