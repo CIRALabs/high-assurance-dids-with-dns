@@ -193,7 +193,7 @@ def verify_did(did_web):
 
         # Step XX: Get public key from DNS/DNSSEC record
         # Change into a more generic function
-        if header['typ'] == 'dns/did':
+        if header['dnsType'] == 'txt':
             alg = header['alg']
             certificate_key = query_did_dns_record(domain)
             logging.debug(f"OK: {certificate_key}, {alg}")
@@ -215,7 +215,6 @@ def verify_did(did_web):
         # Step 3: Extract signature, iss,and exp from did doc
         try:
             signature = did_doc['signature']
-            iss = did_doc['iss']
             exp = did_doc['exp']
             
         except:
@@ -315,8 +314,8 @@ if __name__ == "__main__":
      
     # did_web = 
    
-    did_test = [    "did:web:community.trustroot.ca:aniltj",
-                    "did:web:aniltj@community.trustroot.ca"   
+    did_test = [    "did:web:trustroot.ca"
+                      
                 ]    
 
     

@@ -82,7 +82,7 @@ def query_cert_record(domain):
 
 def query_did_dns_record(domain):
     resolver = dns.resolver.Resolver()
-    resolver.use_dnssec = True
+    resolver = dns.resolver.Resolver()
     resolver.nameservers = ['8.8.8.8']
     resolver.use_edns = True
 
@@ -156,21 +156,20 @@ def get_did_doc(request: Request):
     except:
         return {"error": "issuer record do not match dns record!"}
     
-    current_time_int = int(datetime.utcnow().timestamp())
-    expiry_time_int = int((datetime.utcnow() + timedelta(seconds=settings.TTL)).timestamp())
+    current_time_int = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f%z")
+    expiry_time_int = (datetime.utcnow() + timedelta(seconds=settings.TTL)).strftime("%Y-%m-%dT%H:%M:%S.%f%z")
 
     did_doc = {
                 "@context": 
                     ["https://www.w3.org/ns/did/v1", "https://w3id.org/security/suites/secp256k1recovery-2020"], 
 
                 "header": {
-                    "typ":     issuer_db[did_domain]['typ'],
+                    "dnsType":     issuer_db[did_domain]['dnsType'],
                     "alg":     issuer_db[did_domain]['alg']
                     
                 },
 
-                "id":       f"did:web:{did_domain}",
-                "iss":      f"did:web:{did_domain}", 
+                "id":       f"did:web:{did_domain}",                 
                 "sub":      f"did:web:{did_domain}",                
                 "iat":      current_time_int,
                 "exp":      expiry_time_int, 
@@ -237,21 +236,20 @@ def get_user_did_doc(entity_name: str, request: Request):
     except:
         return {"error": "records do not match!"}
     
-    current_time_int = int(datetime.utcnow().timestamp())
-    expiry_time_int = int((datetime.utcnow() + timedelta(seconds=settings.TTL)).timestamp())
+    current_time_int = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f%z")
+    expiry_time_int = (datetime.utcnow() + timedelta(seconds=settings.TTL)).strftime("%Y-%m-%dT%H:%M:%S.%f%z")
 
     did_doc = {
                 "@context": 
                     ["https://www.w3.org/ns/did/v1", "https://w3id.org/security/suites/secp256k1recovery-2020"], 
 
                 "header": {
-                    "typ":     issuer_db[did_domain]['typ'],
+                    "dnsType":     issuer_db[did_domain]['dnsType'],
                     "alg":     issuer_db[did_domain]['alg']
                     
                 },
 
-                "id":       f"did:web:{did_domain}:{entity_name}",
-                "iss":      f"did:web:{did_domain}", 
+                "id":       f"did:web:{did_domain}:{entity_name}",                
                 "sub":      f"did:web:{did_domain}:{entity_name}",                
                 "iat":      current_time_int,
                 "exp":      expiry_time_int, 
@@ -290,6 +288,10 @@ def get_user_did_doc(entity_name: str, request: Request):
 @app.get("/checkdid{did}",tags=["public"])
 def get_verify_did(did: str, request: Request):
     checks = {}
+
+    #prepend did:web if not supplied
+    did = "did:web:" + did if did[:7] != 'did:web' else did
+
     # get validat url
 
     # Step 1 : Get web url
@@ -308,8 +310,9 @@ def get_verify_did(did: str, request: Request):
     #Step 3: determine type of did doc and which DNS rer
 
     if did_doc.get("header", None):
-        checks['dns_lookup-method'] = 'DNS TXT record type'
+        checks["dnsType"] = did_doc['header']['dnsType']
+        
     else:
-        checks['dns_lookup_method'] = 'DNS TLSA record type'
+        checks['dnsType'] = 'not defined'
 
     return {"did": did, "checks": checks }
