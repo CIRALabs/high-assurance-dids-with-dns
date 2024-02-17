@@ -1,0 +1,5 @@
+{ "issuers":[
+    {"domain": "127.0.0.1", "dnsType": "txt", "alg": "secp256k1", "privkey":"e4f7cafa0b271769087b06859917921941c4cea13abe842f379fc9209f367592" },
+    {"domain": "trustroot.ca", "dnsType": "tlsa", "alg": "x509prime256v1","privkey":"a23732a8a2b58ba33f807b1db1a64ea76474e96b8acc49ce84f946dbe276fcc5" }
+]
+}

@@ -1,0 +1,8 @@
+{"users": [
+    {"user": "examplecorp", "pubkey":"e4f7cafa0b271769087b06859917921941c4cea13abe842f379fc9209f367592" },
+    {"user": "xyzfoundation", "pubkey":"02300d753f822691b63c0c79134aa2069c946768600a3fb32b6078b8209e75d203" },
+    {"user": "localagency", "pubkey":"0219a49c1a050ca04fedae9b73f20e58d3985f7a710b954439cd85aeac36882f7c" },
+    {"user": "trbouma", "pubkey":"0219a49c1a050ca04fedae9b73f20e58d3985f7a710b954439cd85aeac36882f7c" },
+    {"user": "continuumloop", "pubkey":"0326349f3301108c1a4b56cff36fe5c7a3577d409f4a0b8ff55e61b2cfd9559b1d" }
+]
+}
