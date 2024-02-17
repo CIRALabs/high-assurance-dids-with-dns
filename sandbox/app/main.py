@@ -144,7 +144,7 @@ def get_did_doc(request: Request):
         with open(privkey_pem_file, 'rb') as key_file:
             private_key_pem = key_file.read()
         tlsa_private_key = SigningKey.from_pem(private_key_pem)
-        tlsa_record = query_tlsa_record("credentials.trustroot.ca",3,1,0)
+        tlsa_record = query_tlsa_record(did_domain,3,1,0)
         certificate_key = hexlify(tlsa_record.cert).decode()
 
         public_key = tlsa_private_key.get_verifying_key()
@@ -207,10 +207,12 @@ def get_did_doc(request: Request):
 
     # remove header, treat everything else as payload
 
-    
-    del(did_doc_to_sign['header'])
+    # We'll keep in the header for now
+    # del(did_doc_to_sign['header'])
 
     msg = json.dumps(did_doc_to_sign)
+
+    # Generate signature based on dnsType
 
     if issuer_db[did_domain]['dnsType'] == "tlsa":
         signature = tlsa_private_key.sign(msg.encode(),hashfunc=hashlib.sha256 )
