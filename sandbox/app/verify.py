@@ -61,3 +61,20 @@ def download_did_document(did_web):
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
+    
+def query_tlsa_record(domain, usage, selector, matching_type):
+    resolver = dns.resolver.Resolver()
+    resolver.use_dnssec = True
+    resolver.nameservers = ['8.8.8.8']
+    
+    try:
+        query_domain = '_did.' + domain
+        response = resolver.resolve(query_domain, 'TLSA')
+
+        for rdata in response:
+            if (rdata.usage == usage and
+                rdata.selector == selector and
+                rdata.mtype == matching_type):
+                return rdata
+    except dns.resolver.NoAnswer:
+        return None

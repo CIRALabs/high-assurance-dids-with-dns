@@ -9,9 +9,11 @@ import dns.rdatatype
 import dns.rdata
 
 from secp256k1 import PrivateKey, PublicKey
-from binascii import unhexlify
+from binascii import unhexlify, hexlify
 
 from urllib.parse import urlparse, parse_qs
+import ecdsa
+from ecdsa import SigningKey
 
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
@@ -21,7 +23,7 @@ import logging
 from datetime import datetime, timedelta
 
 from .config import Settings
-from .verify import did_web_to_url, download_did_document
+from .verify import did_web_to_url, download_did_document, query_tlsa_record
 
 # Initialize issuer database
 issuer_db = {}
@@ -135,26 +137,41 @@ def get_did_doc(request: Request):
     if did_domain == "127.0.0.1":
         did_domain = 'trustroot.ca'
 
-    print(issuer_db[did_domain]['privkey'])
+    print(issuer_db[did_domain]['dnsType'])
+    if issuer_db[did_domain]['dnsType'] == "tlsa":
+        privkey_pem_file = f"app/data/keys/{did_domain}/privkey.pem"
+        print(privkey_pem_file)
+        with open(privkey_pem_file, 'rb') as key_file:
+            private_key_pem = key_file.read()
+        tlsa_private_key = SigningKey.from_pem(private_key_pem)
+        tlsa_record = query_tlsa_record("credentials.trustroot.ca",3,1,0)
+        certificate_key = hexlify(tlsa_record.cert).decode()
 
-    try:
-        certificate_key = query_did_dns_record(did_domain)
-        private_key = PrivateKey(unhexlify(issuer_db[did_domain]['privkey']))
-    except:
-        return {"error": "pubkey record does not exist!"}
+        public_key = tlsa_private_key.get_verifying_key()
+        public_key_pem = public_key.to_pem()
+        public_key_bytes = hexlify(public_key.to_string()).decode()
+        print("public key:", public_key_bytes)
+        print("public key pem:", public_key_pem.decode())
+    else:
+        try:
+            certificate_key = query_did_dns_record(did_domain)
+            private_key = PrivateKey(unhexlify(issuer_db[did_domain]['privkey']))
+        except:
+            return {"error": "pubkey record does not exist!"}
 
 
-    print("ISSUER", issuer_db[did_domain]['privkey'])
+        print("ISSUER", issuer_db[did_domain]['privkey'])
+        
+        public_key_hex = private_key.pubkey.serialize().hex()
+        print(public_key_hex, certificate_key)
+
+        # Do a check against the 
+        try:
+        
+            assert certificate_key == public_key_hex
+        except:
+            return {"error": "issuer record do not match dns record!"}
     
-    public_key_hex = private_key.pubkey.serialize().hex()
-    print(public_key_hex, certificate_key)
-
-    # Do a check against the 
-    try:
-       
-        assert certificate_key == public_key_hex
-    except:
-        return {"error": "issuer record do not match dns record!"}
     
     current_time_int = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f%z")
     expiry_time_int = (datetime.utcnow() + timedelta(seconds=settings.TTL)).strftime("%Y-%m-%dT%H:%M:%S.%f%z")
@@ -194,10 +211,14 @@ def get_did_doc(request: Request):
     del(did_doc_to_sign['header'])
 
     msg = json.dumps(did_doc_to_sign)
-    sig = private_key.ecdsa_sign(msg.encode())
-    
-    sig_hex= private_key.ecdsa_serialize(sig).hex()
 
+    if issuer_db[did_domain]['dnsType'] == "tlsa":
+        signature = tlsa_private_key.sign(msg.encode(),hashfunc=hashlib.sha256 )
+        sig_hex = hexlify(signature).decode()
+        
+    else:
+        sig = private_key.ecdsa_sign(msg.encode())    
+        sig_hex= private_key.ecdsa_serialize(sig).hex()
     # add in resulting signature to the original did doc
     did_doc["signature"] = sig_hex
 

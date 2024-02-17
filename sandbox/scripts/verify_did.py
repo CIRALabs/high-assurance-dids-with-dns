@@ -63,7 +63,7 @@ def query_tlsa_record(domain, usage, selector, matching_type):
     resolver = dns.resolver.Resolver()
     resolver.use_dnssec = True
     resolver.nameservers = ['8.8.8.8']
-
+    
     try:
         query_domain = '_did.' + domain
         response = resolver.resolve(query_domain, 'TLSA')
@@ -73,7 +73,7 @@ def query_tlsa_record(domain, usage, selector, matching_type):
                 rdata.selector == selector and
                 rdata.mtype == matching_type):
                 return rdata
-
+    
     except dns.resolver.NoAnswer:
         return None
 
@@ -189,15 +189,51 @@ def verify_did(did_web):
         header = None
 
     if header:
-        logging.debug("OK: look for pubkey TXT record for verification")
+        
+        alg = header['alg']
 
         # Step XX: Get public key from DNS/DNSSEC record
         # Change into a more generic function
-        if header['dnsType'] == 'txt':
-            alg = header['alg']
+        if header['dnsType'] == 'txt':   
+            logging.debug("OK: look for DNS TXT record for verification")         
             certificate_key = query_did_dns_record(domain)
-            logging.debug(f"OK: {certificate_key}, {alg}")
+            logging.debug(f"OK: DNS TXT record: {certificate_key}, {alg}")
+            
 
+        elif header['dnsType'] == 'tlsa':
+            logging.debug(f"OK: DNS TLSA record not yet implemented: < >")
+            # Parameters for looking up TLSA record
+            usage = 3           # indicates domain issued certificate
+            selector = 1        # specifies only public key is used
+            matching_type = 0   # indicates public key
+
+            tlsa_record = query_tlsa_record(domain, usage, selector, matching_type)
+            usage = 3
+            selector = 1
+            matching_type = 0
+            if tlsa_record:
+                public_key = tlsa_record.cert
+                print("public key from TLSA record: ", public_key)
+                signature = did_doc["signature"]
+                print("signature from did doc: ", signature)
+                del did_doc["header"]
+                del did_doc["signature"]
+                print(json.dumps(did_doc, indent=4))
+                msg = json.dumps(did_doc)
+                signature_bytes = unhexlify(signature)
+                if verify_ecdsa_signature(signature_bytes, msg.encode(), public_key):
+                    print("Signature verified successfully.")
+                    return True
+                else:
+                    print("Signature verification failed.")
+                    
+                return False
+            else:
+                print("No matching TLSA record found.")
+            
+            return False
+
+            
         
         else:
             # see issue 16 - the _cert can be deprecated
@@ -257,7 +293,8 @@ def verify_did(did_web):
         public_key_obj = PublicKey(unhexlify(certificate_key), raw=True)
         sig_obj = public_key_obj.ecdsa_deserialize(unhexlify(signature.encode()))
 
-    else: # This is for the TLSA record
+    else: # This is the fallback which assumes a TLSA record
+        print("Fallback to original method of TLSA and proof")
         logging.debug("OK: look for TLSA record for verification")
         # Parameters for looking up TLSA record
         usage = 3
@@ -314,7 +351,9 @@ if __name__ == "__main__":
      
     # did_web = 
    
-    did_test = [    "did:web:trustroot.ca"
+    did_test = [    "did:web:trustroot.ca",
+                    "did:web:trustregistry.ca",
+                    "did:web:credentials.trustroot.ca"
                       
                 ]    
 
