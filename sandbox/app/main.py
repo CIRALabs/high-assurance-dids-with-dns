@@ -241,6 +241,7 @@ def get_user_did_doc(entity_name: str, request: Request):
 
     try:
         entity_iss = user_db[entity_name]
+        entity_alg = "secp256k1"
         ## Lookup pubkey
     except:
         return {"error": "issuing entity does not exist"}
@@ -280,7 +281,7 @@ def get_user_did_doc(entity_name: str, request: Request):
                     [{
                         "id": f"did:web:{did_domain}",
                         "controller": f"did:web:{did_domain}",
-                        "type": "EcdsaSecp256k1RecoveryMethod2020",
+                        "type": issuer_db[did_domain]['alg'],
                         "publicKeyHex": certificate_key
                      }
                     ] 
@@ -297,7 +298,7 @@ def get_user_did_doc(entity_name: str, request: Request):
                     [{
                         "id": f"did:web:{did_domain}:{entity_name}",
                         "controller": f"did:web:{did_domain}:{entity_name}",
-                        "type": "EcdsaSecp256k1RecoveryMethod2020",
+                        "type": entity_alg,
                         "publicKeyHex": entity_iss
                      }
                     ]              

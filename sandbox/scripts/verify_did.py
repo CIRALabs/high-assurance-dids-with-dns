@@ -360,7 +360,7 @@ if __name__ == "__main__":
      
     # did_web = 
    
-    did_test = [    "did:web:trbouma@credentials.trustroot.ca"
+    did_test = [    "did:web:trbouma@community.trustroot.ca"
                     
                     
                       
