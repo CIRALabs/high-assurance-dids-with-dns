@@ -182,7 +182,15 @@ def get_did_doc(request: Request):
 
                 "header": {
                     "dnsType":     issuer_db[did_domain]['dnsType'],
-                    "alg":     issuer_db[did_domain]['alg']
+                     "verificationMethod": 
+                    [{
+                        "id": f"did:web:{did_domain}",
+                        "controller": f"did:web:{did_domain}",
+                        "type": issuer_db[did_domain]['alg'],
+                        "publicKeyHex": certificate_key
+                     }
+                    ]  
+                    
                     
                 },
 
@@ -268,7 +276,15 @@ def get_user_did_doc(entity_name: str, request: Request):
 
                 "header": {
                     "dnsType":     issuer_db[did_domain]['dnsType'],
-                    "alg":     issuer_db[did_domain]['alg']
+                     "verificationMethod": 
+                    [{
+                        "id": f"did:web:{did_domain}",
+                        "controller": f"did:web:{did_domain}",
+                        "type": "EcdsaSecp256k1RecoveryMethod2020",
+                        "publicKeyHex": certificate_key
+                     }
+                    ] 
+                    
                     
                 },
 
