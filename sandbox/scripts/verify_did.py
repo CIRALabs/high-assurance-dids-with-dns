@@ -12,7 +12,7 @@ import dns.rdata
 
 
 from secp256k1 import PrivateKey, PublicKey
-from binascii import unhexlify
+from binascii import unhexlify, hexlify
 
 from datetime import datetime
 from urllib.parse import urlparse, parse_qs
@@ -201,7 +201,7 @@ def verify_did(did_web):
             
 
         elif header['dnsType'] == 'tlsa':
-            logging.debug(f"OK: DNS TLSA record not yet implemented: < >")
+            logging.debug(f"OK: dnsType tlsa record")
             # Parameters for looking up TLSA record
             usage = 3           # indicates domain issued certificate
             selector = 1        # specifies only public key is used
@@ -213,16 +213,24 @@ def verify_did(did_web):
             matching_type = 0
             if tlsa_record:
                 public_key = tlsa_record.cert
-                print("public key from TLSA record: ", public_key)
+                print(f"public key from _did.{domain} TLSA record: ", hexlify(public_key).decode())
                 signature = did_doc["signature"]
                 print("signature from did doc: ", signature)
-                del did_doc["header"]
+                # del did_doc["header"]
                 del did_doc["signature"]
                 print(json.dumps(did_doc, indent=4))
                 msg = json.dumps(did_doc)
                 signature_bytes = unhexlify(signature)
                 if verify_ecdsa_signature(signature_bytes, msg.encode(), public_key):
                     print("Signature verified successfully.")
+                    # Now we need to check if expired
+                    exp = datetime.fromisoformat(did_doc['exp'])
+                    current_time = datetime.utcnow()        
+                    try:
+                        assert current_time < exp
+                    except:            
+                        return False
+
                     return True
                 else:
                     print("Signature verification failed.")
@@ -241,6 +249,7 @@ def verify_did(did_web):
             logging.debug("OK: " + certificate_key + certificate_path)
    
 
+        #TODO This code block needs to go up into dnsType "txt"
         if certificate_key:
             
             logging.debug("OK: _cert record: " + certificate_key)        
@@ -262,7 +271,7 @@ def verify_did(did_web):
 
         # Step 4: Remove non-payload data for signature verification
         
-        del did_doc["header"]
+        # del did_doc["header"]
         del did_doc["signature"]
         # Dump resulting for signature check
         message = json.dumps(did_doc)
@@ -305,7 +314,7 @@ def verify_did(did_web):
 
         if tlsa_record:
             public_key = tlsa_record.cert
-            print("public key from TLSA record: ", public_key)
+            print(f"public key from TLSA _did.{domain} record: ", hexlify(public_key))
             signature = did_doc["proof"]["proofValue"]
             print("signature from did doc: ", signature)
             del did_doc["proof"]
@@ -351,9 +360,9 @@ if __name__ == "__main__":
      
     # did_web = 
    
-    did_test = [    "did:web:trustroot.ca",
-                    "did:web:trustregistry.ca",
-                    "did:web:credentials.trustroot.ca"
+    did_test = [    "did:web:trustroot.ca"
+                    
+                    
                       
                 ]    
 
