@@ -179,7 +179,8 @@ openssl x509 -in certificate.pem -pubkey -noout > publickey.pem
 openssl pkey -in publickey.pem -pubin -outform DER | xxd -p > publickey.hex
 openssl dgst -sha256 -binary publickey.pem | openssl enc |  xxd -p > digest.hex
 
-
+# Other handy command to get public key from tls https:// websit
+openssl s_client -connect trustroot.ca:443 | openssl x509 -pubkey -noout
 
 ```
 

@@ -8,7 +8,9 @@ import dns.message
 import dns.rdatatype
 import dns.rdata
 
-
+import requests
+from OpenSSL import crypto
+import ssl, socket
 
 
 from secp256k1 import PrivateKey, PublicKey
@@ -17,8 +19,52 @@ from binascii import unhexlify, hexlify
 from datetime import datetime
 from urllib.parse import urlparse, parse_qs
 
+from cryptography import x509
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.backends import default_backend
+
 import logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
+def get_public_key(host, port=443):
+    # Create a socket
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    
+    # Create an SSL context without certificate verification
+    context = ssl.create_default_context()
+    context.check_hostname = False
+    context.verify_mode = ssl.CERT_NONE
+
+    # Wrap the socket with SSL
+    wrapped_socket = context.wrap_socket(sock, server_hostname=host)
+
+    # Connect and retrieve the certificate
+    wrapped_socket.connect((host, port))
+    der_cert = wrapped_socket.getpeercert(True)
+    wrapped_socket.close()
+
+    # Convert to X509
+    x509 = crypto.load_certificate(crypto.FILETYPE_ASN1, der_cert)
+
+    # Extract the public key
+    public_key = x509.get_pubkey()
+    public_key_pem = crypto.dump_publickey(crypto.FILETYPE_PEM, public_key)
+    # print(public_key_pem)
+
+    public_key_obj = serialization.load_pem_public_key(
+        public_key_pem,
+        backend=default_backend()
+    )
+
+    public_key_bytes = public_key_obj.public_bytes(
+        encoding=serialization.Encoding.DER,
+        format=serialization.PublicFormat.SubjectPublicKeyInfo
+    )
+    
+    return hexlify(public_key_bytes).decode().upper()
+
+
+
 
 def did_web_to_url(did_web):
     # Routine to transform did_web into corresponding url
@@ -190,7 +236,7 @@ def verify_did(did_web):
 
     if header:
         
-        alg = header['alg']
+        alg = header['verificationMethod'][0]['type']
 
         # Step XX: Get public key from DNS/DNSSEC record
         # Change into a more generic function
@@ -360,7 +406,7 @@ if __name__ == "__main__":
      
     # did_web = 
    
-    did_test = [    "did:web:trbouma@community.trustroot.ca"
+    did_test = [    "did:web:xyzfoundation@credentials.trustroot.ca"
                     
                     
                       
@@ -373,4 +419,6 @@ if __name__ == "__main__":
         print(f"verify did {each_did}:", result)
         
 
-    
+url = "trustroot.ca"
+public_key = get_public_key(url)
+print(public_key)

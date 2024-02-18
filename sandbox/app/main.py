@@ -251,22 +251,40 @@ def get_user_did_doc(entity_name: str, request: Request):
     if did_domain == "127.0.0.1":
         did_domain = 'trustroot.ca'
 
-    try:
-        certificate_key = query_did_dns_record(did_domain)
-        private_key = PrivateKey(unhexlify(issuer_db[did_domain]['privkey']))
-    except:
-        return {"error": "pubkey record does not exist!"}
+    print(issuer_db[did_domain]['dnsType'])
+    if issuer_db[did_domain]['dnsType'] == "tlsa":
+        privkey_pem_file = f"app/data/keys/{did_domain}/privkey.pem"
+        print(privkey_pem_file)
+        with open(privkey_pem_file, 'rb') as key_file:
+            private_key_pem = key_file.read()
+        tlsa_private_key = SigningKey.from_pem(private_key_pem)
+        tlsa_record = query_tlsa_record(did_domain,3,1,0)
+        certificate_key = hexlify(tlsa_record.cert).decode()
 
-    
-    public_key_hex = private_key.pubkey.serialize().hex()  
+        public_key = tlsa_private_key.get_verifying_key()
+        public_key_pem = public_key.to_pem()
+        public_key_bytes = hexlify(public_key.to_string()).decode()
+        print("public key:", public_key_bytes)
+        print("public key pem:", public_key_pem.decode())
+    else:
+        try:
+            certificate_key = query_did_dns_record(did_domain)
+            private_key = PrivateKey(unhexlify(issuer_db[did_domain]['privkey']))
+        except:
+            return {"error": "pubkey record does not exist!"}
 
-    print(certificate_key, public_key_hex)
 
-    # Do a check against the 
-    try:
-        assert certificate_key == public_key_hex
-    except:
-        return {"error": "records do not match!"}
+        print("ISSUER", issuer_db[did_domain]['privkey'])
+        
+        public_key_hex = private_key.pubkey.serialize().hex()
+        print(public_key_hex, certificate_key)
+
+        # Do a check against the 
+        try:
+        
+            assert certificate_key == public_key_hex
+        except:
+            return {"error": "issuer record do not match dns record!"}
     
     current_time_int = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f%z")
     expiry_time_int = (datetime.utcnow() + timedelta(seconds=settings.TTL)).strftime("%Y-%m-%dT%H:%M:%S.%f%z")
@@ -311,16 +329,20 @@ def get_user_did_doc(entity_name: str, request: Request):
     # remove header, treat everything else as payload
 
     
-    del(did_doc_to_sign['header'])
+    # del(did_doc_to_sign['header'])
 
     msg = json.dumps(did_doc_to_sign)
-    sig = private_key.ecdsa_sign(msg.encode())
-    
-    sig_hex= private_key.ecdsa_serialize(sig).hex()
+    # Generate signature based on dnsType
 
+    if issuer_db[did_domain]['dnsType'] == "tlsa":
+        signature = tlsa_private_key.sign(msg.encode(),hashfunc=hashlib.sha256 )
+        sig_hex = hexlify(signature).decode()
+        
+    else:
+        sig = private_key.ecdsa_sign(msg.encode())    
+        sig_hex= private_key.ecdsa_serialize(sig).hex()
     # add in resulting signature to the original did doc
     did_doc["signature"] = sig_hex
-
 
     return did_doc
 
