@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-02-15T00:17:23.690258+00:00",
+  "timestamp": "2024-02-18T00:18:51.531495+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -118,7 +118,7 @@
       "labels": [],
       "body": "Issues to explore/resolve. Some of these might require an \"ask\" from IETF and/or W3C\r\n\r\n1.  DNS record types to support high assurance DIDs\r\n\r\nDID (_did)  type for specifying did:methods to invoke other than the did:web method \r\nDID TLSA for   looking up public key material.\r\nTXT record for looking up other pubkey type.\r\n\r\n\r\n2. Adding \"header\" to DID doc to indicate info needed for verification\r\n\r\ntype for public key type, etc.\r\nalg - for a given public key type, specifying the signing algorithm, etc.\r\n\r\n3. \"signature\" versus \"proof\"\r\n\r\nAccommodate JWT conventions where additional info can be found in header\r\n\r\n4. additional attributes in did doc:\r\n\r\nAs per JWT conventions - \"iat\", \"ext\", \"iss\", etc.\r\n\r\n\r\n\r\n\r\n\r\n",
       "createdAt": "2024-02-13T15:57:10Z",
-      "updatedAt": "2024-02-13T19:02:45Z",
+      "updatedAt": "2024-02-16T14:49:44Z",
       "closedAt": null,
       "comments": [
         {
@@ -127,6 +127,27 @@
           "body": "After discussion, this is the proposed approach. I also discovered that many DNS providers do not support URI and/or TLSA records, so relying on those types is a significant path blocker to adoption.\r\n\r\nUse the scoping _did and TXT record to store any public key material (e.g. hex string)\r\n\r\nIn the did document, add a header section like this example:\r\n\r\n```bash\r\nheader = { \r\n\"typ\" = \"dns/did\",\r\n\"alg\" = \"secp256k1ecdsa\"\r\n}\r\n```\r\nSince the issuer knows and has registered the public key for the did doc, it can provide this information within the did doc.\r\n\r\nThe verifier checks the header - ```type=\"dns/did\"`` indicates to look up public key material at  ```_did.domain``` and ```alg=\"secp256k1ecdsa\"``` indicates to use the secp256k1 curve and ecdsa. Therefore the TXT record can be interpeted as a sec256k1 public key. ",
           "createdAt": "2024-02-13T19:02:31Z",
           "updatedAt": "2024-02-13T19:02:45Z"
+        },
+        {
+          "author": "jessecarter111",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Proposed header object: 3 required fields\r\nverificationMethod: Must point to the corresponding verificationMethod used to generate the signature. \r\nalg: A value indicating the crypto-suite used to generate the signature\r\ndnsType: Used to indicate the DNS record type to query (TLSA, CERT, TXT, should be TLSA)\r\nEx:\r\n```javascript\r\n\"header\": {\r\n\"verificationMethod\": \"did:web:example.ca#key-1\",\r\n\"alg\": \"ecdsap256\",\r\n\"dnsType\": \"tlsa\"\r\n}\r\n```\r\n\r\nProposed JWT field inclusions in DID doc: \r\nexp: An expiry date indicating how long a given resolver should cache the DID document/how long that did document is valid for.\r\niat: A date indicating when the current DID document was issued/created.\r\nEx:\r\n```json\r\n{\r\n\"exp\": 2024-03-15T07:09:48.000+0545\r\n\"iat\": 2024-02-15T07:09:48.000+0545\r\n}\r\n```\r\nThere is no need to include the issuer field as that concept is not supported by the DIDs. The relevant parallel is the \"controller\" (https://www.w3.org/TR/did-core/#did-controller) and \"id\" fields  (https://www.w3.org/TR/did-core/#did-subject).",
+          "createdAt": "2024-02-15T18:07:16Z",
+          "updatedAt": "2024-02-15T18:07:16Z"
+        },
+        {
+          "author": "trbouma",
+          "authorAssociation": "COLLABORATOR",
+          "body": "yeah - that  header format looks good.",
+          "createdAt": "2024-02-15T18:09:46Z",
+          "updatedAt": "2024-02-15T18:09:46Z"
+        },
+        {
+          "author": "trbouma",
+          "authorAssociation": "COLLABORATOR",
+          "body": " I implemented \"dnsType\" and made the timestamps ISO format. I still don't believe verificationMethod should be in the header because it is a different concern: the header is just about how the did doc is signed and verified. Verficationmethod is about how it is used for signing and verifying other things (not the did doc) - that became clear when I was generating did docs for users, e.g.,  did:web:trustroot.ca:examplecorp",
+          "createdAt": "2024-02-16T14:49:42Z",
+          "updatedAt": "2024-02-16T14:49:42Z"
         }
       ]
     },
@@ -169,6 +190,38 @@
           "updatedAt": "2024-02-14T21:12:04Z"
         }
       ]
+    },
+    {
+      "number": 19,
+      "id": "I_kwDOLLNO0c5_WLRW",
+      "title": "Added online did:web verification",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/19",
+      "state": "OPEN",
+      "author": "trbouma",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Still implementing, but you can see the method in the openapi page:\r\n\r\nhttps://trustroot.ca/docs\r\n\r\nyou can test it against:\r\n```bash\r\ndid:web:trustregistry.ca\r\ndid:web:trustroot.ca\r\ndid:web:trustroot.ca:examplecorp\r\ndid:web:examplecorp@trustroot.ca #Note that this resolves to the equivalent of the above did:web based on the URI RFC\r\ndid:web:credentials.trustroot.ca\r\ndid:web:examplecorp@credentials.trustroot.ca\r\n```\r\n\r\nThe function is not yet complete, as I still need to add in all of the handling and checks. Should be in shortly.\r\n",
+      "createdAt": "2024-02-15T13:26:05Z",
+      "updatedAt": "2024-02-15T13:26:05Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 20,
+      "id": "I_kwDOLLNO0c5_WayH",
+      "title": "Rebooting Web of Trust Paper - Beyond did:web",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/20",
+      "state": "OPEN",
+      "author": "trbouma",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "I have reviewed this paper. It has a good outline of the issues and believe we can address (have addressed) the main issues. The paper is here:\r\n\r\nhttps://github.com/WebOfTrustInfo/rwot12-cologne/blob/main/final-documents/beyond-did-web.pdf\r\n\r\nAlso, I don't believe we need key pre-rotation (a la KERI) because a similar revocation capability can be implemented using the \"exp\" field. This can be similar to a TTL that you can set (I have set for 3600s) - when you check the did doc, though the signature might check out you fail the verification due to the current_time > \"exp\". That means you need to request a new did doc which (hopefully) has rolled over to a new key.\r\n\r\nIn the end, we don't need to specify a new method beyond ```did:web```, but we do need to specify a series of checks that the did doc must pass before it relied on as a high assurance did. Since relying on a high assurance did doc is the discretion of the relying party, we need to make this as flexible and easy as possible, through \"did doc extensions\", etc.",
+      "createdAt": "2024-02-15T13:48:54Z",
+      "updatedAt": "2024-02-15T13:48:55Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -505,13 +558,13 @@
       "labels": [],
       "body": "latest and greatest ",
       "createdAt": "2024-02-12T11:38:20Z",
-      "updatedAt": "2024-02-14T18:40:39Z",
+      "updatedAt": "2024-02-17T23:06:33Z",
       "baseRepository": "CIRALabs/high-assurance-dids-with-dns",
       "baseRefName": "main",
       "baseRefOid": "1c41bb97c33662582d37848c6e1fc6cfd11b2cb8",
       "headRepository": "CIRALabs/high-assurance-dids-with-dns",
       "headRefName": "sandbox",
-      "headRefOid": "2b9b36ddb8de0ad14913bd45f764f19ce8947e27",
+      "headRefOid": "c213e7db4421e8794a0aaacb9501212e2c8a728e",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
