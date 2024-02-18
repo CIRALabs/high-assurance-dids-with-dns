@@ -204,14 +204,17 @@ def verify_ecdsa_signature(signature, message, public_key):
 
 def verify_did(did_web):
 
+    # Start with verification result as true and toggle to false if there is any error
+    verification_result = True
     # Step 1 get the did doc
 
     try:
         did_doc = download_did_document(did_web)
         
-        logging.debug("OK:" + json.dumps(did_doc, indent=4))
+        logging.debug("OK:" + " Retrieved DID doc!")
     except:
-        return False
+        logging.debug("ERROR:" + "Did not retrieve DID doc")
+        
     
     # Step 2 need to figure out what type of did we are handling
     # This can be determined by inspecting the did doc
@@ -227,6 +230,22 @@ def verify_did(did_web):
     # pubkey in TXT record
     # TLSA in TLSA record
     # if there is header, we know it is a pubkey, otherwise TLSA record
+
+    try:
+        # Parameters for looking up TLSA record
+        usage = 3           # indicates domain issued certificate
+        selector = 1        # specifies only public key is used
+        matching_type = 0   # indicates public key
+        tls_dns_public_key_record = query_tlsa_record(domain,usage,selector,matching_type, "_443._tcp.")
+        tls_dns_public_key = hexlify(tls_dns_public_key_record.cert).decode()
+        tls_website_public_key = get_tls_public_key(domain)
+        # print("web and dns", tls_dns_public_key,tls_website_public_key)
+        assert tls_dns_public_key.upper() == tls_website_public_key.upper()
+        logging.debug(f"OK: DNS and Website TLS certificates MATCH!")
+
+    except:
+        logging.debug(f"ERROR: DNS and Website certificates DO NOT MATCH!")
+        verification_result = False
 
     # header = did_doc.get('header', None)
     try:
@@ -257,33 +276,37 @@ def verify_did(did_web):
             
             if tlsa_record:
                 public_key = tlsa_record.cert
-                print(f"public key from _did.{domain} TLSA record: ", hexlify(public_key).decode())
+                # print(f"public key from _did.{domain} TLSA record: ", hexlify(public_key).decode())
                 signature = did_doc["signature"]
-                print("signature from did doc: ", signature)
+                # print("signature from did doc: ", signature)
                 # del did_doc["header"]
                 del did_doc["signature"]
-                print(json.dumps(did_doc, indent=4))
+                # print(json.dumps(did_doc, indent=4))
                 msg = json.dumps(did_doc)
                 signature_bytes = unhexlify(signature)
                 if verify_ecdsa_signature(signature_bytes, msg.encode(), public_key):
-                    print("Signature verified successfully.")
+                    logging.debug("OK: Signature verified successfully.")
                     # Now we need to check if expired
                     exp = datetime.fromisoformat(did_doc['exp'])
                     current_time = datetime.utcnow()        
                     try:
                         assert current_time < exp
+                        logging.debug("OK: DID doc not expired!")
                     except:            
-                        return False
+                        logging.debug("ERROR: DID doc expired")
+                        verification_result = False
 
-                    return True
+                    # return True
                 else:
-                    print("Signature verification failed.")
+                    logging.debug("ERRO: Signature verification failed.")
+                    verification_result = False
                     
-                return False
+                # return False
             else:
-                print("No matching TLSA record found.")
+                logging.debug("ERROR: No matching TLSA record found.")
+                verification_result = False
             
-            return False
+            return verification_result
 
             
         
@@ -299,7 +322,8 @@ def verify_did(did_web):
             logging.debug("OK: _cert record: " + certificate_key)        
         else:
             logging.error("No matching cert record found.")
-            return False
+            verification_result = False
+            # return False
 
         # Step 3: Extract signature, iss,and exp from did doc
         try:
@@ -307,8 +331,9 @@ def verify_did(did_web):
             exp = datetime.fromisoformat(did_doc['exp'])
             
         except:
-            logging.error("Not a valid did doc!")
-            return False
+            logging.error("ERROR: Not a valid did doc!")
+            verification_result = False
+            # return False
         
         logging.debug("OK: Valid did doc")
         # Remove sections that are not signed
@@ -335,9 +360,8 @@ def verify_did(did_web):
         try:
             assert current_time < exp
         except:
-            
-            return False
-        logging.debug("OK: DID doc not expired.")
+            logging.debug("OK: DID doc not expired.")
+            verification_result = False
         
 
         # Step 7: Verify the did doc
@@ -347,7 +371,7 @@ def verify_did(did_web):
         sig_obj = public_key_obj.ecdsa_deserialize(unhexlify(signature.encode()))
 
     else: # This is the fallback which assumes a TLSA record
-        print("Fallback to original method of TLSA and proof")
+        logging.debug("INFO: Fallback to original method of TLSA and proof")
         logging.debug("OK: look for TLSA record for verification")
         # Parameters for looking up TLSA record
         usage = 3
@@ -371,10 +395,10 @@ def verify_did(did_web):
                 print("Signature verification failed.")
                 return False
         else:
-            print("No matching TLSA record found.")
-            return False
+            logging.debug("ERROR: No matching TLSA record found.")
+            verification_result = False
         
-        return False
+        return verification_result
        
     return public_key_obj.ecdsa_verify(message.encode(), sig_obj, digest=hashlib.sha256)
  
@@ -404,7 +428,12 @@ if __name__ == "__main__":
      
     # did_web = 
    
-    did_test = [    "did:web:xyzfoundation@credentials.trustroot.ca"
+    did_test = [    "did:web:trustroot.ca",
+                    "did:web:credentials.trustroot.ca",
+                    "did:web:community.trustroot.ca",
+                    "did:web:trbouma@trustroot.ca",
+                    "did:web:trbouma@credentials.trustroot.ca",
+                    "did:web:trbouma@community.trustroot.ca"
                     
                     
                       
@@ -417,6 +446,4 @@ if __name__ == "__main__":
         print(f"verify did {each_did}:", result)
         
 
-url = "trustroot.ca"
-public_key = get_tls_public_key(url)
-print(public_key)
+
