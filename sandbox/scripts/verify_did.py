@@ -26,7 +26,7 @@ from cryptography.hazmat.backends import default_backend
 import logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def get_public_key(host, port=443):
+def get_tls_public_key(host, port=443):
     # Create a socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     
@@ -420,5 +420,5 @@ if __name__ == "__main__":
         
 
 url = "trustroot.ca"
-public_key = get_public_key(url)
+public_key = get_tls_public_key(url)
 print(public_key)
