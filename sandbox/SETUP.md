@@ -1,5 +1,7 @@
 # High Assurance DID Web Setup Instructions
 
+[Adding a subdomain to technical prototype](./SUBDOMAIN.md)
+
 ## Background and Key Concepts
 
 For true high assurance, everything must be cryptographically signed and the private keys of the owners and all delegates need to be under their control.

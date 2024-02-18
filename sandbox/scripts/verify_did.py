@@ -23,6 +23,7 @@ from cryptography import x509
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.backends import default_backend
 
+
 import logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -202,7 +203,7 @@ def verify_ecdsa_signature(signature, message, public_key):
         return False
     return True
 
-def verify_did(did_web):
+def verify_did_doc(did_web):
 
     # Start with verification result as true and toggle to false if there is any error
     verification_result = True
@@ -244,7 +245,7 @@ def verify_did(did_web):
         logging.debug(f"OK: DNS and Website TLS certificates MATCH!")
 
     except:
-        logging.debug(f"ERROR: DNS and Website certificates DO NOT MATCH!")
+        logging.debug(f"FAIL: DNS _443._tcp. TLSA record and https:// website certificate DO NOT MATCH!")
         verification_result = False
 
     # header = did_doc.get('header', None)
@@ -266,7 +267,7 @@ def verify_did(did_web):
             
 
         elif header['dnsType'] == 'tlsa':
-            logging.debug(f"OK: dnsType tlsa record")
+            logging.debug(f"OK: DID doc is dnsType:tlsa record")
             # Parameters for looking up TLSA record
             usage = 3           # indicates domain issued certificate
             selector = 1        # specifies only public key is used
@@ -276,7 +277,7 @@ def verify_did(did_web):
             
             if tlsa_record:
                 public_key = tlsa_record.cert
-                # print(f"public key from _did.{domain} TLSA record: ", hexlify(public_key).decode())
+                logging.debug(f"OK: Found public key at _did.{domain} TLSA record: ")
                 signature = did_doc["signature"]
                 # print("signature from did doc: ", signature)
                 # del did_doc["header"]
@@ -285,7 +286,7 @@ def verify_did(did_web):
                 msg = json.dumps(did_doc)
                 signature_bytes = unhexlify(signature)
                 if verify_ecdsa_signature(signature_bytes, msg.encode(), public_key):
-                    logging.debug("OK: Signature verified successfully.")
+                    logging.debug("OK: Signature verified successfully using DNS TLS public key.")
                     # Now we need to check if expired
                     exp = datetime.fromisoformat(did_doc['exp'])
                     current_time = datetime.utcnow()        
@@ -293,7 +294,7 @@ def verify_did(did_web):
                         assert current_time < exp
                         logging.debug("OK: DID doc not expired!")
                     except:            
-                        logging.debug("ERROR: DID doc expired")
+                        logging.debug("FAIL: DID doc expired")
                         verification_result = False
 
                     # return True
@@ -303,7 +304,7 @@ def verify_did(did_web):
                     
                 # return False
             else:
-                logging.debug("ERROR: No matching TLSA record found.")
+                logging.debug("FAIL: No matching TLSA record found.")
                 verification_result = False
             
             return verification_result
@@ -331,7 +332,7 @@ def verify_did(did_web):
             exp = datetime.fromisoformat(did_doc['exp'])
             
         except:
-            logging.error("ERROR: Not a valid did doc!")
+            logging.error("FAIL: Not a valid did doc!")
             verification_result = False
             # return False
         
@@ -371,8 +372,8 @@ def verify_did(did_web):
         sig_obj = public_key_obj.ecdsa_deserialize(unhexlify(signature.encode()))
 
     else: # This is the fallback which assumes a TLSA record
-        logging.debug("INFO: Fallback to original method of TLSA and proof")
-        logging.debug("OK: look for TLSA record for verification")
+        logging.debug("OK: Fallback to original method of TLSA and proof")
+        logging.debug("OK: Look for TLSA record for verification")
         # Parameters for looking up TLSA record
         usage = 3
         selector = 1
@@ -382,20 +383,20 @@ def verify_did(did_web):
 
         if tlsa_record:
             public_key = tlsa_record.cert
-            print(f"public key from TLSA _did.{domain} record: ", hexlify(public_key))
+            logging.debug(f"OK: Public key from TLSA _did.{domain} record")
             signature = did_doc["proof"]["proofValue"]
-            print("signature from did doc: ", signature)
+            # print("signature from did doc: ", signature)
             del did_doc["proof"]
-            print(json.dumps(did_doc, indent=4))
+            # print(json.dumps(did_doc, indent=4))
             msg = json.dumps(did_doc)
             if verify_ecdsa_signature(base58.b58decode(signature), msg.encode(), public_key):
-                print("Signature verified successfully.")
-                return True
+                logging.debug("OK: Signature verified successfully.")
+                
             else:
-                print("Signature verification failed.")
-                return False
+                logging.debug("FAIL Signature verification failed.")
+                verification_result = False
         else:
-            logging.debug("ERROR: No matching TLSA record found.")
+            logging.debug("FAIL: No matching TLSA record found.")
             verification_result = False
         
         return verification_result
@@ -433,7 +434,9 @@ if __name__ == "__main__":
                     "did:web:community.trustroot.ca",
                     "did:web:trbouma@trustroot.ca",
                     "did:web:trbouma@credentials.trustroot.ca",
-                    "did:web:trbouma@community.trustroot.ca"
+                    "did:web:trbouma@community.trustroot.ca",
+                    "did:web:adobe.trustroot.ca",
+                    "did:web:trustregistry.ca"
                     
                     
                       
@@ -442,7 +445,7 @@ if __name__ == "__main__":
     
     for each_did in did_test:
         print(each_did)
-        result = verify_did(each_did)
+        result = verify_did_doc(each_did)
         print(f"verify did {each_did}:", result)
         
 
