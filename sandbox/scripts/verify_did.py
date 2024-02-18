@@ -105,13 +105,13 @@ def did_doc_handler(did_doc):
 
     return True
 
-def query_tlsa_record(domain, usage, selector, matching_type):
+def query_tlsa_record(domain, usage, selector, matching_type, subdomain="_did."):
     resolver = dns.resolver.Resolver()
     resolver.use_dnssec = True
     resolver.nameservers = ['8.8.8.8']
     
     try:
-        query_domain = '_did.' + domain
+        query_domain = subdomain + domain
         response = resolver.resolve(query_domain, 'TLSA')
 
         for rdata in response:
@@ -254,9 +254,7 @@ def verify_did(did_web):
             matching_type = 0   # indicates public key
 
             tlsa_record = query_tlsa_record(domain, usage, selector, matching_type)
-            usage = 3
-            selector = 1
-            matching_type = 0
+            
             if tlsa_record:
                 public_key = tlsa_record.cert
                 print(f"public key from _did.{domain} TLSA record: ", hexlify(public_key).decode())
