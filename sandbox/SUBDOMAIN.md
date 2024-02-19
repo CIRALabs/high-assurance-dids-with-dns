@@ -4,17 +4,23 @@
 
 A technical prototype has been developed to demonstrate the did doc verification process as part of a trusted root domain.
 
+### Prototype
+
 Prototype is live at:
 
 - [trustroot.ca](https://trustroot.ca)
 - [credentials.trustroot.ca](https://credentials.trustroot.ca)
 - [community.trustroot.ca](https://community.trustroot.ca)
 
-The python script for independent verification is [here](./scripts/verify_did.py)
+### W3C Conformance
 
-### DID doc independent verification steps for a high-assurance did:web identifier
+- DID doc roofs are conformant to [W3C Recommendation Draft: Verifiable Credential Data Integrity 1.0](https://www.w3.org/TR/vc-data-integrity/)
 
-For a high-assurance did:web, the following checks are carried out:
+### Independent Verification
+
+A python script has been developed to test independent verification [here](./scripts/verify_did.py)
+
+The following checks are carried out for a high assurance did:web
 
 1. Retrieve DID doc, check to see if valid format
 2. Determine from header the appropriate signature verification process. (3 are currently defined for the prototype)
@@ -22,9 +28,9 @@ For a high-assurance did:web, the following checks are carried out:
 4. Look up public key in DNSSEC TLSA record. (or DNS TXT record if DNSSEC is unavailabe)
 5. Verify DID doc using signature and public key found in DNSSEC TLSA record. (or DNS TXT record in DNSSEC is unavailabe)
 6. Check to see if DID doc has not expired (< TTL).
-7. Return True if all checks passed, otherwise False if there is a failure on any test above
+7. Return ```HighAssurance = True`` if all checks passed, otherwise False if there is a failure on any test above
 
-If some of the checks fail or have to fall back to DNS (Steps 3,4 and 5), that means it cannot necessarily be relied on as a high-assurance did:web, but it can still be relied on at a lower level of assurance subject to the discretion of the relying party.
+Note: If some of the checks fail or have to fall back to DNS (Steps 3,4 and 4), that means it can be relied on as a lower assurance did:web.  Only Step 5 (signature verification) needs to pass to be still be relied on at a lower level of assurance subject to the discretion of the relying party.
 
 ## Setting up a trust root subdomain
 

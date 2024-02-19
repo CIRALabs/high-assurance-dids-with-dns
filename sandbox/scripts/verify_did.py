@@ -261,23 +261,24 @@ def verify_did_doc(did_web):
 
     # header = did_doc.get('header', None)
     try:
-        header = did_doc['header']
+        proof = did_doc['proof']
     except:
-        header = None
+        proof = None
 
-    if header:
+    if proof:
         
-        alg = header['verificationMethod'][0]['type']
+        alg = proof['verificationMethod'][0]['cryptosuite']
+        exp = datetime.fromisoformat(proof['expires'])
 
         # Step XX: Get public key from DNS/DNSSEC record
         # Change into a more generic function
-        if header['dnsType'] == 'txt':   
+        if proof['verificationMethod'][0]['type'] == 'txt':   
             logging.debug("OK: look for DNS TXT record for verification")         
             certificate_key = query_did_dns_record(domain)
             logging.debug(f"OK: DNS TXT record: {certificate_key}, {alg}")
             
 
-        elif header['dnsType'] == 'tlsa':
+        elif proof['verificationMethod'][0]['type'] == 'tlsa':
             logging.debug(f"OK: DID doc is dnsType:tlsa record")
             # Parameters for looking up TLSA record
             usage = 3           # indicates domain issued certificate
@@ -291,17 +292,17 @@ def verify_did_doc(did_web):
                 logging.debug(f"OK: Found public key at _did.{domain} TLSA record: ")
                 
 
-                signature = did_doc["signature"]
+                signature = did_doc["proof"]["proofValue"]
                 # print("signature from did doc: ", signature)
                 # del did_doc["header"]
-                del did_doc["signature"]
+                del did_doc["proof"]
                 # print(json.dumps(did_doc, indent=4))
                 msg = json.dumps(did_doc)
                 signature_bytes = unhexlify(signature)
                 if verify_ecdsa_signature(signature_bytes, msg.encode(), public_key):
                     logging.debug("OK: Signature verified successfully using DNS TLS public key.")
                     # Now we need to check if expired
-                    exp = datetime.fromisoformat(did_doc['exp'])
+                    # exp = datetime.fromisoformat(did_doc['exp'])
                     current_time = datetime.utcnow()        
                     try:
                         assert current_time < exp
@@ -442,17 +443,8 @@ if __name__ == "__main__":
      
     # did_web = 
    
-    did_test = [    "did:web:trustroot.ca",
-                    "did:web:credentials.trustroot.ca",
-                    "did:web:community.trustroot.ca",
-                    "did:web:trbouma@trustroot.ca",
-                    "did:web:trbouma@credentials.trustroot.ca",
-                    "did:web:trbouma@community.trustroot.ca",
-                    "did:web:adobe.trustroot.ca",
-                    "did:web:trustregistry.ca",
-                    "did:web:scouten@adobe.trustroot.ca",
-                    "did:web:aniltj@credentials.trustroot.ca",
-                    "did:web:trbouma@credentials.trustroot.ca"
+    did_test = [    "did:web:trbouma@credentials.trustroot.ca"
+                    
                     
                     
                       

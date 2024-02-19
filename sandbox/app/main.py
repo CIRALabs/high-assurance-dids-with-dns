@@ -180,30 +180,15 @@ def get_did_doc(request: Request):
                 "@context": 
                     ["https://www.w3.org/ns/did/v1", "https://w3id.org/security/suites/secp256k1recovery-2020"], 
 
-                "header": {
-                    "dnsType":     issuer_db[did_domain]['dnsType'],
-                     "verificationMethod": 
-                    [{
-                        "id": f"did:web:{did_domain}",
-                        "controller": f"did:web:{did_domain}",
-                        "type": issuer_db[did_domain]['alg'],
-                        "publicKeyHex": certificate_key
-                     }
-                    ]  
-                    
-                    
-                },
+                
 
                 "id":       f"did:web:{did_domain}",                 
-                "sub":      f"did:web:{did_domain}",                
-                "iat":      current_time_int,
-                "exp":      expiry_time_int, 
-
+                "sub":      f"did:web:{did_domain}", 
                 "verificationMethod": 
                     [{
                         "id": f"did:web:{did_domain}",
                         "controller": f"did:web:{did_domain}",
-                        "type": "EcdsaSecp256k1RecoveryMethod2020",
+                        "type": issuer_db[did_domain]['alg'],
                         "publicKeyHex": certificate_key
                      }
                     ]              
@@ -230,7 +215,27 @@ def get_did_doc(request: Request):
         sig = private_key.ecdsa_sign(msg.encode())    
         sig_hex= private_key.ecdsa_serialize(sig).hex()
     # add in resulting signature to the original did doc
-    did_doc["signature"] = sig_hex
+    # did_doc["signature"] = sig_hex
+
+    did_doc["proof"] =  {
+
+            "id": f"did:web:{did_domain}",
+            "domain": f"did:web:{did_domain}",
+            "type": "DataIntegrityProof",            
+            "created": current_time_int,
+            "expires" : expiry_time_int,            
+            "verificationMethod": 
+                    [{
+                        "id": f"did:web:{did_domain}",
+                        "type": issuer_db[did_domain]['dnsType'],
+                        "cryptosuite": issuer_db[did_domain]['alg'],
+                        "controller": f"did:web:{did_domain}",                        
+                        "publicKeyHex": certificate_key
+                     }
+                    ] ,
+            "proofPurpose": "assertionMethod",            
+            "proofValue": sig_hex
+  }
 
 
     return did_doc
@@ -293,25 +298,10 @@ def get_user_did_doc(entity_name: str, request: Request):
                 "@context": 
                     ["https://www.w3.org/ns/did/v1", "https://w3id.org/security/suites/secp256k1recovery-2020"], 
 
-                "header": {
-                    "dnsType":     issuer_db[did_domain]['dnsType'],
-                     "verificationMethod": 
-                    [{
-                        "id": f"did:web:{did_domain}",
-                        "controller": f"did:web:{did_domain}",
-                        "type": issuer_db[did_domain]['alg'],
-                        "publicKeyHex": certificate_key
-                     }
-                    ] 
-                    
-                    
-                },
+                
 
                 "id":       f"did:web:{did_domain}:{entity_name}",                
-                "sub":      f"did:web:{did_domain}:{entity_name}",                
-                "iat":      current_time_int,
-                "exp":      expiry_time_int, 
-
+                "sub":      f"did:web:{did_domain}:{entity_name}",  
                 "verificationMethod": 
                     [{
                         "id": f"did:web:{did_domain}:{entity_name}",
@@ -342,7 +332,27 @@ def get_user_did_doc(entity_name: str, request: Request):
         sig = private_key.ecdsa_sign(msg.encode())    
         sig_hex= private_key.ecdsa_serialize(sig).hex()
     # add in resulting signature to the original did doc
-    did_doc["signature"] = sig_hex
+    # did_doc["signature"] = sig_hex
+
+    did_doc["proof"] =  {
+
+            "id": f"did:web:{did_domain}",
+            "domain": f"did:web:{did_domain}",
+            "type": "DataIntegrityProof",            
+            "created": current_time_int,
+            "expires" : expiry_time_int,            
+            "verificationMethod": 
+                    [{
+                        "id": f"did:web:{did_domain}",
+                        "type": issuer_db[did_domain]['dnsType'],
+                        "cryptosuite": issuer_db[did_domain]['alg'],
+                        "controller": f"did:web:{did_domain}",                        
+                        "publicKeyHex": certificate_key
+                     }
+                    ] ,
+            "proofPurpose": "assertionMethod",            
+            "proofValue": sig_hex
+  }
 
     return did_doc
 
