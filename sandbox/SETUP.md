@@ -1,5 +1,7 @@
 # High Assurance DID Web Setup Instructions
 
+[Adding a subdomain to technical prototype](./SUBDOMAIN.md)
+
 ## Background and Key Concepts
 
 For true high assurance, everything must be cryptographically signed and the private keys of the owners and all delegates need to be under their control.
@@ -155,6 +157,33 @@ Create the corresponding TSLA Reccords
 ```bash
 _did.example.com. IN TLSA 3 0 1 b0f4063808926b9db1683694c96138d5afaefac027e82833f0c13f1dd6548834
 _443._tcp.example.com. IN TLSA 3 0 1 b0f4063808926b9db1683694c96138d5afaefac027e82833f0c13f1dd6548834
+```
+
+Steps to create a new TLSA certificate:
+
+Handy tools
+https://ssl-tools.net/tlsa-generator
+
+https://filippo.io/dnskey-to-ds/
+
+
+```bash
+openssl genrsa > privkey.pem
+openssl req -new -x509 -key privkey.pem > fullchain.pem
+openssl x509 -in fullchain.pem -pubkey -noout > publickey.pem
+openssl pkey -in publickey.pem -pubin -outform DER | xxd -p > publickey.hex
+
+# Usiing ECC
+openssl ecparam -name prime256v1 -genkey -out privkey.pem
+openssl req -new -key privkey.pem -out csr.pem
+openssl req -x509 -sha256 -days 365 -key privkey.pem -in csr.pem -out certificate.pem
+openssl x509 -in certificate.pem -pubkey -noout > publickey.pem
+openssl pkey -in publickey.pem -pubin -outform DER | xxd -p > publickey.hex
+openssl dgst -sha256 -binary publickey.pem | openssl enc |  xxd -p > digest.hex
+
+# Other handy command to get public key from tls https:// websit
+openssl s_client -connect trustroot.ca:443 | openssl x509 -pubkey -noout
+
 ```
 
 ### STEP 5B: Add in other certificates and public keys as required

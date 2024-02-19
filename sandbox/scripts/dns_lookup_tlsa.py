@@ -8,10 +8,14 @@ import dns.message
 import dns.rdatatype
 import dns.rdata
 
+
+
 def query_tlsa_record(domain, usage, selector, matching_type):
     resolver = dns.resolver.Resolver()
     resolver.use_dnssec = True
     resolver.nameservers = ['8.8.8.8']
+    resolver.edns= True
+    
 
     try:
         query_domain = '_did.' + domain

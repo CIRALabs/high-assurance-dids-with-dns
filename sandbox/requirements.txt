@@ -5,6 +5,7 @@ certifi==2023.11.17
 cffi==1.16.0
 charset-normalizer==3.3.2
 click==8.1.7
+cryptography==42.0.3
 dnspython==2.5.0
 ecdsa==0.18.0
 exceptiongroup==1.2.0
@@ -19,6 +20,7 @@ pycparser==2.21
 pydantic==2.6.1
 pydantic-settings==2.1.0
 pydantic_core==2.16.2
+pyOpenSSL==24.0.0
 python-dotenv==1.0.1
 requests==2.31.0
 secp256k1==0.14.0
