@@ -20,7 +20,7 @@ If some of the checks fail or have to fall back to DNS (Steps 3,4 and 5), that m
 
 ## Setting up a trust root subdomain
 
-### Setting up subdomain for reverve proxy
+### Setting up subdomain for reverse proxy
 
 - Create subdomain on reverse proxy server (nginx) with service directive to forward to running instance.
 - Create symbolic link of server directive to ```sites-enabled```
