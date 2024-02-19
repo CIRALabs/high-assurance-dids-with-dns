@@ -23,7 +23,7 @@ A python script has been developed to test independent verification [here](./scr
 The following checks are carried out for a high assurance did:web
 
 1. Retrieve DID doc, check to see if valid format
-2. Determine from header the appropriate signature verification process. (3 are currently defined for the prototype)
+2. Determine from proof object the appropriate signature verification process. (3 are currently defined for the prototype)
 3. Check DNSSEC TLSA record if website TLS public key is same as what was registered for the website domain. (or DNS TXT record if DNSSEC is unavailable)
 4. Look up public key in DNSSEC TLSA record. (or DNS TXT record if DNSSEC is unavailabe)
 5. Verify DID doc using signature and public key found in DNSSEC TLSA record. (or DNS TXT record in DNSSEC is unavailabe)
