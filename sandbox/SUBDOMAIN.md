@@ -4,7 +4,15 @@
 
 A technical prototype has been developed to demonstrate the did doc verification process as part of a trusted root domain.
 
-### DID doc verification steps for a high-assurance did:web identifier
+Prototype is live at:
+
+- [trustroot.ca](https://trustroot.ca)
+- [credentials.trustroot.ca](https://credentials.trustroot.ca)
+- [community.trustroot.ca](https://community.trustroot.ca)
+
+The python script for independent verification is [here](./scripts/verify_did.py)
+
+### DID doc independent verification steps for a high-assurance did:web identifier
 
 For a high-assurance did:web, the following checks are carried out:
 
