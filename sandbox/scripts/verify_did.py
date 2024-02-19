@@ -25,6 +25,7 @@ from cryptography.hazmat.backends import default_backend
 
 
 import logging
+
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def get_tls_public_key(host, port=443):
@@ -117,10 +118,10 @@ def query_tlsa_record(domain, usage, selector, matching_type, subdomain="_did.")
 
    
     try:
-        print("chicken")
-        pass
+        logging.debug(f"OK: Looked up TLSA record: {query_domain}")
+        
     except:
-        print("error")
+         logging.debug(f"FAIL: No TLSA record found for: {query_domain}")
     
     try: 
         

@@ -14,7 +14,7 @@ Prototype is live at:
 
 ### W3C Conformance
 
-- DID doc roofs are conformant to [W3C Recommendation Draft: Verifiable Credential Data Integrity 1.0](https://www.w3.org/TR/vc-data-integrity/)
+- DID doc proofs are conformant to [W3C Recommendation Draft: Verifiable Credential Data Integrity 1.0](https://www.w3.org/TR/vc-data-integrity/)
 
 ### Independent Verification
 
