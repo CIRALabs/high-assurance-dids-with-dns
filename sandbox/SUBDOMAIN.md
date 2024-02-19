@@ -1,16 +1,26 @@
-# Steps to Create a Subdomain
+# Steps to Create a Trust Root Subdomain
 
-A technical prototype has been developed to demonstrate the did doc verification process. In short the following steps are undertaken:
+## Introduction
+
+A technical prototype has been developed to demonstrate the did doc verification process as part of a trusted root domain.
+
+### DID doc verification steps for a high-assurance did:web identifier
+
+For a high-assurance did:web, the following checks are carried out:
 
 1. Retrieve DID doc, check to see if valid format
 2. Determine from header the appropriate signature verification process. (3 are currently defined for the prototype)
-3. Check to see if website TLS public key is same as what is registered for the domain.
-4. Look up public key in DNS (either as TLSA or TXT record).
-5. Verify DID doc using signature and looked up public key.
+3. Check DNSSEC TLSSA record if website TLS public key is same as what was registered for the website domain. (or DNS TXT record if DNSSEC is unavailable)
+4. Look up public key in DNSSEC TLSA record. (or DNS TXT record if DNSSEC is unavailabe)
+5. Verify DID doc using signature and public key found in DNSSEC TLSA record. (or DNS TXT record in DNSSEC is unavailabe)
 6. Check to see if DID doc has not expired (< TTL).
 7. Return True if all checks passed, otherwise False if there is a failure on any test above
 
-## Setting up subdomain for reverve proxy
+If some of the checks fail or have to fall back to DNS (Steps 3,4 and 5), that means it cannot necessarily be relied on as a high-assurance did:web, but it can still be relied on at a lower level of assurance subject to the discretion of the relying party.
+
+## Setting up a trust root subdomain
+
+### Setting up subdomain for reverve proxy
 
 - Create subdomain on reverse proxy server (nginx) with service directive to forward to running instance.
 - Create symbolic link of server directive to ```sites-enabled```
@@ -20,7 +30,7 @@ A technical prototype has been developed to demonstrate the did doc verification
 - On your reverse proxy server run ```sudo certbot --nginx -d subdomain.trustroot.ca```
 - Confirm that you can see the homepage of htt://subdomain.trustroot.ca
 
-## Configuring the Server
+### Configuring the Technical Prototype Server
 
 - In the ```data/keys``` directory create a subdirectory for the fully-qualified domain name, for example ```mkdir subdomain.trustroot.ca```. Change into this directory.
 - Run the following commands in sequence, ensuring following the prompts and ensuring you have entered the fully qualified doman name
@@ -35,7 +45,7 @@ openssl req -x509 -sha256 -days 365 -key privkey.pem -in csr.pem -out certificat
 - Upon completion you should have the following files: ```certificate.pem  csr.pem  privkey.pem```
 - add corresponding subdomain record in the ```data\issuers.json``` file. Ensure ```dnsType:"tlsa"``` so that the right key files are used.
 
-## Configuring DNS records
+## Configuring DNSSEC records
 
 ### TLSA of website certificate
 
@@ -44,6 +54,8 @@ openssl req -x509 -sha256 -days 365 -key privkey.pem -in csr.pem -out certificat
 - for domain: add in the fully qualified domain
 - Paste the copied certificate contents into the textbox and click generate
 - the corresponding record should look like this: ```_443._tcp.subdomain.trustroot.ca. IN TLSA 3 1 0 30593...c3b3e```
-- do the same for your ```certificate.pem``` file to create a record like: ```_did.subdomain.trustroot.ca. IN TLSA 3 1 0 30593...c3b3e```
 
 
+### TLSA for DID doc
+
+Follow the same processs as above for your trust root domain  ```certificate.pem``` file to create a record like: ```_did.subdomain.trustroot.ca. IN TLSA 3 1 0 30593...c3b3e```
