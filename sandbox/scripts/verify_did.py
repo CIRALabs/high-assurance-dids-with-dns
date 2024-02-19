@@ -110,12 +110,23 @@ def query_tlsa_record(domain, usage, selector, matching_type, subdomain="_did.")
     resolver = dns.resolver.Resolver()
     resolver.use_dnssec = True
     resolver.nameservers = ['8.8.8.8']
-    
-    try:
-        query_domain = subdomain + domain
-        response = resolver.resolve(query_domain, 'TLSA')
+    resolver.edns= True
+    resolver.use_edns(0,0,4096)
 
-        for rdata in response:
+    query_domain = subdomain + domain
+
+   
+    try:
+        print("chicken")
+        pass
+    except:
+        print("error")
+    
+    try: 
+        
+        answer = resolver.resolve(query_domain, 'TLSA')        
+                
+        for rdata in answer:
             if (rdata.usage == usage and
                 rdata.selector == selector and
                 rdata.mtype == matching_type):
@@ -278,6 +289,8 @@ def verify_did_doc(did_web):
             if tlsa_record:
                 public_key = tlsa_record.cert
                 logging.debug(f"OK: Found public key at _did.{domain} TLSA record: ")
+                
+
                 signature = did_doc["signature"]
                 # print("signature from did doc: ", signature)
                 # del did_doc["header"]
@@ -436,7 +449,10 @@ if __name__ == "__main__":
                     "did:web:trbouma@credentials.trustroot.ca",
                     "did:web:trbouma@community.trustroot.ca",
                     "did:web:adobe.trustroot.ca",
-                    "did:web:trustregistry.ca"
+                    "did:web:trustregistry.ca",
+                    "did:web:scouten@adobe.trustroot.ca",
+                    "did:web:aniltj@credentials.trustroot.ca",
+                    "did:web:trbouma@credentials.trustroot.ca"
                     
                     
                       
