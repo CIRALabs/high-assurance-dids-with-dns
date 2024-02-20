@@ -92,7 +92,10 @@ def verify_signature(signature, message, public_key):
 
 def verify_did_doc(did_doc, did_web):
 
+    # Step 1: Extract domain from did:web identifier
     domain = urlparse(did_web_to_url(did_web)).hostname
+
+    # Step 2: Get public key from DNS/DNSSEC record
     pubkey_record = query_pubkey_record(domain)
    
     if pubkey_record:
@@ -102,38 +105,47 @@ def verify_did_doc(did_doc, did_web):
         print("No matching pubkey record found.")
         return False
 
+    # Step 3: Extract signature, iss,and exp from did doc
     try:
         signature = did_doc['signature']
         iss = did_doc['iss']
         exp = did_doc['exp']
-        iat = did_doc['iat']
+        
     except:
         print("Not a valid did doc!")
         return False
-
+    print("OK: Valid did doc")
     # Remove sections that are not signed
+
+    # Step 4: Remove non-payload data for signature verification
     
     del did_doc["header"]
     del did_doc["signature"]
     # Dump resulting for signature check
     message = json.dumps(did_doc)
 
-    # check to see if right key
+    #  Step 5: Check to see if iss key is the same as from DNS
     try:
         assert iss == pubkey_record_str
     except:
         return False
     
-    # check to see if did doc is expired
+    print("OK: Valid public key")
+
+    # Step 6: Check to see if did doc is expired
     current_time_int = int(datetime.utcnow().timestamp())
     
     try:
         assert current_time_int < exp
     except:
         return False
+    print("OK: Not expired.")
+    print(pubkey_record_str, iss)
 
+    # Step 7: Verify the did doc
     public_key_obj = PublicKey(unhexlify(pubkey_record_str), raw=True)
     sig_obj = public_key_obj.ecdsa_deserialize(unhexlify(signature.encode()))
+        
     
     return public_key_obj.ecdsa_verify(message.encode(), sig_obj, digest=hashlib.sha256)
  
@@ -154,7 +166,7 @@ def download_did_document(did_web):
         
 if __name__ == "__main__":
     
-    did_web = "did:web:lncreds.ca"  
+    did_web = "did:web:lncreds.ca:examplecorp"  
 
     did_doc = download_did_document(did_web)
     
