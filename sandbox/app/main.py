@@ -220,20 +220,13 @@ def get_did_doc(request: Request):
     did_doc["proof"] =  {
 
             "id": f"did:web:{did_domain}",
-            "domain": f"did:web:{did_domain}",
-            "type": "DataIntegrityProof",            
+            "type": "DataIntegrityProof",
+            "dnsType": issuer_db[did_domain]['dnsType'],
+            "proofPurpose": "assertionMethod",              
+            "verificationMethod": certificate_key,                       
             "created": current_time_int,
-            "expires" : expiry_time_int,            
-            "verificationMethod": 
-                    [{
-                        "id": f"did:web:{did_domain}",
-                        "type": issuer_db[did_domain]['dnsType'],
-                        "cryptosuite": issuer_db[did_domain]['alg'],
-                        "controller": f"did:web:{did_domain}",                        
-                        "publicKeyHex": certificate_key
-                     }
-                    ] ,
-            "proofPurpose": "assertionMethod",            
+            "expires" : expiry_time_int, 
+            "cryptosuite": issuer_db[did_domain]['alg'], 
             "proofValue": sig_hex
   }
 
@@ -337,27 +330,20 @@ def get_user_did_doc(entity_name: str, request: Request):
     did_doc["proof"] =  {
 
             "id": f"did:web:{did_domain}",
-            "domain": f"did:web:{did_domain}",
-            "type": "DataIntegrityProof",            
+            "type": "DataIntegrityProof",
+            "dnsType": issuer_db[did_domain]['dnsType'],
+            "proofPurpose": "assertionMethod",              
+            "verificationMethod": certificate_key,                       
             "created": current_time_int,
-            "expires" : expiry_time_int,            
-            "verificationMethod": 
-                    [{
-                        "id": f"did:web:{did_domain}",
-                        "type": issuer_db[did_domain]['dnsType'],
-                        "cryptosuite": issuer_db[did_domain]['alg'],
-                        "controller": f"did:web:{did_domain}",                        
-                        "publicKeyHex": certificate_key
-                     }
-                    ] ,
-            "proofPurpose": "assertionMethod",            
+            "expires" : expiry_time_int, 
+            "cryptosuite": issuer_db[did_domain]['alg'], 
             "proofValue": sig_hex
   }
 
     return did_doc
 
 
-@app.get("/checkdid{did}",tags=["public"])
+@app.get("/verifydid{did}",tags=["public"])
 def get_verify_did(did: str, request: Request):
     checks = {}
 

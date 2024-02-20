@@ -268,18 +268,23 @@ def verify_did_doc(did_web):
 
     if proof:
         
-        alg = proof['verificationMethod'][0]['cryptosuite']
-        exp = datetime.fromisoformat(proof['expires'])
+        alg = proof['cryptosuite']
+        try:
+            exp = datetime.fromisoformat(proof['expires'])
+        except:
+            exp = datetime.now()
 
         # Step XX: Get public key from DNS/DNSSEC record
         # Change into a more generic function
-        if proof['verificationMethod'][0]['type'] == 'txt':   
+            
+        dns_type = proof.get('dnsType', 'None')    
+        if dns_type == 'txt':   
             logging.debug("OK: look for DNS TXT record for verification")         
             certificate_key = query_did_dns_record(domain)
             logging.debug(f"OK: DNS TXT record: {certificate_key}, {alg}")
             
 
-        elif proof['verificationMethod'][0]['type'] == 'tlsa':
+        elif dns_type == 'tlsa':
             logging.debug(f"OK: DID doc is dnsType:tlsa record")
             # Parameters for looking up TLSA record
             usage = 3           # indicates domain issued certificate
@@ -323,102 +328,40 @@ def verify_did_doc(did_web):
                 verification_result = False
             
             return verification_result
-
-            
-        
         else:
-            # see issue 16 - the _cert can be deprecated
-            certificate_key, certificate_path = query_cert_record(domain)
-            logging.debug("OK: " + certificate_key + certificate_path)
-   
+                        
+            logging.debug("OK: Fallback to original method of TLSA and proof")
+            logging.debug("OK: Look for TLSA record for verification")
+            # Parameters for looking up TLSA record
+            usage = 3
+            selector = 1
+            matching_type = 0
 
-        #TODO This code block needs to go up into dnsType "txt"
-        if certificate_key:
-            
-            logging.debug("OK: _cert record: " + certificate_key)        
-        else:
-            logging.error("No matching cert record found.")
-            verification_result = False
-            # return False
+            tlsa_record = query_tlsa_record(domain, usage, selector, matching_type)
 
-        # Step 3: Extract signature, iss,and exp from did doc
-        try:
-            signature = did_doc['signature']
-            exp = datetime.fromisoformat(did_doc['exp'])
-            
-        except:
-            logging.error("FAIL: Not a valid did doc!")
-            verification_result = False
-            # return False
-        
-        logging.debug("OK: Valid did doc")
-        # Remove sections that are not signed
-
-        # Step 4: Remove non-payload data for signature verification
-        
-        # del did_doc["header"]
-        del did_doc["signature"]
-        # Dump resulting for signature check
-        message = json.dumps(did_doc)
-
-        #  Step 5: Check to see if iss key is the same as from DNS
-        # Note: iss is now the did instead of the pubkey, so this step is unnecessary
-        # try:
-        #     assert iss == pubkey_record_str
-        # except:
-        #    return False    
-        # logging.debug("OK: Valid public key")
-        # logging.debug(f"OK: _pubkey {pubkey_record_str} is same as iss: {iss}")
-
-        # Step 6: Check to see if did doc is expired
-        current_time = datetime.utcnow()
-        
-        try:
-            assert current_time < exp
-        except:
-            logging.debug("OK: DID doc not expired.")
-            verification_result = False
-        
-
-        # Step 7: Verify the did doc
-        # We can determine from alg what curve/algorithm to use
-        logging.debug(f"OK: did doc signing and verification algorithm: {alg}")
-        public_key_obj = PublicKey(unhexlify(certificate_key), raw=True)
-        sig_obj = public_key_obj.ecdsa_deserialize(unhexlify(signature.encode()))
-
-    else: # This is the fallback which assumes a TLSA record
-        logging.debug("OK: Fallback to original method of TLSA and proof")
-        logging.debug("OK: Look for TLSA record for verification")
-        # Parameters for looking up TLSA record
-        usage = 3
-        selector = 1
-        matching_type = 0
-
-        tlsa_record = query_tlsa_record(domain, usage, selector, matching_type)
-
-        if tlsa_record:
-            public_key = tlsa_record.cert
-            logging.debug(f"OK: Public key from TLSA _did.{domain} record")
-            signature = did_doc["proof"]["proofValue"]
-            # print("signature from did doc: ", signature)
-            del did_doc["proof"]
-            # print(json.dumps(did_doc, indent=4))
-            msg = json.dumps(did_doc)
-            if verify_ecdsa_signature(base58.b58decode(signature), msg.encode(), public_key):
-                logging.debug("OK: Signature verified successfully.")
+            if tlsa_record:
+                public_key = tlsa_record.cert
+                logging.debug(f"OK: Public key from TLSA _did.{domain} record")
+                signature = did_doc["proof"]["proofValue"]
+                # print("signature from did doc: ", signature)
+                del did_doc["proof"]
+                # print(json.dumps(did_doc, indent=4))
+                msg = json.dumps(did_doc)
+                if verify_ecdsa_signature(base58.b58decode(signature), msg.encode(), public_key):
+                    logging.debug("OK: Signature verified successfully.")
                 
+                else:
+                    logging.debug("FAIL Signature verification failed.")
+                    verification_result = False
             else:
-                logging.debug("FAIL Signature verification failed.")
+                logging.debug("FAIL: No matching TLSA record found.")
                 verification_result = False
-        else:
-            logging.debug("FAIL: No matching TLSA record found.")
-            verification_result = False
         
-        return verification_result
-       
-    return public_key_obj.ecdsa_verify(message.encode(), sig_obj, digest=hashlib.sha256)
- 
+            return verification_result
 
+            
+        
+        
 
 
 def download_did_document(did_web):
@@ -444,7 +387,7 @@ if __name__ == "__main__":
      
     # did_web = 
    
-    did_test = [    "did:web:trbouma@credentials.trustroot.ca"
+    did_test = [    "did:web:trbouma@trustroot.ca"
                     
                     
                     
