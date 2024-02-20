@@ -17,14 +17,3 @@ class Settings(BaseSettings):
     TTL: int = 3600
 
     model_config = SettingsConfigDict(env_file=".env")
-   
-    
-    
-
-
-    
-    
-    
-
-   
-

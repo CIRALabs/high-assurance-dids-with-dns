@@ -53,13 +53,10 @@ private_key = PrivateKey(unhexlify(settings.PRIVATE_KEY))
 public_key_hex = private_key.pubkey.serialize().hex()
 
 
-
 app = FastAPI(  title=settings.PROJECT_TITLE,
                 description=settings.PROJECT_DESCRIPTION,
                 version="0.0.1"
 )
-
-
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -71,7 +68,7 @@ async def root(request: Request):
                                          })
 
 
-@app.get("/.well-known/did.json",tags=["public"])
+@app.get("/.well-known/did.json", tags=["public"])
 def get_did_doc(request: Request):
 
     ## Lookup pubkey
@@ -116,7 +113,6 @@ def get_did_doc(request: Request):
                         "publicKeyHex": dns_pubkey_str
                      }
                     ]              
-               
     }
 
     # create a copy for signing
@@ -135,19 +131,17 @@ def get_did_doc(request: Request):
     # add in resulting signature to the original did doc
     did_doc["signature"] = sig_hex
 
-
     return did_doc
+
 
 @app.get("/{entity_name}/did.json",tags=["public"])
 def get_user_did_doc(entity_name: str, request: Request):
-    
-
     try:
         entity_iss = fake_db[entity_name]['iss']
         ## Lookup pubkey
     except:
         return {"error": "issuing entity does not exit"}
-    
+
 
     ## Lookup pubkey
     if request.url.hostname == "127.0.0.1":
