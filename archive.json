@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-02-18T00:18:51.531495+00:00",
+  "timestamp": "2024-02-20T00:17:00.917938+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -558,13 +558,13 @@
       "labels": [],
       "body": "latest and greatest ",
       "createdAt": "2024-02-12T11:38:20Z",
-      "updatedAt": "2024-02-17T23:06:33Z",
+      "updatedAt": "2024-02-19T12:57:15Z",
       "baseRepository": "CIRALabs/high-assurance-dids-with-dns",
       "baseRefName": "main",
       "baseRefOid": "1c41bb97c33662582d37848c6e1fc6cfd11b2cb8",
       "headRepository": "CIRALabs/high-assurance-dids-with-dns",
       "headRefName": "sandbox",
-      "headRefOid": "c213e7db4421e8794a0aaacb9501212e2c8a728e",
+      "headRefOid": "5fbdd6518ffd7b1244add69f0101446a7e80c2c4",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
