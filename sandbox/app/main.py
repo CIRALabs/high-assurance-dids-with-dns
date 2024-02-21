@@ -117,8 +117,6 @@ app = FastAPI(  title=settings.PROJECT_TITLE,
 )
 
 
-
-
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
     # return {"message": "Hello World"}
@@ -128,7 +126,7 @@ async def root(request: Request):
                                          })
 
 
-@app.get("/.well-known/did.json",tags=["public"])
+@app.get("/.well-known/did.json", tags=["public"])
 def get_did_doc(request: Request):
 
    
@@ -192,7 +190,6 @@ def get_did_doc(request: Request):
                         "publicKeyHex": certificate_key
                      }
                     ]              
-               
     }
 
     # create a copy for signing
@@ -233,10 +230,9 @@ def get_did_doc(request: Request):
 
     return did_doc
 
+
 @app.get("/{entity_name}/did.json",tags=["public"])
 def get_user_did_doc(entity_name: str, request: Request):
-    
-
     try:
         entity_iss = user_db[entity_name]
         entity_alg = "secp256k1"
