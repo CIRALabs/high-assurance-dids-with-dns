@@ -28,6 +28,7 @@ report.xml
 /sandbox/*.key
 /sandbox/*.private
 /sandbox/*.pem
+/sandbox/app/data/*.json
 .env
 
 

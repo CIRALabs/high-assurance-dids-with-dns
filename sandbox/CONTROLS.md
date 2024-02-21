@@ -1,6 +1,10 @@
-# DID:WEB Technical Controls and Levels of Assurance
+# DID:WEB Technical Controls and Levels of Security Assurance
 
-This section defines a simple framework to define a set of technical controls that can be implemented and mapped into levels of assurance for did:web identifiers.
+This section defines a simple framework to define a set of technical controls that can be implemented as groups of controls mapped into levels of security assurance for did:web identifiers which then can be mapped to trust framework assurance leves.
+
+## Security Assurance
+
+Security assurance is distinct from trust assurance. In the context of assuring did:web identifiers, security assurance refers to the implementation and level of confidence that security measures, practices, and policies are in place effectively protect the data, systems, and networks of an organization. It involves ensuring that the security controls are functioning correctly and are adequate to mitigate identified risks.
 
 To assist in decision-making and implementation, The controls are ordered in increasing level of [security assurance](#security-assurance) and are grouped into levels of assurance from **LOW-** to **HIGH+**
 
@@ -31,13 +35,13 @@ Note that Controls 9, 10, and 11 CANNOT BE DELEGATED to an **Issuing Service**
 |10|Domain Zone Signing Key Generation|The signing keys MUST be generated under the control of the Issuing Authority.|
 |11|Hardware Security Module|A FIPS 140-2 compliant hardware security module must be under the control of the Issuing Authority.|
 
-## Levels of Assurance
+## Levels of Security Assurance
 
 Many trust frameworks specify levels of assurance to assist in determing which controls must be implemented.
 
-The following table is not a definitive mapping to trust framework levels of assurance. It is intended to assist in determing mappings by grouping the controls within a range from **LOW-** to **HIGH+** relating to the appropriate risk level. Note that controls are additive)in nature. (i.e.,, controls of the preceding level must be fulfilled).
+The following table defines levels of securiy assurance that can be mapped to trust framework levels of assurance. Mapping to trust framework assurance levels is out of scope for this exercise but can be used to assist in determing mappings by grouping the controls within a range from **LOW-** to **HIGH+** relating to the appropriate risk level. Note that controls are additive)in nature. (i.e.,, controls of the preceding level must be fulfilled).
 
-|Level of Assurance|Controls|Description|
+|Level of Security Assurance|Controls|Description|
 |---|---|---|
 |**LOW-**| Control 1|SHOULD only be used for low risk transactions where attribution to originator is desireable.|
 |**LOW**|Control 2|SHOULD only be used for lower risk transactions where establishing the accountablity of the originator is desirable.|
@@ -50,9 +54,7 @@ The following table is not a definitive mapping to trust framework levels of ass
 
 Crud is defined as: Create, Read, Update, Delete/Deactivate
 
-### Security Assurance
 
-Security assurance is distinct from trust assurance. In the context of assuring did:web identifiers, security assurance refers to the implementation and level of confidence that security measures, practices, and policies are in place effectively protect the data, systems, and networks of an organization. It involves ensuring that the security controls are functioning correctly and are adequate to mitigate identified risks.
 
 ### Other Means
 
