@@ -73,14 +73,20 @@ There area three broad functional areas: resolution, verifiability, and extensib
 
 ### Resolution
 
+Resolution is the function to retrieve metadata or mapped data related to a ```urn:vwi``` identifier.
+
 - ```urn:vwi``` resolution would follow the same standard conventions for W3C ```did:web``` specification for resolution to retrieve the did doc
 
 ### Verifiability
+
+Verifiability is the function of verifying/validation the integrity of data by cryptographic means or non-cryptographic means (for legacy identifiers)
 
 - ```urn:vwi```would follow the same standard conventions for document integrity that can be defined according the W3C DID DOC integrity specification.
 - ```urn:vwi``` would follow the methods for validation that are defined by DNS, DNNSEC and associated cryptographic algorithms.
 
 ### Extensibility
+
+Extensibility is the means by which addition functionality can be added to further enrich resolution or to enahnce interactions with the ```urn:vwi```. For example a ```urn:vwi``` can be extended to support specialized queries or support specialized interactions such as authentication protocols.
 
 - ```urn:vwi``` would follow the same standard conventions for defining service endpoints that can be defined according the W3C DID specification.
 
