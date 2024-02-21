@@ -65,5 +65,23 @@ john.smith@engineers.trustroot.ca   # for an individual
 
 If these look like email addresses, it's because email address are of the same urn syntax: ```urn:mailto:info@example.com``` and due to common usage, the ```urn:mailto:``` prefix is assumed and dropped.
 
+## Embracing What Is Already Built
 
+```urn:vwi``` is intended to be scheme that does not invent anything new.  Instead, ```urn:vwi```leverages existing composable components that are already accepted broadly.
 
+There area three broad functional areas: resolution, verifiability, and extensibility.
+
+### Resolution
+
+- ```urn:vwi``` resolution would follow the same standard conventions for W3C ```did:web``` specification for resolution to retrieve the did doc
+
+### Verifiability
+
+- ```urn:vwi```would follow the same standard conventions for document integrity that can be defined according the W3C DID DOC integrity specification.
+- ```urn:vwi``` would follow the methods for validation that are defined by DNS, DNNSEC and associated cryptographic algorithms.
+
+### Extensibility
+
+- ```urn:vwi``` would follow the same standard conventions for defining service endpoints that can be defined according the W3C DID specification.
+
+This would enable the introspection of a ```urn:vwi``` identifier for additional capabilitiies suchs as WHOIS (publicy verifiable information)
