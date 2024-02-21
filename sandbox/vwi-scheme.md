@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The verifiable web identifier scheme ```urn:vwi:``` is a proposal to generalize the ```did:web``` method into a urn scheme that can be used to specify globally unique identifiers that are human-recognizable and easily read to understand the authority. 
+The verifiable web identifier scheme ```urn:vwi:``` is a proposal to generalize the ```did:web``` method and dns/dnssec resolution/validation methods into a urn scheme that can be used to specify globally unique identifiers that are human-recognizable and easily read to understand the authority. 
 
 A verifiable web identifier (vwi) can be defined as an identifier that can be used for verification functions such as providing verifiable information (.i.e., proofs) about its subject and authentication functionality (challege and response interactions).
 
