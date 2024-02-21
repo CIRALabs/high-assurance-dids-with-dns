@@ -219,6 +219,10 @@ def verify_did_doc(did_web):
 
     # Start with verification result as true and toggle to false if there is any error
     verification_result = True
+
+    #prepend did:web if not supplied
+    did_web = "did:web:" + did_web if did_web[:7] != 'did:web' else did_web
+    
     # Step 1 get the did doc
 
     try:
@@ -387,7 +391,8 @@ if __name__ == "__main__":
      
     # did_web = 
    
-    did_test = [    "did:web:trbouma@trustroot.ca"
+    did_test = [    "did:web:trustregistry.ca",
+                    "trustroot.ca"
                     
                     
                     

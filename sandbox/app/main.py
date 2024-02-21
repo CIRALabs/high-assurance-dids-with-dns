@@ -186,7 +186,7 @@ def get_did_doc(request: Request):
                 "sub":      f"did:web:{did_domain}", 
                 "verificationMethod": 
                     [{
-                        "id": f"did:web:{did_domain}",
+                        "id": f"did:web:{did_domain}#key-dnstlsa",
                         "controller": f"did:web:{did_domain}",
                         "type": issuer_db[did_domain]['alg'],
                         "publicKeyHex": certificate_key
@@ -223,7 +223,7 @@ def get_did_doc(request: Request):
             "type": "DataIntegrityProof",
             "dnsType": issuer_db[did_domain]['dnsType'],
             "proofPurpose": "assertionMethod",              
-            "verificationMethod": certificate_key,                       
+            "verificationMethod": f"did:web:{did_domain}#key-dnstlsa",                       
             "created": current_time_int,
             "expires" : expiry_time_int, 
             "cryptosuite": issuer_db[did_domain]['alg'], 
@@ -301,6 +301,12 @@ def get_user_did_doc(entity_name: str, request: Request):
                         "controller": f"did:web:{did_domain}:{entity_name}",
                         "type": entity_alg,
                         "publicKeyHex": entity_iss
+                     },
+                     {
+                        "id": f"did:web:{did_domain}#key-dnstlsa",
+                        "controller": f"did:web:{did_domain}",
+                        "type": issuer_db[did_domain]['alg'],
+                        "publicKeyHex": certificate_key
                      }
                     ]              
                
@@ -333,7 +339,7 @@ def get_user_did_doc(entity_name: str, request: Request):
             "type": "DataIntegrityProof",
             "dnsType": issuer_db[did_domain]['dnsType'],
             "proofPurpose": "assertionMethod",              
-            "verificationMethod": certificate_key,                       
+            "verificationMethod": f"did:web:{did_domain}#key-dnstlsa",                       
             "created": current_time_int,
             "expires" : expiry_time_int, 
             "cryptosuite": issuer_db[did_domain]['alg'], 
