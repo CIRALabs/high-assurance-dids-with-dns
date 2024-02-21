@@ -393,7 +393,8 @@ if __name__ == "__main__":
     # did_web = 
    
     did_test = [    "did:web:trustregistry.ca",
-                    "trbouma@trustroot.ca" 
+                    "trbouma@trustroot.ca",
+                    "trbouma@creators.trustroot.ca" 
                       
                 ]    
     
