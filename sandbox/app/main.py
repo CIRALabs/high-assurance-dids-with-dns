@@ -233,9 +233,32 @@ def get_did_doc(request: Request):
 
 @app.get("/{entity_name}/did.json",tags=["public"])
 def get_user_did_doc(entity_name: str, request: Request):
+    
+    x509cert = None
+
     try:
         entity_iss = user_db[entity_name]
-        entity_alg = "secp256k1"
+        print(entity_iss[0])
+        if entity_iss[0] == "x509":
+            entity_alg = 'x509prime256v1'
+            privkey_pem_file = f"app/data/keys/users/{entity_name}/privkey.pem"
+            print(privkey_pem_file)
+            with open(privkey_pem_file, 'rb') as key_file:
+                private_key_pem = key_file.read()
+            user_private_key = SigningKey.from_pem(private_key_pem)
+            user_public_key = user_private_key.get_verifying_key()
+            user_public_key_pem = user_public_key.to_pem()
+            # Use this x509 public key instead
+            user_public_key_bytes = hexlify(user_public_key.to_string()).decode().upper()
+            print("user public key:", user_public_key_bytes)
+            print("public key pem:", user_public_key_pem.decode())
+            
+            print("we are here!")
+            entity_iss = user_public_key_bytes
+            x509cert = user_public_key_pem.decode()
+        else:
+            entity_alg = "secp256k1"
+
         ## Lookup pubkey
     except:
         return {"error": "issuing entity does not exist"}
@@ -302,7 +325,8 @@ def get_user_did_doc(entity_name: str, request: Request):
                         "id": f"did:web:{did_domain}#key-dnstlsa",
                         "controller": f"did:web:{did_domain}",
                         "type": issuer_db[did_domain]['alg'],
-                        "publicKeyHex": certificate_key
+                        "publicKeyHex": certificate_key,
+                        "x509cert": x509cert
                      }
                     ]              
                
