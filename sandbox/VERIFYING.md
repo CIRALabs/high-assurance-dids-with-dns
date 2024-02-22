@@ -40,3 +40,11 @@ The verification logic is as follows:
   - Check to see if did doc is not expired
   - Check remaining payload if propertly signed with signature
   - If all checks pass, return TRUE, else return FALSE
+
+## Verifying with dig
+
+this shows the TLSA record and the corresponding RRSIG record
+
+```bash
+dig +dnssec @ns1.desec.io _443._tcp.trustroot.ca
+```
