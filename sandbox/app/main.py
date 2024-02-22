@@ -189,7 +189,14 @@ def get_did_doc(request: Request):
                         "type": issuer_db[did_domain]['alg'],
                         "publicKeyHex": certificate_key
                      }
-                    ]              
+                    ],  
+                    
+                 "service": [{
+                    "id":f"did:web:{did_domain}#whois",
+                    "type": "VerifiedQuery", 
+                    "serviceEndpoint": f"https://{did_domain}/whois"
+                }]
+           
     }
 
     # create a copy for signing
@@ -328,7 +335,12 @@ def get_user_did_doc(entity_name: str, request: Request):
                         "publicKeyHex": certificate_key,
                         "x509cert": x509cert
                      }
-                    ]              
+                    ],
+                    "service": [{
+                    "id":f"did:web:{did_domain}:{entity_name}#whois",
+                    "type": "VerifiedQuery", 
+                    "serviceEndpoint": f"https://{did_domain}/{entity_name}/whois"
+                }]              
                
     }
 
@@ -400,3 +412,13 @@ def get_verify_did(did: str, request: Request):
         checks['dnsType'] = 'not defined'
 
     return {"did": did, "checks": checks }
+
+@app.get("/whois",tags=["public"])
+def get_verify_did(request: Request):
+    info = {"detail": f"whois not yet implemented yet for {request.url.hostname}"}
+    return info
+
+@app.get("/{user}/whois",tags=["public"])
+def get_verify_did(user: str, request: Request):
+    info = {"detail": f"whois not yet implemented for {user}"}
+    return info
