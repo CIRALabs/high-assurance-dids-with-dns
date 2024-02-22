@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-02-20T00:17:00.917938+00:00",
+  "timestamp": "2024-02-22T00:17:28.544753+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -222,6 +222,166 @@
       "updatedAt": "2024-02-15T13:48:55Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 21,
+      "id": "I_kwDOLLNO0c5_zkJg",
+      "title": "Working protoytype using W3C proof spec",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/21",
+      "state": "OPEN",
+      "author": "trbouma",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "After a discussion with @aniltj , I revisited the W3C Data Integrity Spec and concluded that it can serve our needs instead of the 'more straightforward' JWT approach,  which I was originally advocating for. The primary justification is to embrace what the W3C community has authored rather than trying advocate yet another way to do it. \r\n\r\nAll of the latest code is in this branch: https://github.com/CIRALabs/high-assurance-dids-with-dns/tree/w3c_proof\r\n\r\nYou can see it in action at http://trustroot.ca\r\n\r\nThe resulting did doc looks like below - note that \"header\", \"dsnType\", \"alg\", \"iat\" and \"exp\" are no longer because they can be expressed in the proof as: VerificationMethod {\"type\", :cryptosuite\"} and  Proof {\"created\", \"expires\" }\r\n\r\n```bash\r\n{\r\n  \"@context\": [\r\n    \"https://www.w3.org/ns/did/v1\",\r\n    \"https://w3id.org/security/suites/secp256k1recovery-2020\"\r\n  ],\r\n  \"id\": \"did:web:trustroot.ca\",\r\n  \"sub\": \"did:web:trustroot.ca\",\r\n  \"verificationMethod\": [\r\n    {\r\n      \"id\": \"did:web:trustroot.ca\",\r\n      \"controller\": \"did:web:trustroot.ca\",\r\n      \"type\": \"x509prime256v1\",\r\n      \"publicKeyHex\": \"3059301306072a8648ce3d020106082a8648ce3d03010703420004d50eb242c6fcd1078ae74caf893668543cfaa8d5fb2096b1b7dfc687feafa3527655d0f2ebd86037bd6a80f19405c9cd3947dfdbf1190a8c482f9210ddf2da45\"\r\n    }\r\n  ],\r\n  \"proof\": {\r\n    \"id\": \"did:web:trustroot.ca\",\r\n    \"domain\": \"did:web:trustroot.ca\",\r\n    \"type\": \"DataIntegrityProof\",\r\n    \"created\": \"2024-02-20T11:47:01.466206\",\r\n    \"expires\": \"2024-02-20T12:47:01.466222\",\r\n    \"verificationMethod\": [\r\n      {\r\n        \"id\": \"did:web:trustroot.ca\",\r\n        \"type\": \"tlsa\",\r\n        \"cryptosuite\": \"x509prime256v1\",\r\n        \"controller\": \"did:web:trustroot.ca\",\r\n        \"publicKeyHex\": \"3059301306072a8648ce3d020106082a8648ce3d03010703420004d50eb242c6fcd1078ae74caf893668543cfaa8d5fb2096b1b7dfc687feafa3527655d0f2ebd86037bd6a80f19405c9cd3947dfdbf1190a8c482f9210ddf2da45\"\r\n      }\r\n    ],\r\n    \"proofPurpose\": \"assertionMethod\",\r\n    \"proofValue\": \"e27ab1047d96a63b8a54dfe1c08e98e685f055396ef72bac22029cdb1b1ee1c4ac918b4f9befb6d97c4a7cd1077da4e549c443144cd5e68c64b6326efc59c7ab\"\r\n  }\r\n}\r\n```\r\nThere will still need to be some work to ensure that we can accommodate a wide array of Verification Methods. For example, x509 via openssl can accommodate about 50 different curves and schemes which are all formally specified. You can see above that I am using \"x509prime256v1\" which is a NIST curve, but x509 also supports all of the SECP curves. Further there are barebones schemes that don't use a cert, but just a public key/curve/signing algorithm. \r\n\r\nI also dumped in \"publicKeyHex\" in the proof - it's not necessary, but it's a nice to have extracted from the certificate, just in case you need to verify the DID when offline.\r\n\r\nI also updated the verify_did script (https://github.com/CIRALabs/high-assurance-dids-with-dns/blob/w3c_proof/sandbox/scripts/verify_did.py  It's still pretty ugly, I am still cleaning up.\r\n\r\nFinally, I am documenting how to add a subdomain - the steps to create a high assurance did for a subdomain like https://credentials.trustroot.ca\r\n\r\nThe steps are here: https://github.com/CIRALabs/high-assurance-dids-with-dns/blob/w3c_proof/sandbox/SUBDOMAIN.md\r\n\r\nI am also experimenting with user dids like ```did:web:examplecorp@trustroot.ca``` which I believe can have some profound implications, but I will save that detail for another issue.\r\n",
+      "createdAt": "2024-02-20T12:05:00Z",
+      "updatedAt": "2024-02-21T13:41:45Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "trbouma",
+          "authorAssociation": "COLLABORATOR",
+          "body": "this is the did doc for the user```did:web:trustroot.ca:examplecorp``` or  the more concise '_verifiable web identifier_' version of: ```examplecorp@trustroot.ca```. Note that the proof is same as above (except for different times) but the verificationMethod in the body is different because it relates to the user of the did, in this case excamplecorp, not trustroot.ca\r\n\r\n\r\n```bash\r\n{\r\n  \"@context\": [\r\n    \"https://www.w3.org/ns/did/v1\",\r\n    \"https://w3id.org/security/suites/secp256k1recovery-2020\"\r\n  ],\r\n  \"id\": \"did:web:trustroot.ca:examplecorp\",\r\n  \"sub\": \"did:web:trustroot.ca:examplecorp\",\r\n  \"verificationMethod\": [\r\n    {\r\n      \"id\": \"did:web:trustroot.ca:examplecorp\",\r\n      \"controller\": \"did:web:trustroot.ca:examplecorp\",\r\n      \"type\": \"secp256k1\",\r\n      \"publicKeyHex\": [\r\n        \"e4f7cafa0b271769087b06859917921941c4cea13abe842f379fc9209f367592\"\r\n      ]\r\n    }\r\n  ],\r\n  \"proof\": {\r\n    \"id\": \"did:web:trustroot.ca\",\r\n    \"domain\": \"did:web:trustroot.ca\",\r\n    \"type\": \"DataIntegrityProof\",\r\n    \"created\": \"2024-02-20T12:26:44.870816\",\r\n    \"expires\": \"2024-02-20T13:26:44.870996\",\r\n    \"verificationMethod\": [\r\n      {\r\n        \"id\": \"did:web:trustroot.ca\",\r\n        \"type\": \"tlsa\",\r\n        \"cryptosuite\": \"x509prime256v1\",\r\n        \"controller\": \"did:web:trustroot.ca\",\r\n        \"publicKeyHex\": \"3059301306072a8648ce3d020106082a8648ce3d03010703420004d50eb242c6fcd1078ae74caf893668543cfaa8d5fb2096b1b7dfc687feafa3527655d0f2ebd86037bd6a80f19405c9cd3947dfdbf1190a8c482f9210ddf2da45\"\r\n      }\r\n    ],\r\n    \"proofPurpose\": \"assertionMethod\",\r\n    \"proofValue\": \"4ac9b4ac0d7f8343e7ba50177c9135df17e42d712b0a8967cceabd63c69e0771c954ff87cdc20d5a80ede865b0edcf41fced4a6104555e01471fbd9a3e06e3d5\"\r\n  }\r\n}\r\n```",
+          "createdAt": "2024-02-20T12:32:24Z",
+          "updatedAt": "2024-02-20T12:33:12Z"
+        },
+        {
+          "author": "aniltj",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Is the OPTIONAL domain property in the proof used correctly? From the spec (https://www.w3.org/TR/vc-data-integrity/#proofs) >> \"A verifier SHOULD use the value to ensure that the proof was intended to be used in the security domain in which the verifier is operating. The specification of the domain parameter is useful in challenge-response protocols where the verifier is operating from within a security domain known to the creator of the proof.\"\r\n\r\nThis implies that the issuer knows the security domain of the verifier, which is not possible here as it could be anyone on the internet who wants to verify.",
+          "createdAt": "2024-02-20T12:56:30Z",
+          "updatedAt": "2024-02-20T12:56:30Z"
+        },
+        {
+          "author": "trbouma",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@aniltj - not sure. I need to read the spec more closely to see if it is correct. I saw that \"domain\" was a new attribute I hadn't seen before, so I dumped it in without fully understanding it.\r\n\r\nAll said, I am seeing _huge_ potential for someone publishing their _verifiable web identifier_ with a formalized scheme that can optionally support methods for different use cases such as presenting verifiable information that is public, do a challenge and response for authentication, and enabling one-time or many-time requests for selected proofs to reserved audiences by means of providing some sort of proofkey. \r\n\r\nAnyway, further exploration. FWW, I am seeing a massive potential to break away from the 'digital wallet' and 'digital credential' metaphor that we've all been working with so far. I am exploring the different options in that light,",
+          "createdAt": "2024-02-20T13:06:43Z",
+          "updatedAt": "2024-02-20T13:07:07Z"
+        },
+        {
+          "author": "jessecarter111",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Am supportive of going back to the W3C spec.  Note that the publicKeyHex has been deprecated by W3C (https://www.w3.org/TR/did-spec-registries/#publickeyhex). While the publicKeyHex is a nice convenience, I don't think it is necessary. I think the assumption is the end user has the cryptographic capabilities to do the necessary key conversions. ",
+          "createdAt": "2024-02-20T18:59:03Z",
+          "updatedAt": "2024-02-20T18:59:03Z"
+        },
+        {
+          "author": "trbouma",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Ok - will remove publickeyhex",
+          "createdAt": "2024-02-20T19:30:55Z",
+          "updatedAt": "2024-02-20T19:30:55Z"
+        },
+        {
+          "author": "trbouma",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Attempting to implement the W3C data integrity proof spec - a few things don't seem to be right.\r\n\r\nFor the proof verificationMethod - the spec says it has to be a URL (link) to a public key or the cryptographic material - why?? For my implementation I retrieve the material by querying a DNSSEC record (not a website).  I am putting the result of this query as text of the public key instead. This should be changed in the spec.\r\n\r\nThere is an inconsistency - the spec does not have cryptosuite as a field in the prooofs, yet it is in the examples. This is useful, so I added.\r\n\r\nFor the verificationMethods in the body of the doc, the registration https://www.w3.org/TR/did-spec-registries/#publickeyhex seems to be overly restrictive, deprecating methods that are still used by other ecosystems. I propose that they loosen up these requirements to accommodate a broader ecosystem.\r\n\r\n\r\n\r\n\r\n",
+          "createdAt": "2024-02-20T21:28:34Z",
+          "updatedAt": "2024-02-20T21:28:34Z"
+        },
+        {
+          "author": "trbouma",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This is how my resulting proof object looks like. I had to add in \"dnsType\". Also see that the \"verficationMethod\" is the hexstring of the publickey - not a URL\r\n\r\n```bash\r\n  \"proof\": {\r\n    \"id\": \"did:web:trustroot.ca\",\r\n    \"type\": \"DataIntegrityProof\",\r\n    \"dnsType\": \"tlsa\",\r\n    \"proofPurpose\": \"assertionMethod\",\r\n    \"verificationMethod\": \"3059301306072a8648ce3d020106082a8648ce3d03010703420004d50eb242c6fcd1078ae74caf893668543cfaa8d5fb2096b1b7dfc687feafa3527655d0f2ebd86037bd6a80f19405c9cd3947dfdbf1190a8c482f9210ddf2da45\",\r\n    \"created\": \"2024-02-20T22:05:38.451173\",\r\n    \"expires\": \"2024-02-20T23:05:38.451196\",\r\n    \"cryptosuite\": \"x509prime256v1\",\r\n    \"proofValue\": \"7254ed50ef45c4be0bf77e1cfc33d3c91335b28edb976338ce6eb72f12528ca1c84488a766bb4cd0076f146de1ed22c4c31f37c6ac2829769f844bf00af97525\"\r\n  }\r\n```",
+          "createdAt": "2024-02-20T22:08:05Z",
+          "updatedAt": "2024-02-20T22:08:05Z"
+        },
+        {
+          "author": "jessecarter111",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "The verificationMethod just points to an object in the DID doc representing a key pair. \r\nFor the information to be in the DNS, it also has to be a verificationMethod in the DID document. Cross-validating the information across 2 separate domains is an important aspect of the enhanced authenticity, and also provides optionality for the verifier when interacting with the DID document.\r\n\r\nBy not actually pointing to a verificationMethod and instead just using the key material, we make it much more difficult to ascertain the correct keypair, and even make assertions about the key itself.\r\n\r\nI strongly posit that the verificationMethod field should be left as we originally implemented and left as a fragment pointing to a verificationMethod in the DID document. \r\n\r\ni.e:\r\n```json\r\n{\r\n\"verificationMethod\":\"did:web:trustroot.ca#key-1\"\r\n}\r\n```\r\n\r\nIn cases where the DID doc is self signed the use of the verificationMethod URI is intuitive. For a self signed DID document, it just links to another object in the DID document. You already have access to it if you are looking at the proof.\r\n\r\nIt also makes it much more difficult to interact with DID docs that are not self signed. If we aren't pointing to a verificationMethod, figuring who that key belongs to is unnecessarily difficult. \r\n\r\nIn both cases, the user can choose to resolve that key in the DNS to verify or just use the verificationMethod directly.",
+          "createdAt": "2024-02-21T03:26:52Z",
+          "updatedAt": "2024-02-21T03:26:52Z"
+        },
+        {
+          "author": "trbouma",
+          "authorAssociation": "COLLABORATOR",
+          "body": "OK, I think I am getting it now. The verificationMethod in the \"proof\" is just a pointer to the verificationMethod in the did doc. \r\n\r\nA bit nested and referential for my liking ( read confusing) but I think I am getting it now.... \r\n\r\nSo here is the latest iteration - for verificationMethod for \"id\" I used ```#key-dnstla``` to give a better indication of what it actually is. You will see in \"proof\" this is what I am pointing to. \r\n\r\nI am also still using the ```publicKeyHex``` format as I believe this is a better format for human inspection (it is same format in the DNS TLSA record) and it should not be deprecated because this format is in wide use (especially compressed public key format) in many other ecosystems. The spec should be more accommodating to these formats.\r\n\r\nAnyway, I hope this is correct. Since this did is for trustroot.ca it is 'self-signed'. I will put in the next comment the did doc for a user did - e.g. ```did:web:trustroot.ca:examplecorp```\r\n\r\nThe latest and greatest did doc for ```did:web:trustroot.ca``` is below:\r\n\r\n\r\n\r\n```bash\r\n{\r\n  \"@context\": [\r\n    \"https://www.w3.org/ns/did/v1\",\r\n    \"https://w3id.org/security/suites/secp256k1recovery-2020\"\r\n  ],\r\n  \"id\": \"did:web:trustroot.ca\",\r\n  \"sub\": \"did:web:trustroot.ca\",\r\n  \"verificationMethod\": [\r\n    {\r\n      \"id\": \"did:web:trustroot.ca#key-dnstlsa\",\r\n      \"controller\": \"did:web:trustroot.ca\",\r\n      \"type\": \"x509prime256v1\",\r\n      \"publicKeyHex\": \"3059301306072a8648ce3d020106082a8648ce3d03010703420004d50eb242c6fcd1078ae74caf893668543cfaa8d5fb2096b1b7dfc687feafa3527655d0f2ebd86037bd6a80f19405c9cd3947dfdbf1190a8c482f9210ddf2da45\"\r\n    }\r\n  ],\r\n  \"proof\": {\r\n    \"id\": \"did:web:trustroot.ca\",\r\n    \"type\": \"DataIntegrityProof\",\r\n    \"dnsType\": \"tlsa\",\r\n    \"proofPurpose\": \"assertionMethod\",\r\n    \"verificationMethod\": \"did:web:trustroot.ca#key-dnstlsa\",\r\n    \"created\": \"2024-02-21T13:07:17.100937\",\r\n    \"expires\": \"2024-02-21T14:07:17.100957\",\r\n    \"cryptosuite\": \"x509prime256v1\",\r\n    \"proofValue\": \"c623e566344852a4f4e4f57cf23620c53ca37278604f84e2e57310a5ecddb9389366c0cbfcf1eb4911186b3c6685be492b11aa6a5482130c40c2a6e07227b93b\"\r\n  }\r\n}\r\n```",
+          "createdAt": "2024-02-21T13:20:57Z",
+          "updatedAt": "2024-02-21T13:20:57Z"
+        },
+        {
+          "author": "trbouma",
+          "authorAssociation": "COLLABORATOR",
+          "body": "And here is the did doc for the user ```did:web:trustroot.ca:examplecorp```\r\n\r\nYou will see in the \"proof\" it is exactly the same as the in the previous case. \r\n\r\nWhat is different in this case (since it is a user did doc) - there are two verification methods - one for the user (examplecorp) to verify anything the user issues  and one for (trustroot) to verify the did doc that trustroot issues (in this case, this did doc, which is indicated in the proof object)\r\n\r\nI hope this is all correct now. The other part I am getting confused is the order and hierarchy of ```verificationMethod```, ```assertionMethod``` and ```DataIntegrityMethod```. It all seems rather complicated, nested and referential. I am sure it's justified but it's taking me time to sort it all out.\r\n\r\n```bash\r\n{\r\n  \"@context\": [\r\n    \"https://www.w3.org/ns/did/v1\",\r\n    \"https://w3id.org/security/suites/secp256k1recovery-2020\"\r\n  ],\r\n  \"id\": \"did:web:trustroot.ca:examplecorp\",\r\n  \"sub\": \"did:web:trustroot.ca:examplecorp\",\r\n  \"verificationMethod\": [\r\n    {\r\n      \"id\": \"did:web:trustroot.ca:examplecorp\",\r\n      \"controller\": \"did:web:trustroot.ca:examplecorp\",\r\n      \"type\": \"secp256k1\",\r\n      \"publicKeyHex\": [\r\n        \"e4f7cafa0b271769087b06859917921941c4cea13abe842f379fc9209f367592\"\r\n      ]\r\n    },\r\n    {\r\n      \"id\": \"did:web:trustroot.ca#key-dnstlsa\",\r\n      \"controller\": \"did:web:trustroot.ca\",\r\n      \"type\": \"x509prime256v1\",\r\n      \"publicKeyHex\": \"3059301306072a8648ce3d020106082a8648ce3d03010703420004d50eb242c6fcd1078ae74caf893668543cfaa8d5fb2096b1b7dfc687feafa3527655d0f2ebd86037bd6a80f19405c9cd3947dfdbf1190a8c482f9210ddf2da45\"\r\n    }\r\n  ],\r\n  \"proof\": {\r\n    \"id\": \"did:web:trustroot.ca\",\r\n    \"type\": \"DataIntegrityProof\",\r\n    \"dnsType\": \"tlsa\",\r\n    \"proofPurpose\": \"assertionMethod\",\r\n    \"verificationMethod\": \"did:web:trustroot.ca#key-dnstlsa\",\r\n    \"created\": \"2024-02-21T13:21:44.666409\",\r\n    \"expires\": \"2024-02-21T14:21:44.666434\",\r\n    \"cryptosuite\": \"x509prime256v1\",\r\n    \"proofValue\": \"599f9187693899094be7261fa02e7093ea249fede7783880d41f57a6d30d4990cdafc5c3519484df00690a525d0774e674759d22e1e7c3fc00217e1498e8743c\"\r\n  }\r\n}\r\n```",
+          "createdAt": "2024-02-21T13:29:37Z",
+          "updatedAt": "2024-02-21T13:30:35Z"
+        },
+        {
+          "author": "trbouma",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Looking over this overall approach, there are a few things still to sort out.\r\n\r\nIn the proof:\r\n\r\n1.  \"dnsType\" and \"crypotosuite\" are redundant because these can be discerned from the \"verificationMethod\" in this case ```did:web:trustroot.ca#key-dnstlsa```. So these should be removed.\r\n\r\n2. \"type\" is \"DataIntegrityProof\"  - ok, this is a good indicator, but it does not look like it is used a parameter for any lookups.\r\n\r\n3. \"proofPurpose\" is \"assertionMethod\" - not sure how this is used in relation to \"verificationMethod\" - \r\n\r\nI guess I am getting confused because I don't have a clear sense of the underlying data/conceptual model. I will spend some more time reading the specs to sort out",
+          "createdAt": "2024-02-21T13:41:44Z",
+          "updatedAt": "2024-02-21T13:41:44Z"
+        }
+      ]
+    },
+    {
+      "number": 24,
+      "id": "I_kwDOLLNO0c5_9zPH",
+      "title": "Verifiable Web Identifier (urn:vwi) scheme",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/24",
+      "state": "OPEN",
+      "author": "trbouma",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "I put together some ideas for a possible proposal. In short, I see the opportunity to abstract the best of did:web methods an dns/dnssec into a generic unifying urn scheme denoted by vwi (verifiable web identifier)\r\n\r\nComments, reactions, welcome!\r\n\r\nhttps://github.com/CIRALabs/high-assurance-dids-with-dns/blob/w3c_proof/sandbox/vwi-scheme.md",
+      "createdAt": "2024-02-21T14:33:46Z",
+      "updatedAt": "2024-02-21T22:02:26Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "darrellodonnell",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Is there value (now or later) in using a `urn:vid` for Verifiable Identifier?",
+          "createdAt": "2024-02-21T14:40:48Z",
+          "updatedAt": "2024-02-21T14:40:48Z"
+        },
+        {
+          "author": "trbouma",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I see ```urn:vid``` as an even more general scheme for things that don't use the web at all (IoT devices). I am hoping that we can get ToIP to embrace the concept of a ```urn:vid``` while we work on the more specific scheme of ```urn:vwi```\r\n\r\n",
+          "createdAt": "2024-02-21T14:54:34Z",
+          "updatedAt": "2024-02-21T14:54:34Z"
+        },
+        {
+          "author": "trbouma",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Anyway, I've noted that many ```urn``` schemes are provisional (for decades) according to IANA. So I am not holding my breath to get any type of approval soon. I figure the proof will be in the pudding if the community likes it or not.",
+          "createdAt": "2024-02-21T14:56:50Z",
+          "updatedAt": "2024-02-21T14:56:50Z"
+        },
+        {
+          "author": "trbouma",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I added a section on 'embracing what is already built' https://github.com/CIRALabs/high-assurance-dids-with-dns/blob/w3c_proof/sandbox/vwi-scheme.md",
+          "createdAt": "2024-02-21T16:46:11Z",
+          "updatedAt": "2024-02-21T16:46:11Z"
+        },
+        {
+          "author": "darrellodonnell",
+          "authorAssociation": "COLLABORATOR",
+          "body": "As I read through the documents I am finding `urn:vid` to be a big distraction. While I agree that the concept here may turn into something else (E.g. `urn:vid` or `vid:web`) for now anyone that is DID-savvy is going to have trouble grokking things. ",
+          "createdAt": "2024-02-21T17:28:53Z",
+          "updatedAt": "2024-02-21T17:29:02Z"
+        },
+        {
+          "author": "darrellodonnell",
+          "authorAssociation": "COLLABORATOR",
+          "body": "and our audience is `did:web` savvy people. I recommend leaving the `urn:vid` idea as a small section and look at it in the future.",
+          "createdAt": "2024-02-21T17:29:41Z",
+          "updatedAt": "2024-02-21T17:29:41Z"
+        },
+        {
+          "author": "trbouma",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@darrellodonnell comment noted. This is still early and still formalizing the concepts and ensuring their rigour.\r\n\r\nAs this evolves, it will likely become simpler and likely another piece will need to be written to communicate this to the did:web folks. But we are not there, yet.",
+          "createdAt": "2024-02-21T22:02:24Z",
+          "updatedAt": "2024-02-21T22:02:24Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -569,6 +729,62 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 22,
+      "id": "PR_kwDOLLNO0c5nbpER",
+      "title": "Rough draft review",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/pull/22",
+      "state": "MERGED",
+      "author": "jessecarter111",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-02-20T18:51:41Z",
+      "updatedAt": "2024-02-20T18:51:48Z",
+      "baseRepository": "CIRALabs/high-assurance-dids-with-dns",
+      "baseRefName": "main",
+      "baseRefOid": "1c41bb97c33662582d37848c6e1fc6cfd11b2cb8",
+      "headRepository": "CIRALabs/high-assurance-dids-with-dns",
+      "headRefName": "rough-draft-review",
+      "headRefOid": "0b9d58b65f550866b32426e9905a4e294be3239f",
+      "closedAt": "2024-02-20T18:51:48Z",
+      "mergedAt": "2024-02-20T18:51:48Z",
+      "mergedBy": "jessecarter111",
+      "mergeCommit": {
+        "oid": "749cb1b4a6b2a3b7142ffd65335facc0c53abb6e"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 23,
+      "id": "PR_kwDOLLNO0c5nd0XX",
+      "title": "W3c proof",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/pull/23",
+      "state": "MERGED",
+      "author": "jessecarter111",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-02-21T02:59:03Z",
+      "updatedAt": "2024-02-21T03:03:00Z",
+      "baseRepository": "CIRALabs/high-assurance-dids-with-dns",
+      "baseRefName": "main",
+      "baseRefOid": "749cb1b4a6b2a3b7142ffd65335facc0c53abb6e",
+      "headRepository": "CIRALabs/high-assurance-dids-with-dns",
+      "headRefName": "w3c_proof",
+      "headRefOid": "ad14877499001f6dffa39948b73547ad000ca2c8",
+      "closedAt": "2024-02-21T03:03:00Z",
+      "mergedAt": "2024-02-21T03:03:00Z",
+      "mergedBy": "jessecarter111",
+      "mergeCommit": {
+        "oid": "22d37bed8d734f332ec5e342643efb4689797a35"
+      },
       "comments": [],
       "reviews": []
     }
