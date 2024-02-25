@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-02-22T00:17:28.544753+00:00",
+  "timestamp": "2024-02-25T00:18:50.780903+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -382,6 +382,22 @@
           "updatedAt": "2024-02-21T22:02:24Z"
         }
       ]
+    },
+    {
+      "number": 25,
+      "id": "I_kwDOLLNO0c6AFYaa",
+      "title": "Added x509 support for user dids",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/25",
+      "state": "OPEN",
+      "author": "trbouma",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "I added x509 support for user dids in this branch\r\n\r\nhttps://github.com/CIRALabs/high-assurance-dids-with-dns/tree/x509_user\r\n\r\nI have deployed the code and have it running at https://trustroot.ca\r\n\r\nI added some user setup instructions at the end of this doc\r\n\r\nhttps://github.com/CIRALabs/high-assurance-dids-with-dns/blob/x509_user/sandbox/SUBDOMAIN.md\r\n\r\nSo far it is only for two users - trbouma and examplecorp.  you can see how examplecorp resolves at: https://dev.uniresolver.io/#did:web:trustroot.ca:examplecorp\r\n\r\n\r\nIf you look in the verificationMethod, you can see a \"x509\" attribute - that is where I dumped in the x509 public key to show that it works.\r\n\r\nAnyway, there is still some work to be done on how everything should be expressed in the did doc, but all of the binding mechanisms work. Also, the users in the technical prototype work across all subdomains, so examplecorp shows up in the credentials and community subdomains as well. A real system wouldn't do this of course, but this is to make it easy to leverage the same user data across different domains for demonstration purposes.\r\n",
+      "createdAt": "2024-02-22T11:53:30Z",
+      "updatedAt": "2024-02-22T11:53:30Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
