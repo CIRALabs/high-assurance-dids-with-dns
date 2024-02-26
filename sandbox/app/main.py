@@ -94,7 +94,6 @@ def query_did_dns_record(domain):
         certificate_key= str(response[0]).strip("\"")
         logging.debug(f"OK: query_domain {query_domain} certificate_key {certificate_key}")
         return certificate_key
-
     except dns.resolver.NoAnswer:
         return None, None
     
@@ -169,8 +168,7 @@ def get_did_doc(request: Request):
             assert certificate_key == public_key_hex
         except:
             return {"error": "issuer record do not match dns record!"}
-    
-    
+          
     current_time_int = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f%z")
     expiry_time_int = (datetime.utcnow() + timedelta(seconds=settings.TTL)).strftime("%Y-%m-%dT%H:%M:%S.%f%z")
 
@@ -184,12 +182,20 @@ def get_did_doc(request: Request):
                 "sub":      f"did:web:{did_domain}", 
                 "verificationMethod": 
                     [{
+                        "id": f"did:web:{did_domain}#key-dnstlsa",
                         "id": f"did:web:{did_domain}",
                         "controller": f"did:web:{did_domain}",
                         "type": issuer_db[did_domain]['alg'],
                         "publicKeyHex": certificate_key
                      }
-                    ]              
+                    ],  
+                    
+                 "service": [{
+                    "id":f"did:web:{did_domain}#whois",
+                    "type": "VerifiedQuery", 
+                    "serviceEndpoint": f"https://{did_domain}/whois"
+                }]
+           
     }
 
     # create a copy for signing
@@ -220,6 +226,7 @@ def get_did_doc(request: Request):
             "type": "DataIntegrityProof",
             "dnsType": issuer_db[did_domain]['dnsType'],
             "proofPurpose": "assertionMethod",              
+            "verificationMethod": f"did:web:{did_domain}#key-dnstlsa",                       
             "verificationMethod": certificate_key,                       
             "created": current_time_int,
             "expires" : expiry_time_int, 
@@ -233,8 +240,32 @@ def get_did_doc(request: Request):
 
 @app.get("/{entity_name}/did.json",tags=["public"])
 def get_user_did_doc(entity_name: str, request: Request):
+    
+    x509cert = None
+
     try:
         entity_iss = user_db[entity_name]
+        print(entity_iss[0])
+        if entity_iss[0] == "x509":
+            entity_alg = 'x509prime256v1'
+            privkey_pem_file = f"app/data/keys/users/{entity_name}/privkey.pem"
+            print(privkey_pem_file)
+            with open(privkey_pem_file, 'rb') as key_file:
+                private_key_pem = key_file.read()
+            user_private_key = SigningKey.from_pem(private_key_pem)
+            user_public_key = user_private_key.get_verifying_key()
+            user_public_key_pem = user_public_key.to_pem()
+            # Use this x509 public key instead
+            user_public_key_bytes = hexlify(user_public_key.to_string()).decode().upper()
+            print("user public key:", user_public_key_bytes)
+            print("public key pem:", user_public_key_pem.decode())
+            
+            print("we are here!")
+            entity_iss = user_public_key_bytes
+            x509cert = user_public_key_pem.decode()
+        else:
+            entity_alg = "secp256k1"
+
         entity_alg = "secp256k1"
         ## Lookup pubkey
     except:
@@ -297,8 +328,20 @@ def get_user_did_doc(entity_name: str, request: Request):
                         "controller": f"did:web:{did_domain}:{entity_name}",
                         "type": entity_alg,
                         "publicKeyHex": entity_iss
+                     },
+                     {
+                        "id": f"did:web:{did_domain}#key-dnstlsa",
+                        "controller": f"did:web:{did_domain}",
+                        "type": issuer_db[did_domain]['alg'],
+                        "publicKeyHex": certificate_key,
+                        "x509cert": x509cert
                      }
-                    ]              
+                    ],
+                    "service": [{
+                    "id":f"did:web:{did_domain}:{entity_name}#whois",
+                    "type": "VerifiedQuery", 
+                    "serviceEndpoint": f"https://{did_domain}/{entity_name}/whois"
+                }]              
                
     }
 
@@ -329,6 +372,7 @@ def get_user_did_doc(entity_name: str, request: Request):
             "type": "DataIntegrityProof",
             "dnsType": issuer_db[did_domain]['dnsType'],
             "proofPurpose": "assertionMethod",              
+            "verificationMethod": f"did:web:{did_domain}#key-dnstlsa",                       
             "verificationMethod": certificate_key,                       
             "created": current_time_int,
             "expires" : expiry_time_int, 
@@ -343,6 +387,44 @@ def get_user_did_doc(entity_name: str, request: Request):
 def get_verify_did(did: str, request: Request):
     checks = {}
 
+    #prepend did:web if not supplied
+    did = "did:web:" + did if did[:7] != 'did:web' else did
+
+    # get validat url
+
+    # Step 1 : Get web url
+    did_web_url = did_web_to_url(did)
+    checks['did_web_url'] = did_web_url
+
+    # Step 2: Get did doc
+    did_doc = download_did_document(did)
+    
+    if did_doc == None:
+        checks['did_doc'] = "No did doc!"
+        return {"did": did, "checks": checks }
+    else:
+        checks['did_doc'] = did_doc
+
+    #Step 3: determine type of did doc and which DNS rer
+
+    if did_doc.get("header", None):
+        checks["dnsType"] = did_doc['header']['dnsType']
+        
+    else:
+        checks['dnsType'] = 'not defined'
+
+    return {"did": did, "checks": checks }
+
+@app.get("/whois",tags=["public"])
+def get_verify_did(request: Request):
+    info = {"detail": f"whois not yet implemented yet for {request.url.hostname}"}
+    return info
+
+@app.get("/{user}/whois",tags=["public"])
+def get_verify_did(user: str, request: Request):
+    info = {"detail": f"whois not yet implemented for {user}"}
+    return info
+  
     #prepend did:web if not supplied
     did = "did:web:" + did if did[:7] != 'did:web' else did
 

@@ -70,6 +70,7 @@ def get_tls_public_key(host, port=443):
 
 def did_web_to_url(did_web):
     # Routine to transform did_web into corresponding url
+    did_web = "did:web:" + did_web if did_web[:7] != 'did:web' else did_web
 
     # replace colon with slash and encoded colon with colon
 
@@ -219,6 +220,10 @@ def verify_did_doc(did_web):
 
     # Start with verification result as true and toggle to false if there is any error
     verification_result = True
+
+    #prepend did:web if not supplied
+    did_web = "did:web:" + did_web if did_web[:7] != 'did:web' else did_web
+    
     # Step 1 get the did doc
 
     try:
@@ -387,18 +392,23 @@ if __name__ == "__main__":
      
     # did_web = 
    
-    did_test = [    "did:web:trbouma@trustroot.ca"
-                    
-                    
-                    
+    did_test = [    "did:web:trustregistry.ca",
+                    "trbouma@trustroot.ca",
+                    "trbouma@creators.trustroot.ca" 
                       
                 ]    
-
     
+    for each_did in did_test:
+        print(each_did)
+        print(download_did_document(each_did))
+        result = verify_did_doc(each_did)
+        print(f"verify did {each_did}:", result)
+        
+    
+    did_test = ["did:web:trbouma@trustroot.ca"]    
     for each_did in did_test:
         print(each_did)
         result = verify_did_doc(each_did)
         print(f"verify did {each_did}:", result)
         
-
 

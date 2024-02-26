@@ -73,3 +73,26 @@ openssl req -x509 -sha256 -days 365 -key privkey.pem -in csr.pem -out certificat
 ### TLSA for DID doc
 
 Follow the same processs as above for your trust root domain  ```certificate.pem``` file to create a record like: ```_did.subdomain.trustroot.ca. IN TLSA 3 1 0 30593...c3b3e```
+
+### X509 certificates for user dids
+
+The technical prototype now supports x509 certificates for user dids. The steps to create a x509 user cert are as follows:
+
+- create subdirectory in ```data/keys/users/``` that corresponds to the username e.g., ```/data/keys/users/examplecorp```
+- cd to the sudirectory and run the following commands (yes, the are same commands as for the issuers)
+
+```bash
+openssl ecparam -name prime256v1 -genkey -out privkey.pem
+openssl req -new -key privkey.pem -out csr.pem
+openssl req -x509 -sha256 -days 365 -key privkey.pem -in csr.pem -out certificate.pem
+```
+
+- when you are done, you should have these three files: ```certificate.pem  csr.pem  privkey.pem```
+
+- modify the ```/data/user.json``` file to have the following corresponding entry:
+
+```bash
+{"user": "examplecorp", "pubkey":"x509" },
+```
+
+- restart the service so changes can take effect
