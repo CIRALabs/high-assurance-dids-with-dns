@@ -1,4 +1,4 @@
-# TODO - Your title
+# high-assurance-dids-with-dns
 
 This is the working area for the individual Internet-Draft, "TODO - Your title".
 

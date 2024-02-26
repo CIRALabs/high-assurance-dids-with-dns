@@ -405,4 +405,10 @@ if __name__ == "__main__":
         print(f"verify did {each_did}:", result)
         
     
+    did_test = ["did:web:trbouma@trustroot.ca"]    
+    for each_did in did_test:
+        print(each_did)
+        result = verify_did_doc(each_did)
+        print(f"verify did {each_did}:", result)
+        
 

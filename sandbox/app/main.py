@@ -94,7 +94,6 @@ def query_did_dns_record(domain):
         certificate_key= str(response[0]).strip("\"")
         logging.debug(f"OK: query_domain {query_domain} certificate_key {certificate_key}")
         return certificate_key
-
     except dns.resolver.NoAnswer:
         return None, None
     
@@ -169,8 +168,7 @@ def get_did_doc(request: Request):
             assert certificate_key == public_key_hex
         except:
             return {"error": "issuer record do not match dns record!"}
-    
-    
+          
     current_time_int = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f%z")
     expiry_time_int = (datetime.utcnow() + timedelta(seconds=settings.TTL)).strftime("%Y-%m-%dT%H:%M:%S.%f%z")
 
@@ -185,6 +183,7 @@ def get_did_doc(request: Request):
                 "verificationMethod": 
                     [{
                         "id": f"did:web:{did_domain}#key-dnstlsa",
+                        "id": f"did:web:{did_domain}",
                         "controller": f"did:web:{did_domain}",
                         "type": issuer_db[did_domain]['alg'],
                         "publicKeyHex": certificate_key
@@ -228,6 +227,7 @@ def get_did_doc(request: Request):
             "dnsType": issuer_db[did_domain]['dnsType'],
             "proofPurpose": "assertionMethod",              
             "verificationMethod": f"did:web:{did_domain}#key-dnstlsa",                       
+            "verificationMethod": certificate_key,                       
             "created": current_time_int,
             "expires" : expiry_time_int, 
             "cryptosuite": issuer_db[did_domain]['alg'], 
@@ -266,6 +266,7 @@ def get_user_did_doc(entity_name: str, request: Request):
         else:
             entity_alg = "secp256k1"
 
+        entity_alg = "secp256k1"
         ## Lookup pubkey
     except:
         return {"error": "issuing entity does not exist"}
@@ -372,6 +373,7 @@ def get_user_did_doc(entity_name: str, request: Request):
             "dnsType": issuer_db[did_domain]['dnsType'],
             "proofPurpose": "assertionMethod",              
             "verificationMethod": f"did:web:{did_domain}#key-dnstlsa",                       
+            "verificationMethod": certificate_key,                       
             "created": current_time_int,
             "expires" : expiry_time_int, 
             "cryptosuite": issuer_db[did_domain]['alg'], 
@@ -422,3 +424,31 @@ def get_verify_did(request: Request):
 def get_verify_did(user: str, request: Request):
     info = {"detail": f"whois not yet implemented for {user}"}
     return info
+  
+    #prepend did:web if not supplied
+    did = "did:web:" + did if did[:7] != 'did:web' else did
+
+    # get validat url
+
+    # Step 1 : Get web url
+    did_web_url = did_web_to_url(did)
+    checks['did_web_url'] = did_web_url
+
+    # Step 2: Get did doc
+    did_doc = download_did_document(did)
+    
+    if did_doc == None:
+        checks['did_doc'] = "No did doc!"
+        return {"did": did, "checks": checks }
+    else:
+        checks['did_doc'] = did_doc
+
+    #Step 3: determine type of did doc and which DNS rer
+
+    if did_doc.get("header", None):
+        checks["dnsType"] = did_doc['header']['dnsType']
+        
+    else:
+        checks['dnsType'] = 'not defined'
+
+    return {"did": did, "checks": checks }
