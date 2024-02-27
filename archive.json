@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-02-25T00:18:50.780903+00:00",
+  "timestamp": "2024-02-27T00:17:46.032972+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -800,6 +800,34 @@
       "mergedBy": "jessecarter111",
       "mergeCommit": {
         "oid": "22d37bed8d734f332ec5e342643efb4689797a35"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 26,
+      "id": "PR_kwDOLLNO0c5n8h5W",
+      "title": "X509 user",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/pull/26",
+      "state": "MERGED",
+      "author": "jessecarter111",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-02-26T17:37:07Z",
+      "updatedAt": "2024-02-26T17:41:02Z",
+      "baseRepository": "CIRALabs/high-assurance-dids-with-dns",
+      "baseRefName": "main",
+      "baseRefOid": "5900911e845f15601924f6311288a8f9b6617b54",
+      "headRepository": "CIRALabs/high-assurance-dids-with-dns",
+      "headRefName": "x509_user",
+      "headRefOid": "84f7d2881c579a1e0874737c102b5978b5a345ce",
+      "closedAt": "2024-02-26T17:41:02Z",
+      "mergedAt": "2024-02-26T17:41:02Z",
+      "mergedBy": "jessecarter111",
+      "mergeCommit": {
+        "oid": "45cd40eaff783d8255d866ec440c7e20ace8eef0"
       },
       "comments": [],
       "reviews": []
