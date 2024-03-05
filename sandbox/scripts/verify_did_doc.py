@@ -14,166 +14,242 @@ from binascii import unhexlify
 from datetime import datetime
 from urllib.parse import urlparse
 
-def did_web_to_url(did_web):
-    # Routine to transform did_web into corresponing url
+from joserfc.jwk import JWKRegistry
+from multibase import decode
 
-    did_web_url = did_web.replace(":", "/").replace('did/web/', "https://")
-    
+from cryptography.hazmat.primitives.serialization import (
+    load_der_public_key,
+    Encoding,
+    PublicFormat,
+)
+from cryptography.hazmat.primitives.asymmetric import ed25519
+
+from urllib.parse import urlparse
+import sys
+from ecdsa import VerifyingKey
+from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives import hashes
+
+
+def _did_web_to_url(did_web: str) -> str:
+    """
+    Converts a DID Web identifier to a URL pointing to the corresponding DID document.
+
+    Args:
+        did_web (str): The DID Web identifier to convert.
+
+    Returns:
+        str: The URL pointing to the corresponding DID document.
+    """
+    did_web_url = did_web.replace(":", "/").replace("did/web/", "https://")
+
     parsed_url = urlparse(did_web_url)
-    if parsed_url.path == '':
-        did_web_url = did_web_url + '/.well-known/did.json'
+    if parsed_url.path == "":
+        did_web_url = did_web_url + "/.well-known/did.json"
     else:
-        did_web_url = did_web_url + "/did.json"    
-    
+        did_web_url = did_web_url + "/did.json"
+
     print("did_web_url:", did_web_url)
 
-    # did_web_url =     'https://' + did_web.split(':')[-1] + '/.well-known/did.json'
     return did_web_url
 
 
-def query_tlsa_record(domain, usage, selector, matching_type):
+def _extract_target_verifcation_method(
+    did_doc: dict, target_verification_method_id: str
+) -> dict:
+    try:
+        verificationMethods = did_doc.get("verificationMethod")
+        for verificationMethod in verificationMethods:
+            if target_verification_method_id == verificationMethod.get("id"):
+                return verificationMethod
+    except:
+        return False
+    return False
+
+
+def query_tlsa_record(domain: str) -> dns.rdata:
+    """
+    Queries the TLSA record for a given domain.
+
+    Args:
+        domain (str): The domain to query the TLSA record for.
+        matching_type (str): The matching type of the TLSA record.
+
+    Returns:
+        dns.rdata: The TLSA record matching the given domain and matching type,
+                   or None if no matching record is found.
+    """
     resolver = dns.resolver.Resolver()
     resolver.use_dnssec = True
-    resolver.nameservers = ['8.8.8.8']
+    resolver.nameservers = ["8.8.8.8"]
 
     try:
-        query_domain = '_did.' + domain
-        response = resolver.resolve(query_domain, 'TLSA')
+        query_domain = "_did." + domain
+        response = resolver.resolve(query_domain, "TLSA")
 
+        tlsa_records = []
         for rdata in response:
-            if (rdata.usage == usage and
-                rdata.selector == selector and
-                rdata.mtype == matching_type):
-                return rdata
+            if rdata.usage == 3 and rdata.selector == 1 and rdata.mtype == 0:
+                tlsa_records.append(rdata.cert)
+        return tlsa_records
 
     except dns.resolver.NoAnswer:
         return None
 
 
-def query_txt_record(domain):
-    resolver = dns.resolver.Resolver()
-    resolver.use_dnssec = True
-    resolver.nameservers = ['8.8.8.8']
-    resolver.use_edns = True
+def verify_signature(cryptosuite, signature, message, public_key):
+    """
+    Verify a signature using the specified cryptosuite.
 
-    try:
-        query_domain = '_pubkey.' + domain        
-        response = resolver.resolve(query_domain, 'TXT')
-        
-        return response[0]
+    Args:
+        cryptosuite (str): The cryptosuite used for the signature.
+        signature (str): The signature to verify.
+        message (str): The message that was signed.
+        public_key (str): The public key used for verification.
 
-    except dns.resolver.NoAnswer:
-        return None
-    
-    
-def query_pubkey_record(domain):
-    resolver = dns.resolver.Resolver()
-    resolver.use_dnssec = True
-    resolver.nameservers = ['8.8.8.8']
-    resolver.use_edns = True
+    Returns:
+        bool: True if the signature is valid, False otherwise.
+    """
+    print(cryptosuite)
+    print(signature)
+    print(message)
+    print(public_key)
+    if cryptosuite == "ecdsa-jfc-2019":
+        try:
+            print("We're here")
+            signature_bytes = base58.b58decode(signature)
+            # print(public_key.sign)
+            public_key.verify(signature_bytes, message, ec.ECDSA(hashes.SHA256()))
+        except Exception as e:
+            print(e)
+            print("The signature is invalid.")
+    elif cryptosuite == "eddsa-jcs-2022":
+        try:
+            signature_bytes = unhexlify(signature.encode())
+            message_bytes = message.encode()
+            public_key.verify(signature, message)
+        except:
+            print("The signature is invalid.")
 
-    try:
-        query_domain = '_pubkey.' + domain        
-        response = resolver.resolve(query_domain, 'TXT')
-        
-        return response[0]
-
-    except dns.resolver.NoAnswer:
-        return None
-
-
-def verify_signature(signature, message, public_key):
-
-    public_key_obj = PublicKey(unhexlify(public_key), raw=True)
-    sig_obj = public_key_obj.ecdsa_deserialize(unhexlify(signature.encode()))
-    
-    return public_key_obj.ecdsa_verify(message.encode(), sig_obj, digest=hashlib.sha256)
+    return False
 
 
-def verify_did_doc(did_doc, did_web):
+def verify_did_doc(did_doc: dict):
+    """
+    Verify the integrity and authenticity of a DID document.
 
-    # Step 1: Extract domain from did:web identifier
-    domain = urlparse(did_web_to_url(did_web)).hostname
+    Args:
+        did_doc (dict): The DID document to be verified.
+        did_web (str): The DID Web identifier.
 
-    # Step 2: Get public key from DNS/DNSSEC record
-    pubkey_record = query_pubkey_record(domain)
-   
-    if pubkey_record:
-        pubkey_record_str = str(pubkey_record).strip("\"")
-        print("_pubkey record:", pubkey_record_str)        
+    Returns:
+        bool: True if the DID document is valid, False otherwise.
+    """
+    # Step 1: Verify did doc proof is not expired
+    current_time = datetime.utcnow()
+    exp_date = did_doc.get("proof").get("expires")
+    if exp_date[-1] == "Z":
+        exp_date = exp_date[:-1]
+    exp_date = datetime.fromisoformat(exp_date)
+    if exp_date >= current_time:
+        print("OK: Not expired.")
     else:
-        print("No matching pubkey record found.")
+        print(f"Invalid: Proof has expired - {did_doc.get('proof').get('expires')}")
         return False
 
-    # Step 3: Extract signature, iss,and exp from did doc
-    try:
-        signature = did_doc['signature']
-        iss = did_doc['iss']
-        exp = did_doc['exp']
-        
-    except:
-        print("Not a valid did doc!")
+    # Step 2: Determine the correct verificationMethod to verify the proof
+    # i.e The verificationMethod used to generate the proof will either belong to the did doc being verified, or reference a verificationMethod belonging to another did
+    proof_verification_method = did_doc.get("proof").get("verificationMethod")
+    if proof_verification_method.split("#")[0] == did_doc.get("id"):
+        target_verification_method = _extract_target_verifcation_method(
+            did_doc, did_doc.get("proof").get("verificationMethod")
+        )
+
+    else:
+        root_did_doc = download_did_document(proof_verification_method.split("#")[0])
+        target_verification_method = _extract_target_verifcation_method(
+            root_did_doc, did_doc.get("proof").get("verificationMethod")
+        )
+
+    # Step 3: Extract the verificationMethod public key to der format:
+    der_format_verification_method = convert_verification_method_to_der(
+        target_verification_method
+    )
+
+    print(target_verification_method)
+
+    # Step 4: Extract domain from did:web identifier
+    domain = urlparse(
+        _did_web_to_url(target_verification_method.get("id").split("#")[0])
+    ).hostname
+
+    # Step 5: Get public key from DNS/DNSSEC record
+    tlsa_records = query_tlsa_record(domain)
+    match = False
+    for pub_key in tlsa_records:
+        if pub_key == der_format_verification_method.public_bytes(
+            Encoding.DER, PublicFormat.SubjectPublicKeyInfo
+        ):
+            match = True
+            break
+    if not match:
+        print(
+            f"Invalid: verificationMethod {target_verification_method} doesn't match any corresponding TLSA records."
+        )
         return False
-    print("OK: Valid did doc")
-    # Remove sections that are not signed
+    print("OK: Valid verificationMethod")
+    proof = did_doc.pop("proof")
+    # # Step 7: Verify the did doc proof
+    verify_signature(
+        proof.get("cryptosuite"),
+        proof.get("proofValue"),
+        json.dumps(did_doc).encode("utf-8"),
+        der_format_verification_method,
+    )
 
-    # Step 4: Remove non-payload data for signature verification
-    
-    del did_doc["header"]
-    del did_doc["signature"]
-    # Dump resulting for signature check
-    message = json.dumps(did_doc)
 
-    #  Step 5: Check to see if iss key is the same as from DNS
-    try:
-        assert iss == pubkey_record_str
-    except:
-        return False
-    
-    print("OK: Valid public key")
-
-    # Step 6: Check to see if did doc is expired
-    current_time_int = int(datetime.utcnow().timestamp())
-    
-    try:
-        assert current_time_int < exp
-    except:
-        return False
-    print("OK: Not expired.")
-    print(pubkey_record_str, iss)
-
-    # Step 7: Verify the did doc
-    public_key_obj = PublicKey(unhexlify(pubkey_record_str), raw=True)
-    sig_obj = public_key_obj.ecdsa_deserialize(unhexlify(signature.encode()))
-        
-    
-    return public_key_obj.ecdsa_verify(message.encode(), sig_obj, digest=hashlib.sha256)
- 
-
-def download_did_document(did_web):
-
-    did_web_url = did_web_to_url(did_web)
+def download_did_document(did_web: str) -> dict:
+    did_web_url = _did_web_to_url(did_web)
     try:
         response = requests.get(did_web_url)
         if response.status_code == 200:
             return response.json()
         else:
-            print(f"Failed to download DID document. Status code: {response.status_code}")
+            print(
+                f"Failed to download DID document. Status code: {response.status_code}"
+            )
             return None
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
-        
+
+
+def convert_verification_method_to_der(verificationMethod: dict) -> object:
+    # https://www.w3.org/TR/did-spec-registries/#jsonwebkey2020
+    # https://www.w3.org/TR/did-spec-registries/#ecdsasecp256k1verificationkey2019
+    if verificationMethod.get("publicKeyJwk"):
+        key = JWKRegistry.import_key(verificationMethod.get("publicKeyJwk"))
+        return load_der_public_key(key.as_der())
+    # https://www.w3.org/TR/did-spec-registries/#ed25519verificationkey2018
+    # https://w3c-ccg.github.io/lds-ed25519-2018/#examples
+    elif verificationMethod.get("publicKeyMultibase"):
+        return ed25519.Ed25519PublicKey.from_public_bytes(
+            decode(verificationMethod.get("publicKeyMultibase"))
+        )
+
+
 if __name__ == "__main__":
-    
-    did_web = "did:web:lncreds.ca:examplecorp"  
+    if len(sys.argv) != 2:
+        print("Usage: python verify_did_doc.py <did_web>")
+        sys.exit(1)
+
+    did_web = sys.argv[1]
 
     did_doc = download_did_document(did_web)
-    
+
     print(json.dumps(did_doc, indent=4))
 
-
     # verify did doc using pubkey that was looked up on DNS
-    result = verify_did_doc(did_doc, did_web)
+    result = verify_did_doc(did_doc)
 
     print("verify did doc", result)

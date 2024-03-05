@@ -9,6 +9,4 @@ parsed_dict = parse_qs(parsed_record.query)
 
 print(parsed_record.path)
 print(parsed_dict)
-pubkey = parsed_dict['kid'][0]
-
-
+pubkey = parsed_dict["kid"][0]

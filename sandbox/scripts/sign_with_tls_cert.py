@@ -14,7 +14,7 @@ from verify_did import query_tlsa_record, verify_signature, verify_ecdsa_signatu
 # run script from sandbox directory
 
 # Path to your private key file (usually in PEM format)
-private_key_file = 'keys/credentials/privkey.pem'
+private_key_file = "keys/credentials/privkey.pem"
 
 # The data you want to sign
 data_to_sign = b"Data to be signed"
@@ -24,21 +24,21 @@ with open(private_key_file, "rb") as key_file:
     private_key = serialization.load_pem_private_key(
         key_file.read(),
         password=None,  # Provide a password if your key is encrypted
-        backend=default_backend()
+        backend=default_backend(),
     )
 
 public_key = private_key.public_key()
 pem_public_key = public_key.public_bytes(
     encoding=serialization.Encoding.PEM,
-    format=serialization.PublicFormat.SubjectPublicKeyInfo
+    format=serialization.PublicFormat.SubjectPublicKeyInfo,
 )
 
 print(pem_public_key.decode())
 # Sign the data
-  
+
 der_public_key = public_key.public_bytes(
     encoding=serialization.Encoding.DER,
-    format=serialization.PublicFormat.SubjectPublicKeyInfo
+    format=serialization.PublicFormat.SubjectPublicKeyInfo,
 )
 
 hex_public_key = binascii.hexlify(der_public_key).decode()
@@ -50,11 +50,8 @@ print(hex_public_key)
 
 signature = private_key.sign(
     data_to_sign,
-    padding.PSS(
-        mgf=padding.MGF1(hashes.SHA256()),
-        salt_length=padding.PSS.MAX_LENGTH
-    ),
-    hashes.SHA256()
+    padding.PSS(mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH),
+    hashes.SHA256(),
 )
 print(signature)
 signature_str = base58.b58encode(signature).decode()
@@ -69,15 +66,13 @@ tlsa_record = query_tlsa_record("credentials.trustroot.ca", 3, 1, 0)
 public_key_dns = tlsa_record.cert
 
 
-
 # verify_ecdsa_signature(signature_bytes,data_to_sign,der_public_key)
 
 print("############ECDSA#################")
-private_key_file = 'keys/test/privkey.pem'
+private_key_file = "keys/test/privkey.pem"
 
-with open(private_key_file, 'rb') as key_file:
+with open(private_key_file, "rb") as key_file:
     private_key_pem = key_file.read()
 
 
-
-private_key =ecdsa.SigningKey.from_pem(private_key_pem)
+private_key = ecdsa.SigningKey.from_pem(private_key_pem)
