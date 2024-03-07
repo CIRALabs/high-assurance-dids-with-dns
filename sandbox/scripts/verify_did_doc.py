@@ -1,34 +1,30 @@
-import hashlib
-import base58
-import ecdsa
-import requests
 import json
-import dns.resolver
-import dns.message
-import dns.rdatatype
-import dns.rdata
-
-from secp256k1 import PrivateKey, PublicKey
+import sys
 from binascii import unhexlify
-
 from datetime import datetime
 from urllib.parse import urlparse
 
+import base58
+import dns.message
+import dns.rdata
+import dns.rdatatype
+import dns.resolver
+import requests
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import ec, ed25519
+from cryptography.hazmat.primitives.serialization import (
+    Encoding,
+    PublicFormat,
+    load_der_public_key,
+)
 from joserfc.jwk import JWKRegistry
 from multibase import decode
 
-from cryptography.hazmat.primitives.serialization import (
-    load_der_public_key,
-    Encoding,
-    PublicFormat,
-)
-from cryptography.hazmat.primitives.asymmetric import ed25519
+import logging
 
-from urllib.parse import urlparse
-import sys
-from ecdsa import VerifyingKey
-from cryptography.hazmat.primitives.asymmetric import ec
-from cryptography.hazmat.primitives import hashes
+logging.basicConfig(
+    level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 def _did_web_to_url(did_web: str) -> str:
@@ -57,6 +53,16 @@ def _did_web_to_url(did_web: str) -> str:
 def _extract_target_verifcation_method(
     did_doc: dict, target_verification_method_id: str
 ) -> dict:
+    """
+    Extracts the target verification method from the given DID document.
+
+    Args:
+        did_doc (dict): The DID document to extract the verification method from.
+        target_verification_method_id (str): The ID of the target verification method.
+
+    Returns:
+        dict: The target verification method if found, otherwise False.
+    """
     try:
         verificationMethods = did_doc.get("verificationMethod")
         for verificationMethod in verificationMethods:
@@ -69,7 +75,7 @@ def _extract_target_verifcation_method(
 
 def query_tlsa_record(domain: str) -> dns.rdata:
     """
-    Queries the TLSA record for a given domain.
+    Queries the TLSA records for a given domain.
 
     Args:
         domain (str): The domain to query the TLSA record for.
@@ -164,7 +170,6 @@ def verify_did_doc(did_doc: dict):
         target_verification_method = _extract_target_verifcation_method(
             did_doc, did_doc.get("proof").get("verificationMethod")
         )
-
     else:
         root_did_doc = download_did_document(proof_verification_method.split("#")[0])
         target_verification_method = _extract_target_verifcation_method(
@@ -183,8 +188,9 @@ def verify_did_doc(did_doc: dict):
         _did_web_to_url(target_verification_method.get("id").split("#")[0])
     ).hostname
 
+    # Step 5: Verify
     # Step 5: Get public key from DNS/DNSSEC record
-    tlsa_records = query_tlsa_record(domain)
+    tlsa_records = query_tlsa_record("_did." + domain)
     match = False
     for pub_key in tlsa_records:
         if pub_key == der_format_verification_method.public_bytes(
@@ -225,17 +231,13 @@ def download_did_document(did_web: str) -> dict:
 
 
 def convert_verification_method_to_der(verificationMethod: dict) -> object:
-    # https://www.w3.org/TR/did-spec-registries/#jsonwebkey2020
-    # https://www.w3.org/TR/did-spec-registries/#ecdsasecp256k1verificationkey2019
     if verificationMethod.get("publicKeyJwk"):
         key = JWKRegistry.import_key(verificationMethod.get("publicKeyJwk"))
         return load_der_public_key(key.as_der())
-    # https://www.w3.org/TR/did-spec-registries/#ed25519verificationkey2018
-    # https://w3c-ccg.github.io/lds-ed25519-2018/#examples
     elif verificationMethod.get("publicKeyMultibase"):
-        return ed25519.Ed25519PublicKey.from_public_bytes(
-            decode(verificationMethod.get("publicKeyMultibase"))
-        )
+        return load_der_public_key(decode(verificationMethod.get("publicKeyMultibase")))
+    else:
+        raise ValueError("Invalid verificationMethod format.")
 
 
 if __name__ == "__main__":

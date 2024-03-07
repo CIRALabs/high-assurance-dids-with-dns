@@ -6,7 +6,7 @@ cffi==1.16.0
 charset-normalizer==3.3.2
 click==8.1.7
 cryptography==42.0.3
-dnspython==2.5.0
+dnspython==2.6.1
 ecdsa==0.18.0
 exceptiongroup==1.2.0
 fastapi==0.109.2

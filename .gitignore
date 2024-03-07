@@ -30,6 +30,6 @@ report.xml
 /sandbox/*.pem
 /sandbox/app/data/*.json
 .env
-
+.venv
 
 sandbox/app/__pycache__/main.cpython-310.pyc
