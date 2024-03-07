@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-03-05T00:17:09.712003+00:00",
+  "timestamp": "2024-03-07T00:14:22.276245+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -396,6 +396,22 @@
       "body": "I added x509 support for user dids in this branch\r\n\r\nhttps://github.com/CIRALabs/high-assurance-dids-with-dns/tree/x509_user\r\n\r\nI have deployed the code and have it running at https://trustroot.ca\r\n\r\nI added some user setup instructions at the end of this doc\r\n\r\nhttps://github.com/CIRALabs/high-assurance-dids-with-dns/blob/x509_user/sandbox/SUBDOMAIN.md\r\n\r\nSo far it is only for two users - trbouma and examplecorp.  you can see how examplecorp resolves at: https://dev.uniresolver.io/#did:web:trustroot.ca:examplecorp\r\n\r\n\r\nIf you look in the verificationMethod, you can see a \"x509\" attribute - that is where I dumped in the x509 public key to show that it works.\r\n\r\nAnyway, there is still some work to be done on how everything should be expressed in the did doc, but all of the binding mechanisms work. Also, the users in the technical prototype work across all subdomains, so examplecorp shows up in the credentials and community subdomains as well. A real system wouldn't do this of course, but this is to make it easy to leverage the same user data across different domains for demonstration purposes.\r\n",
       "createdAt": "2024-02-22T11:53:30Z",
       "updatedAt": "2024-02-22T11:53:30Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 27,
+      "id": "I_kwDOLLNO0c6BbipM",
+      "title": "Scoped out Verifiable Web Identifiers",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/27",
+      "state": "OPEN",
+      "author": "trbouma",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Hi everyone,\r\n\r\nI will leave the repo material that I have so far developed on ```verifiable web identifiers```, but I now consider it to be out of scope for this specific project.\r\n\r\nI have spun up a separate repo under my own account: https://github.com/trbouma/vwi/ and will continue working on it there.\r\nAs I described, this is a more generic scheme that is enabled by ```did:web``` but also some other decentralized ecosystems that I am involved in, namely ```nostr``` at https://github.com/nostr-protocol/nips\r\n\r\nAnyway, if you have any questions/concerns let me know.\r\n\r\n\r\n\r\n\r\n\r\n",
+      "createdAt": "2024-03-06T13:11:08Z",
+      "updatedAt": "2024-03-06T13:11:08Z",
       "closedAt": null,
       "comments": []
     }
