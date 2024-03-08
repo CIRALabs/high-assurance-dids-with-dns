@@ -1,6 +1,7 @@
 import argparse
 import json
 from datetime import datetime
+from urllib.parse import urlparse
 
 import multibase
 import requests
@@ -9,6 +10,55 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from joserfc import jwk
+
+
+def _did_web_to_url(did_web: str) -> str:
+    """
+    Converts a DID Web identifier to a URL pointing to the corresponding DID document.
+
+    Args:
+        did_web (str): The DID Web identifier to convert.
+
+    Returns:
+        str: The URL pointing to the corresponding DID document.
+    """
+    did_web_url = did_web.replace(":", "/").replace("did/web/", "https://")
+
+    parsed_url = urlparse(did_web_url)
+
+    if parsed_url.path == "":
+        did_web_url = did_web_url + "/.well-known/did.json"
+    else:
+        did_web_url = did_web_url + "/did.json"
+
+    print("did_web_url:", did_web_url)
+
+    return did_web_url
+
+
+def resolve_did_web(did: str):
+    """
+    Resolves a DID using the DID Web protocol.
+
+    Args:
+        did (str): The DID to resolve.
+
+    Returns:
+        dict or None: The resolved DID document as a dictionary, or None if the resolution failed.
+    """
+    did_web_url = _did_web_to_url(did)
+    try:
+        response = requests.get(did_web_url)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            print(
+                f"Failed to download DID document. Status code: {response.status_code}"
+            )
+            return None
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
 
 
 def download_did_document(did):
@@ -24,6 +74,9 @@ def download_did_document(did):
     Raises:
         requests.exceptions.RequestException: If an error occurs while making the HTTP request.
     """
+    if did.split(":")[1] == "web":
+        return resolve_did_web(did)
+
     resolver_url = f"https://uniresolver.io/1.0/identifiers/{did}"
     try:
         response = requests.get(resolver_url)
@@ -192,10 +245,10 @@ if __name__ == "__main__":
         json.dumps(
             main(
                 args.did,
-                args.verification_method,
+                args.verificationMethod,
                 args.expiry,
                 args.cryptosuite,
-                args.private_key,
+                args.path,
             ),
             indent=4,
         )

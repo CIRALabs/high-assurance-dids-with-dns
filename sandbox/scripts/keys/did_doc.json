@@ -1,0 +1,38 @@
+{
+    "@context": [
+      "https://www.w3.org/ns/did/v1",
+      "https://w3id.org/security/suites/jws-2020/v1",
+      "https://github.com/trustoverip/tswg-trust-registry-service-profile/blob/main/spec.md"
+    ],
+    "id": "did:web:trustregistry.ca:test1",
+    "verificationMethod": [{
+        "id": "did:web:trustregistry.ca:test1#key-1",
+        "type": "Ed25519VerificationKey2018",
+        "controller": "did:web:trustregistry.ca:test1",
+        "publicKeyJwk": {
+            "crv": "Ed25519",
+            "x": "3Agfp8raiTl5Ayp5xK2HJ-mkfhet4ZVknegt1vKqFBQ",
+            "kty": "OKP"
+        }
+    }, {
+        "id": "did:web:trustregistry.ca:test1#key-2",
+        "type": "EcdsaSecp256k1VerificationKey2019",
+        "controller": "did:web:trustregistry.ca:test1",
+        "publicKeyMultibase": "PZ8Tyr4Nx8MHsRAGMpZmZ6TWY63dXWSCy8PRvqUwHZ3mNNcM2ys8WYRSHzCsiHYFP1NbRiqKv3jSATkfkM1Uer2KwDyfArUvLzvVgG7ajUosuEUXG1TPJQ8B"
+    }],
+    "authentication": [
+      "did:web:trustregistry.com#key-1"
+    ],
+    "assertionMethod": [
+      "did:web:trustregistry.com#key-1"
+    ],
+    "proof": {
+      "type": "DataIntegrityProof",
+      "cryptosuite": "ecdsa-jfc-2019",
+      "created": "2023-10-11T15:27:27Z",
+      "expires": "2025-10-11T15:27:27Z",
+      "verificationMethod": "did:web:trustregistry.ca#key-1",
+      "proofPurpose": "assertionMethod",
+      "proofValue": "2VszW6oinTqBaSbz9oAfh6tAmYsc57smCr1nSirGucB1XA8VjcGTcUXfLZbnTyppnJibhr7pMzEmUFELxFqdWKH9"
+    }
+}

@@ -5,6 +5,7 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ed25519
 from joserfc.jwk import ECKey, OKPKey
 import argparse
+import multibase
 
 EC_KEY_CURV = "secp256k1"
 
@@ -83,7 +84,9 @@ def generate_ecdsasecp256k1_verification_method_multibase() -> dict:
     print(private_key.as_pem().decode())
     print("Public Key:")
     print(private_key.as_pem(private=False).decode())
-    multibase_public_key = base58.b58encode(private_key.as_der(private=False)).decode()
+    multibase_public_key = multibase.encode(
+        "base58btc", private_key.as_der(private=False)
+    ).decode()
     verification_method = {
         "id": "your did",
         "type": "EcdsaSecp256k1VerificationKey2019",

@@ -1,0 +1,139 @@
+# Verify DNSSEC
+# Verify URI and TLSA record match DID and verificationMethod
+# Verify proof isn't expired
+# Verify signature using verificationMethod
+
+import json
+from urllib.parse import urlparse
+from joserfc.jwk import JWKRegistry
+from cryptography.hazmat.primitives import serialization
+
+import multibase
+import requests
+
+
+def _did_web_to_url(did_web: str) -> str:
+    """
+    Converts a DID Web identifier to a URL pointing to the corresponding DID document.
+
+    Args:
+        did_web (str): The DID Web identifier to convert.
+
+    Returns:
+        str: The URL pointing to the corresponding DID document.
+    """
+    did_web_url = did_web.replace(":", "/").replace("did/web/", "https://")
+
+    parsed_url = urlparse(did_web_url)
+    if parsed_url.path == "":
+        did_web_url = did_web_url + "/.well-known/did.json"
+    else:
+        did_web_url = did_web_url + "/did.json"
+
+    print("did_web_url:", did_web_url)
+
+    return did_web_url
+
+
+def download_did_document(did: str) -> dict:
+    if did.split(":")[1] == "web":
+        return resolve_did_web(did)
+    else:
+        return resolve_generic_did(did)
+
+
+def resolve_did_web(did: str):
+    did_web_url = _did_web_to_url(did)
+    try:
+        response = requests.get(did_web_url)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            print(
+                f"Failed to download DID document. Status code: {response.status_code}"
+            )
+            return None
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
+
+
+def resolve_generic_did(did: str):
+    resolver_url = f"https://uniresolver.io/1.0/identifiers/{did}"
+    try:
+        response = requests.get(resolver_url)
+        response.raise_for_status()
+        return response.json().get("didDocument")
+    except requests.exceptions.RequestException as e:
+        print(f"Error occurred: {e}")
+        return None
+
+
+def verify_proof(did_doc: dict):
+    proof = did_doc.get("proof")
+    if proof is None:
+        raise ValueError("DID document does not contain a proof.")
+
+    verification_methods = did_doc.get("verificationMethod")
+
+    # get the verificationMethod
+    target_verification_method_id = proof.get("verificationMethod")
+
+    # If the verificationMethod belongs to another did, download that did doc and extract the verificationMethods
+    if target_verification_method_id.split("#")[0] != did_doc.get("id"):
+        new_did_doc = download_did_document(target_verification_method_id.split("#")[0])
+        if new_did_doc is None:
+            raise ValueError(
+                "Signing verificationMethod belongs to a DID doc which does not exist."
+            )
+        verification_methods = new_did_doc.get("verificationMethod")
+
+    # Sort through the verificationMethod set to get the correct one
+    for verification_method in verification_methods:
+        if verification_method.get("id") == target_verification_method_id:
+            target_verification_method = verification_method
+
+    if target_verification_method is None:
+        raise ValueError(
+            "Signing verificationMethod does not exist in the DID document."
+        )
+
+    public_key = extract_verification_method_to_der(target_verification_method)
+    del did_doc["proof"]
+    canonical_did_doc = json.dumps(did_doc, sort_keys=True)
+
+    public_key.verify(
+        multibase.decode(proof.get("proofValue")), canonical_did_doc.encode("utf-8")
+    )
+
+
+def extract_verification_method_to_der(verifcation_method):
+    print(verifcation_method)
+    if verifcation_method.get("publicKeyJwk"):
+        public_key = verifcation_method.get("publicKeyJwk")
+        public_key = JWKRegistry.import_key(public_key)
+        return serialization.load_der_public_key(public_key.as_der(), None)
+    elif verifcation_method.get("publicKeyMultibase"):
+        public_key = verifcation_method.get("publicKeyMultibase")
+        return serialization.load_der_public_key(
+            multibase.decode(public_key).encode(), None
+        )
+    else:
+        raise ValueError("Unsupported verificationMethod format.")
+
+
+def main():
+    did = input("Enter the DID to verify: ")
+    did_doc = download_did_document(did)
+    if did_doc is not None:
+        try:
+            verify_proof(did_doc)
+            print("Proof verification successful.")
+        except ValueError as e:
+            print(f"Proof verification failed: {str(e)}")
+    else:
+        print("Failed to resolve DID document.")
+
+
+if __name__ == "__main__":
+    main()

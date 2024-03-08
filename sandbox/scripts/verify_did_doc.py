@@ -188,8 +188,9 @@ def verify_did_doc(did_doc: dict):
         _did_web_to_url(target_verification_method.get("id").split("#")[0])
     ).hostname
 
-    # Step 5: Verify
-    # Step 5: Get public key from DNS/DNSSEC record
+    # Step 5: Verify the domain is also claimming ownership of the did doc via URI records
+
+    # Step 6: Get public key from DNS/DNSSEC record
     tlsa_records = query_tlsa_record("_did." + domain)
     match = False
     for pub_key in tlsa_records:
@@ -206,6 +207,7 @@ def verify_did_doc(did_doc: dict):
     print("OK: Valid verificationMethod")
     proof = did_doc.pop("proof")
     # # Step 7: Verify the did doc proof
+
     verify_signature(
         proof.get("cryptosuite"),
         proof.get("proofValue"),
