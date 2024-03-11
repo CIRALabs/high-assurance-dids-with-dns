@@ -1,5 +1,6 @@
 import argparse
 import json
+import logging
 from datetime import datetime
 from urllib.parse import urlparse
 
@@ -10,6 +11,8 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from joserfc import jwk
+
+SUPPORTED_CRYPTOSUITES = ["ecdsa-jcs-2019", "eddsa-jcs-2022"]
 
 
 def _did_web_to_url(did_web: str) -> str:
@@ -23,20 +26,16 @@ def _did_web_to_url(did_web: str) -> str:
         str: The URL pointing to the corresponding DID document.
     """
     did_web_url = did_web.replace(":", "/").replace("did/web/", "https://")
-
     parsed_url = urlparse(did_web_url)
-
     if parsed_url.path == "":
         did_web_url = did_web_url + "/.well-known/did.json"
     else:
         did_web_url = did_web_url + "/did.json"
-
-    print("did_web_url:", did_web_url)
-
+    logging.info("did_web_url: %s", did_web_url)
     return did_web_url
 
 
-def resolve_did_web(did: str):
+def resolve_did_web(did: str) -> dict | None:
     """
     Resolves a DID using the DID Web protocol.
 
@@ -48,20 +47,19 @@ def resolve_did_web(did: str):
     """
     did_web_url = _did_web_to_url(did)
     try:
-        response = requests.get(did_web_url)
+        response = requests.get(did_web_url, timeout=5)
         if response.status_code == 200:
             return response.json()
-        else:
-            print(
-                f"Failed to download DID document. Status code: {response.status_code}"
-            )
-            return None
+        logging.error(
+            "Failed to download DID document. Status code: %s", response.status_code
+        )
+        return None
     except Exception as e:
-        print(f"An error occurred: {e}")
+        logging.error("An error occurred: %s", e)
         return None
 
 
-def download_did_document(did):
+def download_did_document(did: str) -> dict | None:
     """
     Downloads the DID document for the given DID from the UniResolver API.
 
@@ -74,20 +72,20 @@ def download_did_document(did):
     Raises:
         requests.exceptions.RequestException: If an error occurs while making the HTTP request.
     """
-    if did.split(":")[1] == "web":
+    if did.startswith("did:web"):
         return resolve_did_web(did)
 
     resolver_url = f"https://uniresolver.io/1.0/identifiers/{did}"
     try:
-        response = requests.get(resolver_url)
+        response = requests.get(resolver_url, timeout=5)
         response.raise_for_status()
         return response.json().get("didDocument")
     except requests.exceptions.RequestException as e:
-        print(f"Error occurred: {e}")
+        logging.error("Error occurred: %s", e)
         return None
 
 
-def extract_private_key(private_key):
+def extract_private_key(private_key: str) -> object | None:
     """
     Extracts a private key from various formats and returns a loaded private key object.
 
@@ -99,14 +97,13 @@ def extract_private_key(private_key):
 
     Raises:
         Exception: If an error occurs during the extraction process.
-
     """
     if private_key.startswith("{"):  # JWK format
         try:
             private_key = jwk.JWKRegistry.import_key(json.loads(private_key))
             return serialization.load_der_private_key(private_key.as_der(), None)
         except Exception as e:
-            print(f"Error occurred: {e}")
+            logging.error("Error occurred: %s", e)
             return None
     elif private_key.startswith("-----BEGIN"):  # PEM format
         try:
@@ -115,7 +112,7 @@ def extract_private_key(private_key):
                 private_key, password=None, backend=default_backend()
             )
         except Exception as e:
-            print(f"Error occurred: {e}")
+            logging.error("Error occurred: %s", e)
             return None
     elif private_key.startswith("z"):  # Multibase format
         try:
@@ -124,7 +121,7 @@ def extract_private_key(private_key):
                 decoded_key, password=None, backend=default_backend()
             )
         except Exception as e:
-            print(f"Error occurred: {e}")
+            logging.error("Error occurred: %s", e)
             return None
     else:
         try:  # DER format
@@ -132,11 +129,11 @@ def extract_private_key(private_key):
                 private_key, password=None, backend=default_backend()
             )
         except Exception as e:
-            print(f"Error occurred: {e}")
+            logging.error("Error occurred: %s", e)
             return None
 
 
-def validate_verification_method(target_verification_method):
+def validate_verification_method(target_verification_method: str):
     """
     Validates the given target verification method.
 
@@ -176,7 +173,6 @@ def sign_did(did, target_verification_method, expiry, cryptosuite, private_key):
     Raises:
         ValueError: If the cryptosuite or private key type is invalid.
     """
-
     validate_verification_method(target_verification_method)
 
     did_doc = download_did_document(did)
@@ -227,15 +223,15 @@ def main(did, verification_method, expiry, cryptosuite, path):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate a DID Document proof")
     parser.add_argument(
-        "cryptosuite", help="Cryptosuite, either 'ecdsa-jcs-2019' or 'eddsa-jcs-2022'."
+        "cryptosuite",
+        choices=SUPPORTED_CRYPTOSUITES,
+        help="Which cryptosuite to use for the proof.",
     )
     parser.add_argument("did", help="The DID to generate the proof for.")
     parser.add_argument(
-        "verificationMethod", help="verificationMethod the signature belongs to."
+        "verification_method", help="Which verificationMethod the signature belongs to."
     )
-    parser.add_argument(
-        "expiry", help="ISO format date time for the expiry of the proof."
-    )
+    parser.add_argument("expiry", help="ISO format date for the proof expiry.")
     parser.add_argument(
         "path",
         help="Path to a file containing the private key to generate the proof with.",

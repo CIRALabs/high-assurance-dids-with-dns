@@ -5,11 +5,18 @@
 
 import json
 from urllib.parse import urlparse
+from dns import resolver, rdatatype
 from joserfc.jwk import JWKRegistry
 from cryptography.hazmat.primitives import serialization
 
 import multibase
 import requests
+import argparse
+
+resolver = resolver.Resolver()
+resolver.use_dnssec = True
+resolver.nameservers = ["8.8.8.8"]
+resolver.timeout = 10
 
 
 def _did_web_to_url(did_web: str) -> str:
@@ -122,9 +129,25 @@ def extract_verification_method_to_der(verifcation_method):
         raise ValueError("Unsupported verificationMethod format.")
 
 
-def main():
-    did = input("Enter the DID to verify: ")
+def dns_validate_did_document(did_doc: dict):
+    if did_doc.get("id").startswith("did:web"):
+        did_web_url = (
+            did_doc.get("id").replace(":", "/").replace("did/web/", "https://")
+        )
+        domain = urlparse(did_web_url).netloc
+    else:
+        raise ValueError("Unsupported DID format for DNS validation.")
+    response = resolver.resolve(f"_did.{domain}", rdatatype.URI)
+    for uri_record in response:
+        if uri_record.target.decode() != did_doc.get("id"):
+            raise ValueError("URI record does not match DID.")
+
+    response = resolver.resolve(f"_did.{domain}", rdatatype.TLSA)
+
+
+def main(did: str):
     did_doc = download_did_document(did)
+    dns_validate_did_document(did_doc)
     if did_doc is not None:
         try:
             verify_proof(did_doc)
@@ -136,4 +159,14 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Verify DID document proof")
+    parser.add_argument("did", help="The DID to verify")
+    parser.add_argument(
+        "--use-dns",
+        "-d",
+        action="store_true",
+        help="Use DNS records to validate the DID document",
+    )
+    args = parser.parse_args()
+
+    main(args.did)

@@ -12,7 +12,9 @@ EC_KEY_CURV = "secp256k1"
 # https://www.w3.org/TR/did-spec-registries/#verification-method-types
 
 
-def generate_ed25519_verification_method_jwk() -> dict:
+def generate_ed25519_verification_method_jwk(
+    did: str, verification_method_id: str
+) -> dict:
     """
     Generate a DID verification method for ed25519verificationkey2018 as a JWK.
 
@@ -25,16 +27,18 @@ def generate_ed25519_verification_method_jwk() -> dict:
     print("\nPublic key:")
     print(json.dumps(private_key.as_dict(private=False), indent=4))
     verification_method = {
-        "id": "your did",
+        "id": did + "#" + verification_method_id,
         "type": "Ed25519VerificationKey2018",
-        "controller": "did:web:example.com",
+        "controller": did,
         "publicKeyJwk": private_key.as_dict(private=False),
     }
     print("\nVerificationMethod:")
     print(json.dumps(verification_method, indent=4))
 
 
-def generate_ed25519_verification_method_multibase() -> dict:
+def generate_ed25519_verification_method_multibase(
+    did: str, verification_method_id: str
+) -> dict:
     """
     Generate a DID verification method for ed25519verificationkey2018 as multibase.
 
@@ -63,16 +67,18 @@ def generate_ed25519_verification_method_multibase() -> dict:
         )
     ).decode()
     verification_method = {
-        "id": "your did",
+        "id": did + "#" + verification_method_id,
         "type": "Ed25519VerificationKey2018",
-        "controller": "did:web:example.com",
+        "controller": did,
         "publicKeyMultibase": multibase_public_key,
     }
     print("VerificationMethod:")
     print(json.dumps(verification_method, indent=4))
 
 
-def generate_ecdsasecp256k1_verification_method_multibase() -> dict:
+def generate_ecdsasecp256k1_verification_method_multibase(
+    did: str, verification_method_id: str
+) -> dict:
     """
     Generate a DID verification method for ecdsasecp256k1verificationkey2019.
 
@@ -88,16 +94,18 @@ def generate_ecdsasecp256k1_verification_method_multibase() -> dict:
         "base58btc", private_key.as_der(private=False)
     ).decode()
     verification_method = {
-        "id": "your did",
+        "id": did + "#" + verification_method_id,
         "type": "EcdsaSecp256k1VerificationKey2019",
-        "controller": "did:web:example.com",
+        "controller": did,
         "publicKeyMultibase": multibase_public_key,
     }
     print("VerificationMethod:")
     print(json.dumps(verification_method, indent=4))
 
 
-def generate_ecdsasecp256k1_verification_method_jwk() -> dict:
+def generate_ecdsasecp256k1_verification_method_jwk(
+    did: str, verification_method_id: str
+) -> dict:
     """
     Generate a DID verification method for ecdsasecp256k1verificationkey2019 as JWK.
 
@@ -112,9 +120,9 @@ def generate_ecdsasecp256k1_verification_method_jwk() -> dict:
     print("\nPublic Key:")
     print(json.dumps(public_key_dict, indent=4))
     verification_method = {
-        "id": "your did",
+        "id": did + "#" + verification_method_id,
         "type": "EcdsaSecp256k1VerificationKey2019",
-        "controller": "did:web:example.com",
+        "controller": did,
         "publicKeyJwk": public_key_dict,
     }
     print("\nVerificationMethod:")
@@ -131,18 +139,36 @@ if __name__ == "__main__":
     parser.add_argument(
         "output_format", choices=["jwk", "multibase"], help="The output format"
     )
+    parser.add_argument("did", help="The DID to generate the verification method for")
+    parser.add_argument(
+        "verification_method_id",
+        help="The id of the verification method to generate",
+    )
     args = parser.parse_args()
 
-    verification_method_type = args.verification_method_type
-    output_format = args.output_format
-
-    if verification_method_type == "ed25519" and output_format == "jwk":
-        generate_ed25519_verification_method_jwk()
-    elif verification_method_type == "ed25519" and output_format == "multibase":
-        generate_ed25519_verification_method_multibase()
-    elif verification_method_type == "ecdsasecp256k1" and output_format == "multibase":
-        generate_ecdsasecp256k1_verification_method_multibase()
-    elif verification_method_type == "ecdsasecp256k1" and output_format == "jwk":
-        generate_ecdsasecp256k1_verification_method_jwk()
+    if args.verification_method_type == "ed25519" and args.output_format == "jwk":
+        generate_ed25519_verification_method_jwk(
+            args.did, args.verification_method_type
+        )
+    elif (
+        args.verification_method_type == "ed25519" and args.output_format == "multibase"
+    ):
+        generate_ed25519_verification_method_multibase(
+            args.did, args.verification_method_type
+        )
+    elif (
+        args.verification_method_type == "ecdsasecp256k1"
+        and args.output_format == "multibase"
+    ):
+        generate_ecdsasecp256k1_verification_method_multibase(
+            args.did, args.verification_method_type
+        )
+    elif (
+        args.verification_method_type == "ecdsasecp256k1"
+        and args.output_format == "jwk"
+    ):
+        generate_ecdsasecp256k1_verification_method_jwk(
+            args.did, args.verification_method_type
+        )
     else:
         print("Invalid verification method type or output format.")
