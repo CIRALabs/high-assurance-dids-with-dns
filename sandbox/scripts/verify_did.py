@@ -92,7 +92,11 @@ def did_web_to_url(did_web):
         # strip out fragment and params    
         did_web_url = did_web_url.replace('#'+ parsed_url.fragment,'').replace(parsed_url.query,'').replace('?','')    
     
-
+    # add in fragment as a directive
+    if parsed_url.fragment:
+        did_web_url = did_web_url + f"/?directive={parsed_url.fragment}"
+        print("with directive:", did_web_url )
+        
     
     return did_web_url
 
@@ -386,29 +390,9 @@ def download_did_document(did_web):
 if __name__ == "__main__":
 
     logging.debug("starting...")
-
-    # verify_did confirms if it is a high assurance did
-    
-     
-    # did_web = 
-   
-    did_test = [    "did:web:trustregistry.ca",
-                    "trbouma@trustroot.ca",
-                    "trbouma@creators.trustroot.ca" 
-                      
-                ]    
-    
-    for each_did in did_test:
-        print(each_did)
-        print(download_did_document(each_did))
-        result = verify_did_doc(each_did)
-        print(f"verify did {each_did}:", result)
-        
-    
-    did_test = ["did:web:trbouma@trustroot.ca"]    
-    for each_did in did_test:
-        print(each_did)
-        result = verify_did_doc(each_did)
-        print(f"verify did {each_did}:", result)
+    did = input("Enter the DID to verify: ")
+    print(download_did_document(did))
+    result = verify_did_doc(did)
+    print(f"verify did {did}:", result)
         
 

@@ -239,9 +239,12 @@ def get_did_doc(request: Request):
 
 
 @app.get("/{entity_name}/did.json",tags=["public"])
-def get_user_did_doc(entity_name: str, request: Request):
+def get_user_did_doc(entity_name: str, request: Request, directive: str | None = None):
     
     x509cert = None
+
+    if directive:
+        return {"directive": directive}
 
     try:
         entity_iss = user_db[entity_name]
