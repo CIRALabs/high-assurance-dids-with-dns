@@ -410,25 +410,9 @@ def download_did_document(did_web):
 if __name__ == "__main__":
 
     logging.debug("starting...")
+    did = input("Enter the DID to verify: ")
+    print(download_did_document(did))
+    result = verify_did_doc(did)
+    print(f"verify did {did}:", result)
 
-    # verify_did confirms if it is a high assurance did
 
-    # did_web =
-
-    did_test = [
-        "did:web:trustregistry.ca",
-        "trbouma@trustroot.ca",
-        "trbouma@creators.trustroot.ca",
-    ]
-
-    for each_did in did_test:
-        print(each_did)
-        print(download_did_document(each_did))
-        result = verify_did_doc(each_did)
-        print(f"verify did {each_did}:", result)
-
-    did_test = ["did:web:trbouma@trustroot.ca"]
-    for each_did in did_test:
-        print(each_did)
-        result = verify_did_doc(each_did)
-        print(f"verify did {each_did}:", result)
