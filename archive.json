@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-03-10T00:19:02.245667+00:00",
+  "timestamp": "2024-03-12T00:17:03.200021+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -219,9 +219,17 @@
       "labels": [],
       "body": "I have reviewed this paper. It has a good outline of the issues and believe we can address (have addressed) the main issues. The paper is here:\r\n\r\nhttps://github.com/WebOfTrustInfo/rwot12-cologne/blob/main/final-documents/beyond-did-web.pdf\r\n\r\nAlso, I don't believe we need key pre-rotation (a la KERI) because a similar revocation capability can be implemented using the \"exp\" field. This can be similar to a TTL that you can set (I have set for 3600s) - when you check the did doc, though the signature might check out you fail the verification due to the current_time > \"exp\". That means you need to request a new did doc which (hopefully) has rolled over to a new key.\r\n\r\nIn the end, we don't need to specify a new method beyond ```did:web```, but we do need to specify a series of checks that the did doc must pass before it relied on as a high assurance did. Since relying on a high assurance did doc is the discretion of the relying party, we need to make this as flexible and easy as possible, through \"did doc extensions\", etc.",
       "createdAt": "2024-02-15T13:48:54Z",
-      "updatedAt": "2024-02-15T13:48:55Z",
+      "updatedAt": "2024-03-10T18:12:52Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "swcurran",
+          "authorAssociation": "COLLABORATOR",
+          "body": "We\u2019re working in a similar area (web-based DID Method) and think that several items are needed that go beyond did:web. Wondered about your thoughts on these requirements:\r\n\r\n- Signature across the DIDDoc in the DIDDoc from signature(s) of the DID Controller.\r\n  - This is not in the DIDDoc, but we think needs to be added \u2014 likely as a Data Integrity proof.\r\n- A full history of DIDDoc updates chained together (hash of previous DIDDoc is included in the signature of the new, signature on the new DIDDoc is from the controller keys listed in the previous DIDDoc).\r\n  - The full history is needed so that VCs signed at any time can be verified in the face of DIDDoc updates/key rotations.\r\n  - A mechansim for traversing the history \u2014 ideally including a way to get the full history with a single request.\r\n- The identifier for the DID is derived from the initial DID Document as the starting place of the history using some kind of hash (self-certifying identifier or SCID).\r\n- Pre-rotation for use when private keys are exposed through accidental disclosure or quantum calculation.\r\n  - TTL does not solve these concerns \u2014 do you think it needs to?\r\n  - Ensures (or tries to\u2026) that control of the DID can be retained.\r\n- Use of alsoKnownAs to indicate intended places where equivalent versions of the DIDDoc are published.\r\n- Support for multiple controller DIDs (keys) via the [Verifiable Condition specification](https://www.w3.org/TR/did-spec-registries/#verifiablecondition2021)\r\n  - Defines the threshold/combination of keys needed to authorize an update to the DIDDoc.\r\n ",
+          "createdAt": "2024-03-10T18:12:51Z",
+          "updatedAt": "2024-03-10T18:12:51Z"
+        }
+      ]
     },
     {
       "number": 21,
@@ -412,6 +420,38 @@
       "body": "Hi everyone,\r\n\r\nI will leave the repo material that I have so far developed on ```verifiable web identifiers```, but I now consider it to be out of scope for this specific project.\r\n\r\nI have spun up a separate repo under my own account: https://github.com/trbouma/vwi/ and will continue working on it there.\r\nAs I described, this is a more generic scheme that is enabled by ```did:web``` but also some other decentralized ecosystems that I am involved in, namely ```nostr``` at https://github.com/nostr-protocol/nips\r\n\r\nAnyway, if you have any questions/concerns let me know.\r\n\r\n\r\n\r\n\r\n\r\n",
       "createdAt": "2024-03-06T13:11:08Z",
       "updatedAt": "2024-03-06T13:11:08Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 28,
+      "id": "I_kwDOLLNO0c6BzzJ5",
+      "title": "Clarifications about the Internet Draft document",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/28",
+      "state": "OPEN",
+      "author": "swcurran",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "These comments are from reading the document [draft-ietf-high-assurance-dids-with-dns.md](https://github.com/CIRALabs/high-assurance-dids-with-dns/blob/main/draft-ietf-high-assurance-dids-with-dns.md). The links in the README.md did not resolve \u2014 at least for me.\r\n\r\nThe examples in the specification could use additional detail. Notably \u2014 what do the values in the URI and TLSA records mean? I was not clear on the relationship between the DIDs in the example, and those DNS records \u2014 particularly for the TLSA records.\r\n\r\nThe spec. reads (at least to me) as if the \u201cusual case\u201d will be for the DIDDocs to be at the domain level \u2014 e.g. with the did:web referencing the domain, and thus, the DIDDoc in the .well-known path. I think that the common case will be that the DIDDoc will be in a sub-domain or path, and that having the DIDDoc at the domain level will be a rare case. An organization will have multiple \u2014 perhaps many \u2014 DIDs (especially if there are employee level DIDs as discussed in some of the issues in this repo), and so the common case will be that the DIDs are not at the domain level. I think should be reflected in the specification.",
+      "createdAt": "2024-03-10T18:24:47Z",
+      "updatedAt": "2024-03-10T18:24:47Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 29,
+      "id": "I_kwDOLLNO0c6B0Yqt",
+      "title": "Verification process in the internet draft",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/29",
+      "state": "OPEN",
+      "author": "swcurran",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The following are comments/questions from reviewing the [Verification Process](https://github.com/CIRALabs/high-assurance-dids-with-dns/blob/main/draft-ietf-high-assurance-dids-with-dns.md#verification-process) in the Internet Draft.\r\n\r\n1. The first step needs to be clarified as to whether it is refering to a DID (such as might be received in a VC) or a DIDDoc (such as would be returned in resolving a DID).  The words say a DIDDoc, but the example is a DID.\r\n2. A `did:web` may not be associated with a the domain of a DID. For example, it is quite easy to create a DID that is published in a repository on GitHub, where the publisher (the DID\u2019s controller) does not control the domain.  Further, in such DIDs, the domain is not the \u201clast segment\u201d of a DID as the text indicates. The domain is only the last segment in the special case of a `did:web` where the identifier is a domain. I think that will be in a minority of cases.\r\n3. I think the more general case is to assume that in step 1, the DIDDoc is resolved, and that the domain linkage (if any) is in the DIDDoc itself. Then, in the special case of a `did:web` DID that references a domain name, the DIDDoc resolution MAY be skipped.\r\n4. I think that step 3 needs a lot more detail \u2014 defining how the comparison between a verification method (which one(s)?) and the TLSA record(s) is carried out. For example, is it the full `verificationMethod` data that is checked, or just the key type and public key that is matched?\r\n5. Given that in step 3, the `verificationMethod` and the TLSA records are found to match, how does is the level of assurance changed when using the TLSA method in verifying the DIDDoc proof item? I\u2019m wondering if I\u2019m not understanding something in the text.\r\n\r\nA general question about this is how the DID controller keeps the TLSA record and the DIDDoc in sync. Presumably, there is a period when the two are out of sync as they cannot both be updated in a transaction. Is there a way to detect and compensate for that?  In the Web-based DID Method we are considering, DIDDoc version is crucial to enable detect what version of a DID was used in signing something (such as a VC). Versioning could help in dealing with expected \u201cout of sync\u201d scenarios between the DIDDoc and the TLSA record.",
+      "createdAt": "2024-03-11T00:32:22Z",
+      "updatedAt": "2024-03-11T00:32:22Z",
       "closedAt": null,
       "comments": []
     }
