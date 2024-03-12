@@ -147,28 +147,26 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.verification_method_type == "ed25519" and args.output_format == "jwk":
-        generate_ed25519_verification_method_jwk(
-            args.did, args.verification_method_type
-        )
+        generate_ed25519_verification_method_jwk(args.did, args.verification_method_id)
     elif (
         args.verification_method_type == "ed25519" and args.output_format == "multibase"
     ):
         generate_ed25519_verification_method_multibase(
-            args.did, args.verification_method_type
+            args.did, args.verification_method_id
         )
     elif (
         args.verification_method_type == "ecdsasecp256k1"
         and args.output_format == "multibase"
     ):
         generate_ecdsasecp256k1_verification_method_multibase(
-            args.did, args.verification_method_type
+            args.did, args.verification_method_id
         )
     elif (
         args.verification_method_type == "ecdsasecp256k1"
         and args.output_format == "jwk"
     ):
         generate_ecdsasecp256k1_verification_method_jwk(
-            args.did, args.verification_method_type
+            args.did, args.verification_method_id
         )
     else:
         print("Invalid verification method type or output format.")

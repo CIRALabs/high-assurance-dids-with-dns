@@ -1,4 +1,5 @@
 import argparse
+import hashlib
 from urllib.parse import urlparse
 
 import multibase
@@ -70,7 +71,9 @@ def resolve_did_document(did: str) -> dict | None:
         return None
 
 
-def convert_verification_method_to_tlsa_record(did: str) -> str | None:
+def convert_verification_method_to_tlsa_record(
+    did: str, use_sha256: bool = False
+) -> str | None:
     """
     Converts a verification method from a DID document to a TLSA record.
 
@@ -99,17 +102,19 @@ def convert_verification_method_to_tlsa_record(did: str) -> str | None:
             try:
                 public_key = verification_method.get("publicKeyMultibase")
                 der_key = multibase.decode(public_key)
-                tlsa_record = f"3 1 0 {der_key.hex()}"
-                return tlsa_record
+                if use_sha256:
+                    return f"3 1 1 {hashlib.sha256(der_key).digest().hex()}"
+                return f"3 1 0 {der_key.hex()}"
             except Exception as e:
                 logging.error(e)
                 return None
         elif verification_method.get("publicKeyJwk"):
             try:
                 public_key = verification_method.get("publicKeyJwk")
-                public_key = JWKRegistry.import_key(public_key)
-                tlsa_record = f"3 1 0 {public_key.as_der().hex()}"
-                return tlsa_record
+                public_key = JWKRegistry.import_key(public_key).as_der()
+                if use_sha256:
+                    return f"3 1 1 {hashlib.sha256(public_key).digest().hex()}"
+                return f"3 1 0 {public_key.hex()}"
             except Exception as e:
                 logging.error(e)
                 return None
@@ -119,8 +124,8 @@ def convert_verification_method_to_tlsa_record(did: str) -> str | None:
         return None
 
 
-def main(did):
-    tlsa_record = convert_verification_method_to_tlsa_record(did)
+def main(did: str, use_sha256: bool = False):
+    tlsa_record = convert_verification_method_to_tlsa_record(did, use_sha256)
     if tlsa_record:
         return tlsa_record
     else:
@@ -132,6 +137,12 @@ if __name__ == "__main__":
         description="Generate TLSA record from verification method"
     )
     parser.add_argument("did", help="The DID to generate the TLSA record for")
+    parser.add_argument(
+        "-hash",
+        "--sha256",
+        help="Use SHA-256 hashing algorithm for the TLSA record",
+        action="store_true",
+    )
     args = parser.parse_args()
 
-    main(args.DID)
+    print(main(args.did, args.sha256))

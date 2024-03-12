@@ -100,7 +100,7 @@ def extract_private_key(private_key: str) -> object | None:
     """
     if private_key.startswith("{"):  # JWK format
         try:
-            private_key = jwk.JWKRegistry.import_key(json.loads(private_key))
+            private_key = jwk.JWKRegistry.import_key(json.loads(private_key), None)
             return serialization.load_der_private_key(private_key.as_der(), None)
         except Exception as e:
             logging.error("Error occurred: %s", e)
@@ -183,7 +183,6 @@ def sign_did(did, target_verification_method, expiry, cryptosuite, private_key):
     canonical_json = json.dumps(did_doc, sort_keys=True)
 
     private_key = extract_private_key(private_key)
-
     if cryptosuite == "ecdsa-jcs-2019" and isinstance(
         private_key, ec.EllipticCurvePrivateKey
     ):
@@ -241,7 +240,7 @@ if __name__ == "__main__":
         json.dumps(
             main(
                 args.did,
-                args.verificationMethod,
+                args.verification_method,
                 args.expiry,
                 args.cryptosuite,
                 args.path,
