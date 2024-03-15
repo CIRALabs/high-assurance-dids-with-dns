@@ -124,6 +124,7 @@ def verify_proof(did_doc: dict) -> dict:
     logging.info("DID document proof: %s", json.dumps(proof, indent=2))
     verification_methods = did_doc.get("verificationMethod")
     target_verification_method_id = proof.get("verificationMethod")
+    print("***", proof, target_verification_method_id)
     if target_verification_method_id.split("#")[0] != did_doc.get("id"):
         new_did_doc = download_did_document(target_verification_method_id.split("#")[0])
         if new_did_doc is None:
