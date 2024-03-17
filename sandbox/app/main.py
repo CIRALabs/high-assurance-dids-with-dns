@@ -19,7 +19,7 @@ import logging
 from datetime import datetime, timedelta
 
 from .config import Settings
-from .verify import did_web_to_url, download_did_document, query_tlsa_record
+from .helpers import did_web_to_url, download_did_document, query_tlsa_record
 from .w3c import generate_ed25519_verification_method_jwk, sign_did_doc, extract_private_key
 
 

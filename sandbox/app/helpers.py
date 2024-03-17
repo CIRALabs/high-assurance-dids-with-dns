@@ -16,39 +16,30 @@ logging.basicConfig(
 
 
 def did_web_to_url(did_web):
-    # Routine to transform did_web into corresponding url
+# Routine to transform did_web into corresponding url
+    did_web = "did:web:" + did_web if did_web[:7] != 'did:web' else did_web
 
     # replace colon with slash and encoded colon with colon
 
-    did_web_url = (
-        did_web.replace(":", "/").replace("did/web/", "https://").replace("%3A", ":")
-    )
-
+    did_web_url = did_web.replace(":", "/").replace('did/web/', "https://").replace('%3A',':')
+    
     parsed_url = urlparse(did_web_url)
+   
 
     authority = parsed_url.netloc
     if "@" in authority:
-        authority_parts = authority.split("@")
-        did_web_url = (
-            parsed_url.scheme
-            + "://"
-            + authority_parts[1]
-            + "/"
-            + authority_parts[0]
-            + "/did.json"
-        )
-    else:
-        if parsed_url.path == "":
-            did_web_url = did_web_url + "/.well-known/did.json"
+        authority_parts = authority.split('@')
+        did_web_url = parsed_url.scheme + "://" + authority_parts[1] + "/" + authority_parts[0] + "/did.json"
+    else:   
+        if parsed_url.path == '':
+            did_web_url = did_web_url + '/.well-known/did.json'
         else:
-            did_web_url = did_web_url + "/did.json"
-
-        # strip out fragment and params
-        did_web_url = (
-            did_web_url.replace("#" + parsed_url.fragment, "")
-            .replace(parsed_url.query, "")
-            .replace("?", "")
-        )
+            did_web_url = did_web_url + "/did.json"   
+    
+    # strip out fragment and params    
+    did_web_url = did_web_url.replace('#'+ parsed_url.fragment,'').replace(parsed_url.query,'').replace('?','')    
+    
+   
 
     return did_web_url
 
