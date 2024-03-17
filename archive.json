@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-03-14T00:17:08.580178+00:00",
+  "timestamp": "2024-03-17T00:19:07.159855+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -435,9 +435,17 @@
       "labels": [],
       "body": "These comments are from reading the document [draft-ietf-high-assurance-dids-with-dns.md](https://github.com/CIRALabs/high-assurance-dids-with-dns/blob/main/draft-ietf-high-assurance-dids-with-dns.md). The links in the README.md did not resolve \u2014 at least for me.\r\n\r\nThe examples in the specification could use additional detail. Notably \u2014 what do the values in the URI and TLSA records mean? I was not clear on the relationship between the DIDs in the example, and those DNS records \u2014 particularly for the TLSA records.\r\n\r\nThe spec. reads (at least to me) as if the \u201cusual case\u201d will be for the DIDDocs to be at the domain level \u2014 e.g. with the did:web referencing the domain, and thus, the DIDDoc in the .well-known path. I think that the common case will be that the DIDDoc will be in a sub-domain or path, and that having the DIDDoc at the domain level will be a rare case. An organization will have multiple \u2014 perhaps many \u2014 DIDs (especially if there are employee level DIDs as discussed in some of the issues in this repo), and so the common case will be that the DIDs are not at the domain level. I think should be reflected in the specification.",
       "createdAt": "2024-03-10T18:24:47Z",
-      "updatedAt": "2024-03-10T18:24:47Z",
+      "updatedAt": "2024-03-16T12:28:06Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "trbouma",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Most likely a did:web will be resolved at a subdomain leve having its own did. That is what I am experimenting with in the prototype, e.g.,\r\n\r\ndid:web:trustroot.ca, did:web:credentials.trustroot.ca, and did:web:community.trustroot.ca all resolve to different dids.\r\n\r\nAs well, I am experimenting with did:web that have a local part - e.g., did:web:trbouma@credentials.trustroot.ca - resolves to a did that is specific to a user.",
+          "createdAt": "2024-03-16T12:28:05Z",
+          "updatedAt": "2024-03-16T12:28:05Z"
+        }
+      ]
     },
     {
       "number": 29,
@@ -451,7 +459,31 @@
       "labels": [],
       "body": "The following are comments/questions from reviewing the [Verification Process](https://github.com/CIRALabs/high-assurance-dids-with-dns/blob/main/draft-ietf-high-assurance-dids-with-dns.md#verification-process) in the Internet Draft.\r\n\r\n1. The first step needs to be clarified as to whether it is refering to a DID (such as might be received in a VC) or a DIDDoc (such as would be returned in resolving a DID).  The words say a DIDDoc, but the example is a DID.\r\n2. A `did:web` may not be associated with a the domain of a DID. For example, it is quite easy to create a DID that is published in a repository on GitHub, where the publisher (the DID\u2019s controller) does not control the domain.  Further, in such DIDs, the domain is not the \u201clast segment\u201d of a DID as the text indicates. The domain is only the last segment in the special case of a `did:web` where the identifier is a domain. I think that will be in a minority of cases.\r\n3. I think the more general case is to assume that in step 1, the DIDDoc is resolved, and that the domain linkage (if any) is in the DIDDoc itself. Then, in the special case of a `did:web` DID that references a domain name, the DIDDoc resolution MAY be skipped.\r\n4. I think that step 3 needs a lot more detail \u2014 defining how the comparison between a verification method (which one(s)?) and the TLSA record(s) is carried out. For example, is it the full `verificationMethod` data that is checked, or just the key type and public key that is matched?\r\n5. Given that in step 3, the `verificationMethod` and the TLSA records are found to match, how does is the level of assurance changed when using the TLSA method in verifying the DIDDoc proof item? I\u2019m wondering if I\u2019m not understanding something in the text.\r\n\r\nA general question about this is how the DID controller keeps the TLSA record and the DIDDoc in sync. Presumably, there is a period when the two are out of sync as they cannot both be updated in a transaction. Is there a way to detect and compensate for that?  In the Web-based DID Method we are considering, DIDDoc version is crucial to enable detect what version of a DID was used in signing something (such as a VC). Versioning could help in dealing with expected \u201cout of sync\u201d scenarios between the DIDDoc and the TLSA record.",
       "createdAt": "2024-03-11T00:32:22Z",
-      "updatedAt": "2024-03-11T00:32:22Z",
+      "updatedAt": "2024-03-16T12:22:52Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "trbouma",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I am wondering, does a did doc, once a data integrity proof is added, become a verifiable credential, and therefore subject to the W3C Verifiable Credential Recommendation.?\r\n\r\nCould a did doc be in the format of a SD JWT, or any JSON with a signature? I am inclined to make this as open as possible?\r\n\r\nIn your second question, where a did:web might not control the domain (such as GitHub) but they would need to the controller of a subdomain zone at least e.g., did:web:user.github.io\r\n\r\nFor Q4 - I don't think we have this all worked out yet. Lots of questions and insights are coming from building the prototype. More to come.\r\n\r\nFor Q5. We are purpose leaving how levels of assurance are defined to the trust framework providers. We are providing a table on how the series of verification checks, once passed, might map to levels of assurance, but it is the trust framework providers who must formalize that determination and mapping to their assurance models.\r\n",
+          "createdAt": "2024-03-16T12:22:34Z",
+          "updatedAt": "2024-03-16T12:22:52Z"
+        }
+      ]
+    },
+    {
+      "number": 30,
+      "id": "I_kwDOLLNO0c6Ch7hC",
+      "title": "Demo app with latest",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/30",
+      "state": "OPEN",
+      "author": "trbouma",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "I incorporated the latest code so https://trustroot.ca passes the verify.py script, as does https://trustregistry.ca\r\n\r\nThe code is at this branch\r\n\r\nhttps://github.com/CIRALabs/high-assurance-dids-with-dns/tree/review-02-26-2024-app-enhancements \r\n\r\nIt's little more than hack-in at the moment. You can see the did doc directly at:\r\n\r\nhttps://trustroot.ca/.well-known/did.json",
+      "createdAt": "2024-03-16T11:54:30Z",
+      "updatedAt": "2024-03-16T11:54:30Z",
       "closedAt": null,
       "comments": []
     }
