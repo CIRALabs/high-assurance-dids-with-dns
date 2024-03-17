@@ -20,7 +20,7 @@ from datetime import datetime, timedelta
 
 from .config import Settings
 from .verify import did_web_to_url, download_did_document, query_tlsa_record
-from .w3c import generate_ed25519_verification_method_jwk, sign_did_doc
+from .w3c import generate_ed25519_verification_method_jwk, sign_did_doc, extract_private_key
 
 
 # Initialize issuer database
@@ -197,6 +197,13 @@ def get_did_doc(request: Request):
                             "profile": f"https://{did_domain}/profiles/trp/v2",
                             "uri": f"https://{did_domain}/"
                             }
+                        },
+                        {   "id": f"did:web:{did_domain}#nostr",
+                            "type": "NostrNpub",
+                            "serviceEndpoint": {
+                            "profile": f"https://{did_domain}/.well-known/nostr.json?name=root",
+                            "uri": f"https://{did_domain}/"
+                            }
                         }
             
         ],
@@ -223,14 +230,20 @@ def get_did_doc(request: Request):
     if issuer_db[did_domain]["dnsType"] == "w3c":
         # generate appropriate verification method
         verification_method_id = "key-1"
+        privkey_file = f"app/data/keys/{did_domain}/{verification_method_id}.jwk"
         cryptosuite = "eddsa-jcs-2022"
-        verification_method, private_key = generate_ed25519_verification_method_jwk(f"did:web:{did_domain}",verification_method_id)
+        verification_method, private_key = generate_ed25519_verification_method_jwk(f"did:web:{did_domain}",verification_method_id, privkey_file)
         print("verification method:", verification_method)
         print("private key:", private_key)
         did_doc["verificationMethod"] = [verification_method]
         # expiry = "2025-03-14T18:35:34"
         expiry = (datetime.utcnow() + timedelta(seconds=settings.TTL)).strftime(
         "%Y-%m-%dT%H:%M:%S")
+
+       
+        
+        
+
         proof = sign_did_doc(did_doc, verification_method_id, expiry, cryptosuite, private_key)
         did_doc["proof"] = proof
         return did_doc
@@ -265,66 +278,24 @@ def get_did_doc(request: Request):
 
     return did_doc
 
-@app.get("/.well-known/w3c/did.json", tags=["public"])
-def get_w3c_did_doc(request: Request):
-    did_domain = request.url.hostname
-    if did_domain == "127.0.0.1":
-        did_domain = "trustroot.ca"
-
-    print(issuer_db[did_domain]["dnsType"])
-    
-
-    current_time_int = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f%z")
-    expiry_time_int = (datetime.utcnow() + timedelta(seconds=settings.TTL)).strftime(
-        "%Y-%m-%dT%H:%M:%S.%f%z"
-    )
-
-    did_doc = {
-        "@context": [
-            "https://www.w3.org/ns/did/v1",
-            "https://w3id.org/security/suites/jws-2020/v1",
-        "https://github.com/trustoverip/tswg-trust-registry-service-profile/blob/main/spec.md"
-        ],
-        "id": f"did:web:{did_domain}",              
-        "service": [ {
-                        "id":f"did:web:{did_domain}#linked-domain",
-                        "type": "LinkedDomains",
-                        "serviceEndpoint": f"https://{did_domain}"
-                        },
-                    {   "id": f"did:web:{did_domain}#trust-registry",
-                            "type": "TrustRegistry",
-                            "serviceEndpoint": {
-                            "profile": f"https://{did_domain}/profiles/trp/v2",
-                            "uri": f"https://{did_domain}/"
-                            }
-                        }
-            
-        ],
-        "authentication": [
-            f"did:web:{did_domain}#key-1"
-        ],
-        "assertionMethod": [
-            f"did:web:{did_domain}#key-1"
-        ],
-    }
-
-    # determine what method to sign
-    if issuer_db[did_domain]["dnsType"] == "w3c":
-        # generate appropriate verification method
-        verification_method_id = "key-1"
-        cryptosuite = "eddsa-jcs-2022"
-        verification_method, private_key = generate_ed25519_verification_method_jwk(f"did:web:{did_domain}",verification_method_id)
-        print("verification method:", verification_method)
-        print("private key:", private_key)
-        did_doc["verificationMethod"] = [verification_method]
-        # expiry = "2025-03-14T18:35:34"
-        expiry = (datetime.utcnow() + timedelta(seconds=settings.TTL)).strftime(
-        "%Y-%m-%dT%H:%M:%S")
-        proof = sign_did_doc(did_doc, verification_method_id, expiry, cryptosuite, private_key)
-        did_doc["proof"] = proof
 
    
+@app.get("/.well-known/nostr.json/",tags=["public"])
+def get_nostr_name(name: str, request: Request):
 
+    did_domain = request.url.hostname
+    if did_domain == "127.0.0.1":
+        did_domain = "trustroot.ca"  
+   
+        
+
+    nostr_names = {
+                    "names": {
+                        f"{name}": "npub123"
+                        }
+                    }
+
+    return nostr_names
    
 
     

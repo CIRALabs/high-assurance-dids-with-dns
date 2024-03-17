@@ -26,15 +26,21 @@ EC_KEY_CURV = "secp256k1"
 # https://www.w3.org/TR/did-spec-registries/#verification-method-types
 
 
-def generate_ed25519_verification_method_jwk(did: str, verification_method_id: str):
+def generate_ed25519_verification_method_jwk(did: str, verification_method_id: str, privkey_file: str):
     """
     Generate a DID verification method for ed25519verificationkey2018 as a JWK.
 
     Returns:
         dict: A DID verification method for ed25519verificationkey2018 as a JWK.
     """
-    print("Private key:")
-    private_key = OKPKey.generate_key("Ed25519")
+    with open(privkey_file, "r", encoding="utf-8") as file:
+        private_key_str = file.read()
+    
+    private_key_dict = json.loads(private_key_str)
+    print("private_key_dict:", private_key_dict)
+    private_key = OKPKey.import_key(private_key_dict)
+    # private_key = OKPKey.generate_key("Ed25519")
+    # print("Private key generated:", private_key)
     print(json.dumps(private_key.as_dict(private=True), indent=4))
     print("\nPublic key:")
     print(json.dumps(private_key.as_dict(private=False), indent=4))
@@ -211,7 +217,7 @@ def sign_did_doc(did_doc, target_verification_method, expiry, cryptosuite, priva
 
     # did_doc = download_did_document(did)
 
-    
+    print("sign_did_doc_private_key:", private_key)
 
     if did_doc.get("proof") is not None:
         del did_doc["proof"]
