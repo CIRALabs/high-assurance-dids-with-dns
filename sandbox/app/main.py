@@ -238,11 +238,7 @@ def get_did_doc(request: Request):
         did_doc["verificationMethod"] = [verification_method]
         # expiry = "2025-03-14T18:35:34"
         expiry = (datetime.utcnow() + timedelta(seconds=settings.TTL)).strftime(
-        "%Y-%m-%dT%H:%M:%S")
-
-       
-        
-        
+        "%Y-%m-%dT%H:%M:%S")  
 
         proof = sign_did_doc(did_doc, verification_method_id, expiry, cryptosuite, private_key)
         did_doc["proof"] = proof
@@ -252,9 +248,7 @@ def get_did_doc(request: Request):
         did_doc['verificationMethod'] = verification_method
         msg = json.dumps(did_doc_to_sign)
         signature = tlsa_private_key.sign(msg.encode(), hashfunc=hashlib.sha256)
-        sig_hex = hexlify(signature).decode()
-
-    
+        sig_hex = hexlify(signature).decode()    
 
     else:
         did_doc['verificationMethod'] = verification_method
@@ -309,6 +303,27 @@ def get_nostr_name(name: str, request: Request):
 @app.get("/{entity_name}/did.json", tags=["public"])
 def get_user_did_doc(entity_name: str, request: Request):
     x509cert = None
+    did_domain = request.url.hostname
+    if did_domain == "127.0.0.1":
+        did_domain = "trustroot.ca"
+
+    root_did_doc = get_did_doc(request)
+    
+    del root_did_doc["proof"]
+
+    root_did_doc["id"] = f"did:web:{did_domain}:{entity_name}"
+
+    user_verification_method = {
+                "id": f"did:web:{did_domain}:{entity_name}",
+                "controller": f"did:web:{did_domain}:{entity_name}",
+                "type": "test",
+                "publicKeyHex": "test",
+            }
+   
+    root_did_doc["verificationMethod"].append(user_verification_method)
+    
+
+    print("root did doc:", root_did_doc)
 
     try:
         entity_iss = user_db[entity_name]
@@ -340,9 +355,7 @@ def get_user_did_doc(entity_name: str, request: Request):
     except:
         return {"error": "issuing entity does not exist"}
 
-    did_domain = request.url.hostname
-    if did_domain == "127.0.0.1":
-        did_domain = "trustroot.ca"
+    
 
     print(issuer_db[did_domain]["dnsType"])
     if issuer_db[did_domain]["dnsType"] == "tlsa":
