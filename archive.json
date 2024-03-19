@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-03-17T00:19:07.159855+00:00",
+  "timestamp": "2024-03-19T00:17:40.520591+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -459,7 +459,7 @@
       "labels": [],
       "body": "The following are comments/questions from reviewing the [Verification Process](https://github.com/CIRALabs/high-assurance-dids-with-dns/blob/main/draft-ietf-high-assurance-dids-with-dns.md#verification-process) in the Internet Draft.\r\n\r\n1. The first step needs to be clarified as to whether it is refering to a DID (such as might be received in a VC) or a DIDDoc (such as would be returned in resolving a DID).  The words say a DIDDoc, but the example is a DID.\r\n2. A `did:web` may not be associated with a the domain of a DID. For example, it is quite easy to create a DID that is published in a repository on GitHub, where the publisher (the DID\u2019s controller) does not control the domain.  Further, in such DIDs, the domain is not the \u201clast segment\u201d of a DID as the text indicates. The domain is only the last segment in the special case of a `did:web` where the identifier is a domain. I think that will be in a minority of cases.\r\n3. I think the more general case is to assume that in step 1, the DIDDoc is resolved, and that the domain linkage (if any) is in the DIDDoc itself. Then, in the special case of a `did:web` DID that references a domain name, the DIDDoc resolution MAY be skipped.\r\n4. I think that step 3 needs a lot more detail \u2014 defining how the comparison between a verification method (which one(s)?) and the TLSA record(s) is carried out. For example, is it the full `verificationMethod` data that is checked, or just the key type and public key that is matched?\r\n5. Given that in step 3, the `verificationMethod` and the TLSA records are found to match, how does is the level of assurance changed when using the TLSA method in verifying the DIDDoc proof item? I\u2019m wondering if I\u2019m not understanding something in the text.\r\n\r\nA general question about this is how the DID controller keeps the TLSA record and the DIDDoc in sync. Presumably, there is a period when the two are out of sync as they cannot both be updated in a transaction. Is there a way to detect and compensate for that?  In the Web-based DID Method we are considering, DIDDoc version is crucial to enable detect what version of a DID was used in signing something (such as a VC). Versioning could help in dealing with expected \u201cout of sync\u201d scenarios between the DIDDoc and the TLSA record.",
       "createdAt": "2024-03-11T00:32:22Z",
-      "updatedAt": "2024-03-16T12:22:52Z",
+      "updatedAt": "2024-03-18T14:17:52Z",
       "closedAt": null,
       "comments": [
         {
@@ -468,6 +468,27 @@
           "body": "I am wondering, does a did doc, once a data integrity proof is added, become a verifiable credential, and therefore subject to the W3C Verifiable Credential Recommendation.?\r\n\r\nCould a did doc be in the format of a SD JWT, or any JSON with a signature? I am inclined to make this as open as possible?\r\n\r\nIn your second question, where a did:web might not control the domain (such as GitHub) but they would need to the controller of a subdomain zone at least e.g., did:web:user.github.io\r\n\r\nFor Q4 - I don't think we have this all worked out yet. Lots of questions and insights are coming from building the prototype. More to come.\r\n\r\nFor Q5. We are purpose leaving how levels of assurance are defined to the trust framework providers. We are providing a table on how the series of verification checks, once passed, might map to levels of assurance, but it is the trust framework providers who must formalize that determination and mapping to their assurance models.\r\n",
           "createdAt": "2024-03-16T12:22:34Z",
           "updatedAt": "2024-03-16T12:22:52Z"
+        },
+        {
+          "author": "swcurran",
+          "authorAssociation": "COLLABORATOR",
+          "body": "On your question of whether a DID Doc with a DI proof is a VC, I would say no. I think there is a reason for the DI spec being separate from the VC-DI spec (using a DI in the case of a VC) \u2014 a VC-DI is a special case of a DI.\r\n\r\nIt does make sense that in the linkage of a did:web and DNS, that the controller must control both the DID keys and the DNS entry. That reduces my point to the obvious one that did:web\u2019s suitable for this practice are a subset of all possible did:webs.  Domain/subdomain DIDs are all did:web, but not the reverse.",
+          "createdAt": "2024-03-18T13:29:44Z",
+          "updatedAt": "2024-03-18T13:29:44Z"
+        },
+        {
+          "author": "swcurran",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Happy to close this if you think there has been sufficient use from it.",
+          "createdAt": "2024-03-18T13:30:17Z",
+          "updatedAt": "2024-03-18T13:30:17Z"
+        },
+        {
+          "author": "trbouma",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@swcurran - I agree - the DID Doc-DI spec should be separate from the VC-DI spec. I'd go one step further and allow the DID Doc-ID spec use other formats that are not W3C Recommendations, such as a signed JWT. Personally, I find the W3C DID Doc spec a little too complex for my liking. For sure, it does a lot of things and has flexibility, but it takes awhile to get your head wrapped around it. Anyway, my opinion only, as I see other ecosystems that would like to take advantage of this approach without necessarily adopting all of the W3C structural sugar.\r\n\r\nIn the end, irrespective of standards and exactly how it is implemented, it boils down to the controller of the did:web having control of the: 1) web server (including signing keys),  2) dns records, and 3) keys to sign the dns records (dnssec). \r\n\r\nWhen all three of these controls are properly delegated and implemented, it is pretty secure, \r\n",
+          "createdAt": "2024-03-18T14:17:51Z",
+          "updatedAt": "2024-03-18T14:17:51Z"
         }
       ]
     },
@@ -483,9 +504,17 @@
       "labels": [],
       "body": "I incorporated the latest code so https://trustroot.ca passes the verify.py script, as does https://trustregistry.ca\r\n\r\nThe code is at this branch\r\n\r\nhttps://github.com/CIRALabs/high-assurance-dids-with-dns/tree/review-02-26-2024-app-enhancements \r\n\r\nIt's little more than hack-in at the moment. You can see the did doc directly at:\r\n\r\nhttps://trustroot.ca/.well-known/did.json",
       "createdAt": "2024-03-16T11:54:30Z",
-      "updatedAt": "2024-03-16T11:54:30Z",
+      "updatedAt": "2024-03-18T13:58:27Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "trbouma",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I got the verification working - the latest in the app is merged into \r\n\r\nhttps://github.com/CIRALabs/high-assurance-dids-with-dns/tree/review-02-26-2024",
+          "createdAt": "2024-03-18T13:58:25Z",
+          "updatedAt": "2024-03-18T13:58:25Z"
+        }
+      ]
     }
   ],
   "pulls": [
