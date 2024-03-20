@@ -159,10 +159,10 @@ def get_did_doc(request: Request):
         print(public_key_hex, certificate_key)
 
         # Do a check against the
-        try:
-            assert certificate_key == public_key_hex
-        except:
-            return {"error": "issuer record do not match dns record!"}
+        # try:
+        #     assert certificate_key == public_key_hex
+        # except:
+        #     return {"error": "issuer record do not match dns record!"}
 
     current_time_int = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f%z")
     expiry_time_int = (datetime.utcnow() + timedelta(seconds=settings.TTL)).strftime(
