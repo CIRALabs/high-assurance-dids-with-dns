@@ -6,6 +6,7 @@ from typing import Optional
 from urllib.parse import urlparse
 
 import dns
+from dns import dnssec
 import multibase
 import requests
 from cryptography.hazmat.primitives import serialization
