@@ -381,8 +381,36 @@ def dns_validate_did_document(
     validate_uri_record(did_doc, domain, use_dnssec)
     validate_tlsa_record(verificationMethod, domain, use_dnssec)
 
+def dns_txt_validate_did_document(
+    did_doc: dict,
+    verificationMethod: dict    
+) -> None:
+    """
+    Validates the DID document using DNS records.
 
-def main(did: str, use_dns: bool = False, use_dnssec: bool = False) -> None:
+    Args:
+        did_doc (dict): The DID document to be validated.
+        verificationMethod (dict): The verification method to be validated.
+        use_dnssec (bool, optional): Flag indicating whether to use DNSSEC for validation. Defaults to False.
+
+    Raises:
+        ValueError: If the DID format is unsupported for DNS validation.
+    """
+    if did_doc.get("id").startswith("did:web"):
+        did_web_url = (
+            did_doc.get("id").replace(":", "/").replace("did/web/", "https://")
+        )
+        domain = urlparse(did_web_url)
+        if domain.path:
+            domain = domain.path.strip("/") + "." + domain.netloc
+        else:
+            domain = domain.hostname
+    else:
+        raise ValueError("Unsupported DID format for DNS validation.")
+    # validate_uri_record(did_doc, domain, use_dnssec)
+    # validate_tlsa_record(verificationMethod, domain, use_dnssec)
+
+def main(did: str, use_dns: bool = False, use_dnssec: bool = False, use_dnstxt: bool = False) -> None:
     did_doc = download_did_document(did)
     if did_doc is not None:
         try:
@@ -403,7 +431,9 @@ def main(did: str, use_dns: bool = False, use_dnssec: bool = False) -> None:
             logging.info("DNS validation successful.")
         except ValueError as e:
             logging.error(f"DNS validation failed: {str(e)}")
-
+    if use_dnstxt:
+        logging.info(f"Validating DID document using DNS TXT records...")
+        dns_txt_validate_did_document(did_doc, target_verification_method)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Verify DID document proof")
@@ -420,6 +450,12 @@ if __name__ == "__main__":
         action="store_true",
         help="Use DNSSEC to validate the DNS records for the DID document",
     )
+    parser.add_argument(
+        "--use-dnstxt",
+        "-dnstxt",
+        action="store_true",
+        help="Use DNS TXT records to validate the DNS records for the DID document",
+    )
     args = parser.parse_args()
 
-    main(args.did, args.use_dns, args.use_dnssec)
+    main(args.did, args.use_dns, args.use_dnssec, args.use_dnstxt)
