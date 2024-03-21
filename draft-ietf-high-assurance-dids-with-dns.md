@@ -1,6 +1,6 @@
 ---
-title: "TODO - Your title"
-abbrev: "TODO - Abbreviation"
+title: "High Assurance DIDs with DNS"
+abbrev: "hiadid"
 category: info
 
 docname: draft-ietf-high-assurance-dids-with-dns-latest
