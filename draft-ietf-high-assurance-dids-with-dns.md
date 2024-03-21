@@ -4,22 +4,16 @@ abbrev: "hiadid"
 category: info
 
 docname: draft-ietf-high-assurance-dids-with-dns-latest
-submissiontype: IETF  # also: "independent", "editorial", "IAB", or "IRTF"
+submissiontype: IETF
 number:
 date:
 consensus: true
 v: 3
-# area: AREA
-# workgroup: WG Working Group
 keyword:
  - next generation
  - unicorn
  - sparkling distributed ledger
 venue:
-#  group: WG
-#  type: Working Group
-#  mail: WG@example.com
-#  arch: https://example.com/WG
   github: "CIRALabs/high-assurance-did-web"
   latest: "https://CIRALabs.github.io/high-assurance-did-web/draft-carter-high-assurance-did-web.html"
 
