@@ -1,4 +1,4 @@
 # License
 
 See the
-[guidelines for contributions](https://github.com/CIRALabs/high-assurance-did-web/blob/main/CONTRIBUTING.md).
+[guidelines for contributions](https://github.com/CIRALabs/high-assurance-dids-with-dns/blob/main/CONTRIBUTING.md).
