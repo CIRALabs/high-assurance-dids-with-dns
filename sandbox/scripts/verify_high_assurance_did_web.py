@@ -37,6 +37,10 @@ def _did_web_to_url(did_web: str) -> str:
         did_web_url = did_web_url + "/.well-known/did.json"
     else:
         did_web_url = did_web_url + "/did.json"
+    
+    if parsed_url.fragment != "":
+        did_web_url = did_web_url.replace("#"+parsed_url.fragment, "" )
+    
     return did_web_url
 
 
@@ -127,6 +131,7 @@ def verify_proof(did_doc: dict) -> dict:
         raise ValueError("Proof has expired.")
     verification_methods = did_doc.get("verificationMethod")
     target_verification_method_id = proof.get("verificationMethod")
+    print("***", proof, target_verification_method_id)
     if target_verification_method_id.split("#")[0] != did_doc.get("id"):
         new_did_doc = download_did_document(target_verification_method_id.split("#")[0])
         if new_did_doc is None:
