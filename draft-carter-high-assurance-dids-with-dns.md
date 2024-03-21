@@ -107,18 +107,18 @@ In essence, the integration of DIDs with DNS, specifically through the use of TL
 
 Much like presenting two pieces of ID to provide a higher level of assurance when proving your identity or age, replicating important information about a DID into a different domain (like the DNS) enables a similar form of cross validation. This enhances the initial trust establishment between the user and the DID document, as the key information can be compared and verified across two segregated sets of infrastructure. This also acts as a form of ownership verification in a similar way to 2FA, as the implementer must have control over both the DNS zone and the DID document to properly duplicate the relevant information.
 
-+----------------+     +----------------+
-|                |     |                |
-|   DNS Server   |     |   Web Server   |
-|                |     |                |
-|   +-------+    |     |   +-------+    |
-|   |  DID  |<---+-----+-->|  DID  |    |
-|   +-------+    |     |   +-------+    |
-|   +-------+    |     |   +-------+    |
-|   |  PKI  |<---+-----+-->|  PKI  |    |
-|   +-------+    |     |   +-------+    |
-|                |     |                |
-+----------------+     +----------------+
+   +----------------+     +----------------+
+   |                |     |                |
+   |   DNS Server   |     |   Web Server   |
+   |                |     |                |
+   |    +-------+   |     |   +-------+    |
+   |   |  DID  |<---+-----+-->|  DID  |    |
+   |   +-------+    |     |   +-------+    |
+   |   +-------+    |     |   +-------+    |
+   |   |  PKI  |<---+-----+-->|  PKI  |    |
+   |   +-------+    |     |   +-------+    |
+   |                |     |                |
+   +----------------+     +----------------+
 
 The diagram above illustrates how a web server storing the DID document, and the DNS server storing the URI and TLSA records shares and links the key information about the DID accross to independant sets of infrastructure.
 
