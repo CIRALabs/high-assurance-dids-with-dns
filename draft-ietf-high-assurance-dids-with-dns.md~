@@ -222,7 +222,7 @@ In accordance with W3C specifications, we propose including a data integrity pro
     "type": "DataIntegrityProof",
     "cryptosuite": "ecdsa-jfc-2019",
     "created": "2023-10-11T15:27:27Z",
-    "expires": "2099-10-11T15:27:27Z", 
+    "expires": "2099-10-11T15:27:27Z",
     "verificationMethod": "did:web:trustregistry.ca#key-1",
   }
 ```

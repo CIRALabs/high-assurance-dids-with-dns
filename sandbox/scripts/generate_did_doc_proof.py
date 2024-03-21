@@ -156,7 +156,7 @@ def validate_verification_method(target_verification_method: str):
         raise ValueError("Invalid verification method")
 
 
-def sign_did(did, target_verification_method, expiry, cryptosuite, private_key):
+def sign_did(did, target_verification_method, verify, expiry, cryptosuite, private_key):
     """
     Signs a DID document with the provided parameters.
 
@@ -173,7 +173,8 @@ def sign_did(did, target_verification_method, expiry, cryptosuite, private_key):
     Raises:
         ValueError: If the cryptosuite or private key type is invalid.
     """
-    validate_verification_method(target_verification_method)
+    if verify:
+        validate_verification_method(target_verification_method)
 
     did_doc = download_did_document(did)
     if did_doc.get("proof") is not None:
@@ -212,10 +213,12 @@ def sign_did(did, target_verification_method, expiry, cryptosuite, private_key):
     }
 
 
-def main(did, verification_method, expiry, cryptosuite, path):
+def main(did, verification_method, verify, expiry, cryptosuite, path):
     with open(path, "r", encoding="utf-8") as file:
         private_key = file.read()
-    signature = sign_did(did, verification_method, expiry, cryptosuite, private_key)
+    signature = sign_did(
+        did, verification_method, verify, expiry, cryptosuite, private_key
+    )
     return signature
 
 
@@ -230,6 +233,11 @@ if __name__ == "__main__":
     parser.add_argument(
         "verification_method", help="Which verificationMethod the signature belongs to."
     )
+    parser.add_argument(
+        "-v",
+        "--verify",
+        action="store_true",
+    )
     parser.add_argument("expiry", help="ISO format date for the proof expiry.")
     parser.add_argument(
         "path",
@@ -241,6 +249,7 @@ if __name__ == "__main__":
             main(
                 args.did,
                 args.verification_method,
+                args.verify,
                 args.expiry,
                 args.cryptosuite,
                 args.path,

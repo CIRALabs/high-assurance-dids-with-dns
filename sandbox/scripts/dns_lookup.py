@@ -84,7 +84,7 @@ def resolve_dns_record_with_dnssec(
             raise ValueError(f"DNSKEY validation failed for {zone}")
         dnskey_answer = resolver.resolve(zone, dns.rdatatype.DNSKEY)
         query = dns.message.make_query(record_name, record_type, want_dnssec=True)
-        (response, _) = dns.query.udp_with_fallback(query, "8.8.8.8")
+        (response, _) = dns.query.udp_with_fallback(query, "1.1.1.1", timeout=10)
         rrset, rrsig = response.answer
         logging.info("RRSET: %s", rrset)
         logging.info("RRSIG: %s", rrsig)

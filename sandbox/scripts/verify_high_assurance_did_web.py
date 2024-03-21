@@ -4,17 +4,18 @@ import json
 import logging
 from typing import Optional
 from urllib.parse import urlparse
+from datetime import datetime
 
 import dns
 import multibase
 import requests
 from cryptography.hazmat.primitives import serialization
-from dns import rdatatype, resolver
+from dns import rdatatype, resolver, dnssec
 from joserfc.jwk import JWKRegistry
 
 resolver = resolver.Resolver()
 resolver.use_dnssec = True
-resolver.nameservers = ["8.8.8.8"]
+resolver.nameservers = ["1.1.1.1"]
 resolver.timeout = 10
 
 logging.basicConfig(level=logging.INFO)
@@ -122,6 +123,8 @@ def verify_proof(did_doc: dict) -> dict:
     if proof is None:
         raise ValueError("DID document does not contain a proof.")
     logging.info("DID document proof: %s", json.dumps(proof, indent=2))
+    if datetime.fromisoformat(proof.get("expires")) < datetime.now():
+        raise ValueError("Proof has expired.")
     verification_methods = did_doc.get("verificationMethod")
     target_verification_method_id = proof.get("verificationMethod")
     if target_verification_method_id.split("#")[0] != did_doc.get("id"):
@@ -280,7 +283,7 @@ def validate_dnskey_with_ds(zone: str) -> bool:
         for dnskey in dnskey_rrset:
             valid = False
             for ds in ds_rrset:
-                if dns.dnssec.make_ds(zone, dnskey, ds.digest_type) == ds:
+                if dnssec.make_ds(zone, dnskey, ds.digest_type) == ds:
                     valid = True
             if valid is False:
                 return False
@@ -324,9 +327,9 @@ def resolve_dns_record_with_dnssec(
             raise ValueError(f"DNSKEY validation failed for {zone}")
         dnskey_answer = resolver.resolve(zone, dns.rdatatype.DNSKEY)
         query = dns.message.make_query(record_name, record_type, want_dnssec=True)
-        (response, _) = dns.query.udp_with_fallback(query, "8.8.8.8")
+        (response, _) = dns.query.udp_with_fallback(query, "1.1.1.1", timeout=10)
         rrset, rrsig = response.answer
-        dns.dnssec.validate(
+        dnssec.validate(
             rrset,
             rrsig,
             {zone: dnskey_answer},
