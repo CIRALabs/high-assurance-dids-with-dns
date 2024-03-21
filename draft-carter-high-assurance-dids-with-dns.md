@@ -1,27 +1,20 @@
 ---
-title: "TODO - Your title"
-abbrev: "TODO - Abbreviation"
+title: "High Assurance DIDs with DNS"
+abbrev: "hiadid"
 category: info
 
-docname: draft-ietf-high-assurance-dids-with-dns-latest
-submissiontype: IETF  # also: "independent", "editorial", "IAB", or "IRTF"
+docname: draft-carter-high-assurance-dids-with-dns-latest
+submissiontype: independent
 number:
 date:
-consensus: true
 v: 3
-# area: AREA
-# workgroup: WG Working Group
 keyword:
  - next generation
  - unicorn
  - sparkling distributed ledger
 venue:
-#  group: WG
-#  type: Working Group
-#  mail: WG@example.com
-#  arch: https://example.com/WG
-  github: "CIRALabs/high-assurance-did-web"
-  latest: "https://CIRALabs.github.io/high-assurance-did-web/draft-carter-high-assurance-did-web.html"
+  github: "CIRALabs/high-assurance-dids-with-dns"
+  latest: "https://ciralabs.github.io/high-assurance-dids-with-dns/draft-carter-high-assurance-dids-with-dns.html"
 
 author:
 -
