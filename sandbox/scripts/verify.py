@@ -12,6 +12,13 @@ import requests
 from cryptography.hazmat.primitives import serialization
 from dns import rdatatype, resolver
 from joserfc.jwk import JWKRegistry
+import ssl, socket
+from OpenSSL import crypto
+
+from cryptography import x509
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.backends import default_backend
+from binascii import unhexlify, hexlify
 
 resolver = resolver.Resolver()
 resolver.use_dnssec = True
@@ -410,6 +417,58 @@ def dns_txt_validate_did_document(
     # validate_uri_record(did_doc, domain, use_dnssec)
     # validate_tlsa_record(verificationMethod, domain, use_dnssec)
 
+def query_did_dns_txt_record(domain_record):
+    resolver = dns.resolver.Resolver()
+    resolver.use_dnssec = True
+    resolver.nameservers = ['8.8.8.8']
+    resolver.use_edns = True
+
+    try:
+        query_domain = domain_record        
+        response = resolver.resolve(query_domain, 'TXT')
+        answer_txt= str(response[0]).strip("\"")
+        logging.debug(f"OK: query_domain {query_domain} answer_txt {answer_txt}")
+        return answer_txt
+
+    except dns.resolver.NoAnswer:
+        return None, None
+
+def get_tls_public_key(host, port=443):
+    # Create a socket
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    
+    # Create an SSL context without certificate verification
+    context = ssl.create_default_context()
+    context.check_hostname = False
+    context.verify_mode = ssl.CERT_NONE
+
+    # Wrap the socket with SSL
+    wrapped_socket = context.wrap_socket(sock, server_hostname=host)
+
+    # Connect and retrieve the certificate
+    wrapped_socket.connect((host, port))
+    der_cert = wrapped_socket.getpeercert(True)
+    wrapped_socket.close()
+
+    # Convert to X509
+    x509 = crypto.load_certificate(crypto.FILETYPE_ASN1, der_cert)
+
+    # Extract the public key
+    public_key = x509.get_pubkey()
+    public_key_pem = crypto.dump_publickey(crypto.FILETYPE_PEM, public_key)
+    # print(public_key_pem)
+
+    public_key_obj = serialization.load_pem_public_key(
+        public_key_pem,
+        backend=default_backend()
+    )
+
+    public_key_bytes = public_key_obj.public_bytes(
+        encoding=serialization.Encoding.DER,
+        format=serialization.PublicFormat.SubjectPublicKeyInfo
+    )
+    
+    return hexlify(public_key_bytes).decode().upper()
 def main(did: str, use_dns: bool = False, use_dnssec: bool = False, use_dnstxt: bool = False) -> None:
     did_doc = download_did_document(did)
     if did_doc is not None:
@@ -433,7 +492,14 @@ def main(did: str, use_dns: bool = False, use_dnssec: bool = False, use_dnstxt: 
             logging.error(f"DNS validation failed: {str(e)}")
     if use_dnstxt:
         logging.info(f"Validating DID document using DNS TXT records...")
-        dns_txt_validate_did_document(did_doc, target_verification_method)
+        answer_did = query_did_dns_txt_record("_did.openproof.org")
+        print("answer did:", answer_did)
+        answer_tlsa = query_did_dns__txt_record("_tlsa.openproof.org")
+        print("answer tlsa:", answer_tlsa)
+        answer_did_doc = dns_txt_validate_did_document(did_doc, target_verification_method)
+        print("answer:", answer_did_doc)
+        answer_wspubkey = get_tls_public_key("trustroot.ca")
+        print("answer:", answer_wspubkey)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Verify DID document proof")
