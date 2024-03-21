@@ -37,10 +37,10 @@ def _did_web_to_url(did_web: str) -> str:
         did_web_url = did_web_url + "/.well-known/did.json"
     else:
         did_web_url = did_web_url + "/did.json"
-    
+
     if parsed_url.fragment != "":
-        did_web_url = did_web_url.replace("#"+parsed_url.fragment, "" )
-    
+        did_web_url = did_web_url.replace("#" + parsed_url.fragment, "")
+
     return did_web_url
 
 
@@ -204,10 +204,13 @@ def validate_uri_record(did_doc: dict, domain: str, do_dnssec: bool = False) -> 
         None
     """
     logging.info("Validating URI record matches %s...", did_doc.get("id"))
-    if do_dnssec:
-        response = resolve_dns_record_with_dnssec(f"_did.{domain}", rdatatype.URI)
-    else:
-        response = resolver.resolve(f"_did.{domain}", rdatatype.URI)
+    try:
+        if do_dnssec:
+            response = resolve_dns_record_with_dnssec(f"_did.{domain}", rdatatype.URI)
+        else:
+            response = resolver.resolve(f"_did.{domain}", rdatatype.URI)
+    except dns.resolver.NoAnswer:
+        raise ValueError("No URI record found.")
     logging.info("Resolved URI records: %s", response)
     uri_record_match = False
     for uri_record in response:
@@ -236,10 +239,13 @@ def validate_tlsa_record(
         None
     """
     logging.info("Validating TLSA record matches %s...", verificationMethod.get("id"))
-    if do_dnssec:
-        response = resolve_dns_record_with_dnssec(f"_did.{domain}", rdatatype.TLSA)
-    else:
-        response = resolver.resolve(f"_did.{domain}", rdatatype.TLSA)
+    try:
+        if do_dnssec:
+            response = resolve_dns_record_with_dnssec(f"_did.{domain}", rdatatype.TLSA)
+        else:
+            response = resolver.resolve(f"_did.{domain}", rdatatype.TLSA)
+    except dns.resolver.NoAnswer:
+        raise ValueError("No TLSA record found.")
     key = extract_verification_method_to_der(verificationMethod).public_bytes(
         serialization.Encoding.DER, serialization.PublicFormat.SubjectPublicKeyInfo
     )
