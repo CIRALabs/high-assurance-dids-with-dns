@@ -1,6 +1,6 @@
 # high-assurance-dids-with-dns
 
-This is the working area for the individual Internet-Draft, "TODO - Your title".
+This is the working area for the individual Internet-Draft, "draft-carter-high-assurance-did-web".
 
 * [Editor's Copy](https://CIRALabs.github.io/high-assurance-did-web/#go.draft-carter-high-assurance-did-web.html)
 * [Datatracker Page](https://datatracker.ietf.org/doc/draft-carter-high-assurance-did-web)
