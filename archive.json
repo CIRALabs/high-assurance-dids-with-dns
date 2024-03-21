@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-03-19T00:17:40.520591+00:00",
+  "timestamp": "2024-03-21T00:18:21.396966+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -515,6 +515,22 @@
           "updatedAt": "2024-03-18T13:58:25Z"
         }
       ]
+    },
+    {
+      "number": 31,
+      "id": "I_kwDOLLNO0c6C-Z3b",
+      "title": "-dnstxt option for verify.py",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/31",
+      "state": "OPEN",
+      "author": "trbouma",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "I deployed another domain name I had https://openproof.org - It's all working save for the dns/dnssec validation because I am using rebel.ca and I cannot add URI and TLSA records. I can switch this to desec.io, but I've decided to leave at rebel and implement a -dnstxt verification option, where a domain owner can add the TXT records and have them verified. I know this might not be considered the most secure option, but for mass adoption, this control is likely just fine for commerical operators. I should have the script done by end of day today, or tomorrow.",
+      "createdAt": "2024-03-20T12:19:56Z",
+      "updatedAt": "2024-03-20T12:19:57Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
