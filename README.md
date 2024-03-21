@@ -1,6 +1,6 @@
 # High Assurance DIDs with DNS
 
-This is the working area for the IETF Internet-Draft, "High Assurance DIDs with DNS".
+This is the working area for the IETF [HIGH Working Group](https://datatracker.ietf.org/wg/high/documents/) Internet-Draft, "High Assurance DIDs with DNS".
 
 * [Editor's Copy](https://CIRALabs.github.io/high-assurance-did-web/#go.draft-ietf-high-assurance-dids-with-dns.html)
 * [Datatracker Page](https://datatracker.ietf.org/doc/draft-ietf-high-assurance-dids-with-dns)
