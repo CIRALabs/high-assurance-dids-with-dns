@@ -14,8 +14,8 @@ keyword:
  - unicorn
  - sparkling distributed ledger
 venue:
-  github: "CIRALabs/high-assurance-did-web"
-  latest: "https://CIRALabs.github.io/high-assurance-did-web/draft-carter-high-assurance-did-web.html"
+  github: "CIRALabs/high-assurance-dids-with-dns"
+  latest: "https://ciralabs.github.io/high-assurance-dids-with-dns/draft-ietf-high-assurance-dids-with-dns.html"
 
 author:
 -
