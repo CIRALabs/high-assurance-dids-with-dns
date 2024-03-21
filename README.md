@@ -1,11 +1,11 @@
 # High Assurance DIDs with DNS
 
-This is the working area for the IETF [HIGH Working Group](https://datatracker.ietf.org/wg/high/documents/) Internet-Draft, "High Assurance DIDs with DNS".
+This is the working area for the individual Internet-Draft, "High Assurance DIDs with DNS".
 
-* [Editor's Copy](https://CIRALabs.github.io/high-assurance-did-web/#go.draft-ietf-high-assurance-dids-with-dns.html)
-* [Datatracker Page](https://datatracker.ietf.org/doc/draft-ietf-high-assurance-dids-with-dns)
-* [Working Group Draft](https://datatracker.ietf.org/doc/html/draft-ietf-high-assurance-dids-with-dns)
-* [Compare Editor's Copy to Working Group Draft](https://CIRALabs.github.io/high-assurance-did-web/#go.draft-ietf-high-assurance-dids-with-dns.diff)
+* [Editor's Copy](https://CIRALabs.github.io/high-assurance-did-web/#go.draft-carter-high-assurance-dids-with-dns.html)
+* [Datatracker Page](https://datatracker.ietf.org/doc/draft-carter-high-assurance-dids-with-dns)
+* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-carter-high-assurance-dids-with-dns)
+* [Compare Editor's Copy to Individual Draft](https://CIRALabs.github.io/high-assurance-did-web/#go.draft-carter-high-assurance-dids-with-dns.diff)
 
 
 ## Contributing
