@@ -285,6 +285,8 @@ Note that Controls 9, 10, and 11 CANNOT BE DELEGATED to an **Issuing Service**
 |10|Domain Zone Signing Key Generation|The signing keys MUST be generated under the control of the Issuing Authority.|
 |11|Hardware Security Module|A FIPS 140-2 compliant hardware security module must be under the control of the Issuing Authority.|
 
+In addition to the technical controls specificed in the table it is advisable to add in DANE (DNS-based Authentication of Named Entities) {{!RFC6698}} to secure TLS communications. TLS uses certificates to bind keys to names, which are published by public "Certification Authorities" (CAs). It is important to realize that the public CA model is fundamentally vulnerable because it allows any CA to issue a certificate for any domain name. Thus, a compromised CA can issue a fake replacement certificate which could be used to subvert TLS-protected websites. DANE)offers the option to use the DNSSEC infrastructure to store and sign keys and certificates that are used by a TLS-protected website. The keys are bound to names in the Domain Name System (DNS), instead of relying on arbitrary keys and names issued in a potentially compromised certificate.
+
 # Levels of Assurance
 
 Many trust frameworks specify levels of assurance to assist in determing which controls must be implemented.
