@@ -111,7 +111,7 @@ Much like presenting two pieces of ID to provide a higher level of assurance whe
    |                |     |                |
    |   DNS Server   |     |   Web Server   |
    |                |     |                |
-   |    +-------+   |     |   +-------+    |
+   |   +-------+    |     |   +-------+    |
    |   |  DID  |<---+-----+-->|  DID  |    |
    |   +-------+    |     |   +-------+    |
    |   +-------+    |     |   +-------+    |
