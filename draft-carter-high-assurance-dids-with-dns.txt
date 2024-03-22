@@ -151,11 +151,18 @@ Table of Contents
    must have control over both the DNS zone and the DID document to
    properly duplicate the relevant information.
 
-   +----------------+ +----------------+ | | | | | DNS Server | | Web
-   Server | | | | | | +-------+ | | +-------+ | | | DID |<---+-----+-->|
-   DID | | | +-------+ | | +-------+ | | +-------+ | | +-------+ | | |
-   PKI |<---+-----+-->| PKI | | | +-------+ | | +-------+ | | | | |
-   +----------------+ +----------------+
+   +----------------+     +----------------+
+   |                |     |                |
+   |   DNS Server   |     |   Web Server   |
+   |                |     |                |
+   |   +-------+    |     |   +-------+    |
+   |   |  DID  |<---+-----+-->|  DID  |    |
+   |   +-------+    |     |   +-------+    |
+   |   +-------+    |     |   +-------+    |
+   |   |  PKI  |<---+-----+-->|  PKI  |    |
+   |   +-------+    |     |   +-------+    |
+   |                |     |                |
+   +----------------+     +----------------+
 
    The diagram above illustrates how a web server storing the DID
    document, and the DNS server storing the URI and TLSA records shares

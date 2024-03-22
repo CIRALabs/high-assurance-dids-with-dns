@@ -1262,18 +1262,22 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-securing-a-did-using-the-dn" class="section-name selfRef">Securing a DID using the DNS</a>
       </h2>
 <p id="section-3-1">Much like presenting two pieces of ID to provide a higher level of assurance when proving your identity or age, replicating important information about a DID into a different domain (like the DNS) enables a similar form of cross validation. This enhances the initial trust establishment between the user and the DID document, as the key information can be compared and verified across two segregated sets of infrastructure. This also acts as a form of ownership verification in a similar way to 2FA, as the implementer must have control over both the DNS zone and the DID document to properly duplicate the relevant information.<a href="#section-3-1" class="pilcrow">¶</a></p>
-<p id="section-3-2">+----------------+     +----------------+
-   |                |     |                |
-   |   DNS Server   |     |   Web Server   |
-   |                |     |                |
-   |   +-------+    |     |   +-------+    |
-   |   |  DID  |&lt;---+-----+--&gt;|  DID  |    |
-   |   +-------+    |     |   +-------+    |
-   |   +-------+    |     |   +-------+    |
-   |   |  PKI  |&lt;---+-----+--&gt;|  PKI  |    |
-   |   +-------+    |     |   +-------+    |
-   |                |     |                |
-   +----------------+     +----------------+<a href="#section-3-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3-2">
+<pre>
++----------------+     +----------------+
+|                |     |                |
+|   DNS Server   |     |   Web Server   |
+|                |     |                |
+|   +-------+    |     |   +-------+    |
+|   |  DID  |&lt;---+-----+--&gt;|  DID  |    |
+|   +-------+    |     |   +-------+    |
+|   +-------+    |     |   +-------+    |
+|   |  PKI  |&lt;---+-----+--&gt;|  PKI  |    |
+|   +-------+    |     |   +-------+    |
+|                |     |                |
++----------------+     +----------------+
+</pre><a href="#section-3-2" class="pilcrow">¶</a>
+</div>
 <p id="section-3-3">The diagram above illustrates how a web server storing the DID document, and the DNS server storing the URI and TLSA records shares and links the key information about the DID accross to independant sets of infrastructure.<a href="#section-3-3" class="pilcrow">¶</a></p>
 <div id="specifically-for-didweb">
 <section id="section-3.1">
