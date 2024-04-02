@@ -5,11 +5,11 @@
 Network Working Group                                          J. Carter
 Internet-Draft                                                 J. Latour
 Intended status: Informational                                      CIRA
-Expires: 23 September 2024                                     M. Glaude
+Expires: 4 October 2024                                        M. Glaude
                                                            NorthernBlock
                                                                 T. Bouma
                                               Digital Governance Council
-                                                           22 March 2024
+                                                            2 April 2024
 
 
                       High Assurance DIDs with DNS
@@ -52,7 +52,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 23 September 2024.
+   This Internet-Draft will expire on 4 October 2024.
 
 Copyright Notice
 
@@ -541,6 +541,20 @@ Table of Contents
     +---------+------------+------------------------------------------+
 
                                   Table 1
+
+   In addition to the technical controls specificed in the table it is
+   advisable to add in DANE (DNS-based Authentication of Named Entities)
+   [RFC6698] to secure TLS communications.  TLS uses certificates to
+   bind keys to names, which are published by public "Certification
+   Authorities" (CAs).  It is important to realize that the public CA
+   model is fundamentally vulnerable because it allows any CA to issue a
+   certificate for any domain name.  Thus, a compromised CA can issue a
+   fake replacement certificate which could be used to subvert TLS-
+   protected websites.  DANE)offers the option to use the DNSSEC
+   infrastructure to store and sign keys and certificates that are used
+   by a TLS-protected website.  The keys are bound to names in the
+   Domain Name System (DNS), instead of relying on arbitrary keys and
+   names issued in a potentially compromised certificate.
 
 8.  Levels of Assurance
 
