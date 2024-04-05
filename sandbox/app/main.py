@@ -148,7 +148,7 @@ def get_did_doc(request: Request):
         print("public key pem:", public_key_pem.decode())
     else:
         try:
-            certificate_key = query_did_dns_record(did_domain)
+            # certificate_key = query_did_dns_record(did_domain)
             private_key = PrivateKey(unhexlify(issuer_db[did_domain]["privkey"]))
         except:
             return {"error": "pubkey record does not exist!"}
@@ -156,6 +156,7 @@ def get_did_doc(request: Request):
         print("ISSUER", issuer_db[did_domain]["privkey"])
 
         public_key_hex = private_key.pubkey.serialize().hex()
+        certificate_key = public_key_hex
         print(public_key_hex, certificate_key)
 
         # Do a check against the
