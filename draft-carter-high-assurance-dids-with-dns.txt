@@ -71,18 +71,18 @@ Table of Contents
    2.  Conventions and Definitions
    3.  Securing a DID using the DNS
      3.1.  Specifically for did:web
-     3.2.  Other DID methods
+     3.2.  Consideration for other DID methods
      3.3.  DIDs with URI records
        3.3.1.  URI record scoping
        3.3.2.  Issuer Handles
      3.4.  PKI with TLSA records
        3.4.1.  TLSA Record Scoping, Selector Field
        3.4.2.  Issuer Handles
-       3.4.3.  Instances of Multiple DIDs
-       3.4.4.  Instances of Multiple Key Pairs
-       3.4.5.  Benefits of Public Keys in the DNS
+       3.4.3.  Instances of Multiple Key Pairs
+       3.4.4.  Benefits of Public Keys in the DNS
    4.  Role of DNSSEC for Assurance and Revocation
    5.  Digital Signature and Proof Value of the DID Document
+     5.1.  Use of Alternative Cryptosuites
    6.  Verification Process
      6.1.  Verification Failure
    7.  Control Requirements
@@ -178,42 +178,26 @@ Table of Contents
    did:web:*example.ca*) is also the location where you can find the
    supporting DNS records.
 
-3.2.  Other DID methods
+3.2.  Consideration for other DID methods
 
    In the case of other DID methods, the association between a DID and a
    DNS domain is still possible although less obvious than with the
-   aformentioned did:web.  The W3C DID Core spec supports multiple ways
-   of creating the association between a DID to a domain.  This is most
-   intuitively accomplished using one of two different fields.
-
-   *alsoKnownAs*: The assertion that two or more DIDs (or other types of
-   URI, such as a domain name) refer to the same DID subject can be made
-   using the [alsoKnownAs] property.
-
-   *Services*: Alternatively, [services] are used in DID documents to
-   express ways of communicating with the DID subject or associated
-   entities.  In this case we are referring specifically to the
-   [LinkedDomains] service type.
+   aformentioned did:web.  This association is currently out of scope at
+   this time.
 
 3.3.  DIDs with URI records
 
-   However, this association stemming only from the DID is
+   The association stemming only from the did:web's id field is
    unidirectional.  By leveraging URI records as outlined in
    [DID-in-the-DNS], we can create a bidirectional relationship,
-   allowing a domain to publish their associated DIDs in the DNS.
+   allowing a domain to publish their associated DID in the DNS.
 
-   *_Ex: _did.example-issuer.ca IN URI 1 0 “did:example:XXXXXXX”_*
+   *_Ex: _did.example-issuer.ca IN URI 1 0 “did:web:XXXXXX”_*
 
    This relationship enhances security, as an entity would require
    control over both the DID and the domain’s DNS server to create this
    bidirectional association, reducing the likelihood of malicious
    impersonation.
-
-   The ability for an organization to publish a list of their DIDs on
-   the DNS is also beneficial as it establishes a link between the DNS,
-   which is ubiquitously supported, and the distributed ledger (or other
-   places) where the DID document resides on which may not have the same
-   degree of access or support, enhancing discoverability.
 
 3.3.1.  URI record scoping
 
@@ -224,18 +208,17 @@ Table of Contents
 
    An issuer may have multiple sub entities issuing credentials on their
    behalf, such as the different faculties in a university issuing
-   diplomas.  Each of these entities may have one or more DIDs of their
-   own.  For this reason, the introduction of an issuer handle,
+   diplomas.  For this reason, the introduction of an issuer handle,
    represented as a subdomain in the resource record name, provides a
    simple way to facilitate the distinction of DIDs, their public keys,
    and credentials they issue in their relationship to an issuer or root
    authority.
 
    *_Ex: _did.diplomas.example-issuer.ca IN URI 1 0
-   “did:example:XXXXXXX”_*
+   “did:web:diplomas.XXXXXX”_*
 
    *_Ex: _did.certificates.example-issuer.ca IN URI 1 0
-   “did:example:XXXXXXX”_*
+   “did:web:certificates.XXXXXXX”_*
 
 3.4.  PKI with TLSA records
 
@@ -245,11 +228,7 @@ Table of Contents
    in its related domain’s zone, we can provide a cryptographic linkage
    to bolster this relationship while also providing access to the DID’s
    public keys outside of the infrastructure where the DID document
-   itself resides, facilitating interoperability.  If a verifier is
-   presented with a credential issued or signed by a DID using a method
-   they do not support, they would have the option to perform the
-   cryptographic verification of the credential's signature using the
-   public key stored in the DNS.
+   itself resides, facilitating interoperability.
 
    TLSA records [RFC6698] provide a simple way of hosting cryptographic
    information in the DNS.
@@ -281,23 +260,7 @@ Table of Contents
    *_Ex: _did.certificates.example-issuer.ca IN TLSA 3 1 0
    “4e18ac22c00fb9...b96270a7b3”_*
 
-3.4.3.  Instances of Multiple DIDs
-
-   It is also likely an issuer may be using or wish to associate
-   multiple DIDs with a single domain or subdomain.  In this case it is
-   possible to expand the name of the RRset using both the related DID
-   method and identifier to more clearly associate the public key and
-   its corresponding DID.  In this circumstance, we propose using
-   another 2 additional sub names, the first following the _did global
-   identifier denoting the method, and the second denoting the DID's id.
-
-   *_Ex: _did.example.123abc.example-issuer.ca IN TLSA 3 1 0
-   “4e18ac22c00fb9...b96270a7b2”_*
-
-   *_Ex: _did.example2.456abc.example-issuer.ca IN TLSA 3 1 0
-   “4e18ac22c00fb9...b96270a7b3”_*
-
-3.4.4.  Instances of Multiple Key Pairs
+3.4.3.  Instances of Multiple Key Pairs
 
    Depending on the needs of the issuer, it is possible they may use
    multiple keypairs associated with a single DID to sign and issue
@@ -313,7 +276,18 @@ Table of Contents
    *_Ex: _did.example-issuer.ca IN TLSA 3 1 0
    "5f29bd33d11gc1...b96270a7b5"_*
 
-3.4.5.  Benefits of Public Keys in the DNS
+3.4.3.1.  Security Consideration
+
+   It is RECOMMENDED implementers limit the total number of TLSA records
+   for a given domain to 255 to mitigate DoS style attacks, such as
+   creating a problematic number of TLSA records to then be resolved and
+   parsed by the verifier.
+
+   If the total number of TLSA records returned to a verifier exceeds
+   this threshold, it is RECOMMENDED they abort the verification process
+   and deem the target DID insecure.
+
+3.4.4.  Benefits of Public Keys in the DNS
 
    Hosting the public keys in TLSA records provides a stronger mechanism
    for the verifier to verify the issuer with, as they are able to
@@ -321,11 +295,8 @@ Table of Contents
    corresponding TLSA records, or against the domain using the
    corresponding [verificationMethod] in the DID document.  The
    accessibility of the public keys is also beneficial, as the verifier
-   does not need to resolve the DID document using a did method they do
-   not support to access the key material.  This limits the burden of
-   having to interoperate with a multitude of different did methods and
-   for credential verification, facilitating interoperability and
-   adoption.
+   does not need to resolve the DID document to accesss its associated
+   key material, enhancing interoperability.
 
 4.  Role of DNSSEC for Assurance and Revocation
 
@@ -360,7 +331,7 @@ Table of Contents
    In accordance with W3C specifications, we propose including a data
    integrity proof such as those outlined in [dataIntegrityProofECDSA]
    and [dataIntegrityProofEdDSA], with the mandatory inclusions of the
-   "created" and "expiry" fields.  The inclusion of which acts as a
+   "created" and "expires" fields.  The inclusion of which acts as a
    lifespan for the document, similar to the TTL for a DNS record.
    Depending on the use case and security requirement, a longer or
    shorter expiry period would be used as necessary.
@@ -373,48 +344,45 @@ Table of Contents
    The data integrity proof SHOULD be signed using a verificationMethod
    that has an associated TLSA record to allow for the verification of
    the data integrity proof using data contained outside of the DID
-   document.  This provides an added layer of authenticity, as the
+   document.  This provides an added layer of authenticity, as the PKI
    information contained in the DID document would need to be supported
    accross 2 different domains.
+
+5.1.  Use of Alternative Cryptosuites
+
+   While [dataIntegrityProofECDSA] and [dataIntegrityProofEdDSA] are the
+   cryptosuites we have chosen to highlight in this specification, it is
+   important to note that this implementation for a high assruance did
+   is cryptosuite agnostic.  It is interoperable with any new and
+   existing cryptosuites and associated key types as required by the
+   implementers and verifiers.
 
 6.  Verification Process
 
    Using the new DNS records and proof object in the DID document, we
    enable a more secure and higher assurance verification process for
    the DID.  It is important to note that while not strictly necessary,
-   DNSSEC verification should be performed each time a DNS record is
+   DNSSEC verification SHOULD be performed each time a DNS record is
    resolved to ensure their authenticity.
 
    1.  *Initial presentation:* The user is presented with a DID
-       document, ex. did:web:example.ca.
+       document, ex. *did:web:example.ca*.
 
    2.  *Verification of the DID:* The user verifies the DID is
        represented as a URI record in the associated domain.
 
-       1.  In the case of did:web, the domain to be queried is indicated
-           by the last segment of the did. ex. *did:web:example.ca ->
-           _did.example.ca*
-
-       2.  In the case of other did methods, the domain to be queried is
-           indicated by the value held in the "alsoKnownAs" or "service"
-           fields.
-
-           1.  ex. javascript {"alsoKnownAs": "example.ca"} ->
-               _did.example.ca
-
-           2.  ex. javascript {"services": [{
-               "id":"did:example:123abc#linked-domain", "type":
-               "LinkedDomains", "serviceEndpoint": "https://example.ca"
-               -> _did.example.ca }] }
+       1.  In the case of did:web, the domain and record name to be
+           queried is indicated by the last segment of the did. ex.
+           *did:web:example.ca -> _did.example.ca*
 
    3.  *Verification of the PKI:* With the association between the DID
        and the domain verified, the user would then proceed to verify
        the key material between the DID and the domain.
 
        1.  The user would query for a TLSA record.  Depending on the
-           record/s returned, the user would verify either the hash of
-           the verificationMethod or verificationMethod itself matches
-           what was returned by the TLSA record content.
+           type of TLSA record/s returned, the user would verify either
+           the hash of the verificationMethod or verificationMethod
+           itself matches what was returned by the TLSA record content.
 
            1.  Note: This may require some conversion, as TLSA records
                store key material as hex encoded DER format, and this
@@ -445,8 +413,10 @@ Table of Contents
    If at any given step verification fails, the DID document should be
    deemed INSECURE.  Whether it is due to the DID and DNS being out of
    sync with recent updates, or the DID document or DNS zone themselves
-   have been compromised, it is highly advised that the user stop
-   interacting with the given DID until verification succeeds and cross-
+   being compromised, a failed verification MAY indicate malicious
+   activity.  It is then up to the verifier to determine, according to
+   their requirements and use case, the appropiate course of action in
+   regards to interactions with the target DID until succesful
    verification is restored.
 
 7.  Control Requirements
