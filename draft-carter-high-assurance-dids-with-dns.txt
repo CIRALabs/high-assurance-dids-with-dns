@@ -5,11 +5,11 @@
 Network Working Group                                          J. Carter
 Internet-Draft                                                 J. Latour
 Intended status: Informational                                      CIRA
-Expires: 4 October 2024                                        M. Glaude
+Expires: 8 October 2024                                        M. Glaude
                                                            NorthernBlock
                                                                 T. Bouma
                                               Digital Governance Council
-                                                            2 April 2024
+                                                            6 April 2024
 
 
                       High Assurance DIDs with DNS
@@ -52,7 +52,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 4 October 2024.
+   This Internet-Draft will expire on 8 October 2024.
 
 Copyright Notice
 
@@ -166,7 +166,7 @@ Table of Contents
 
    The diagram above illustrates how a web server storing the DID
    document, and the DNS server storing the URI and TLSA records shares
-   and links the key information about the DID accross to independant
+   and links the key information about the DID accross two independant
    sets of infrastructure.
 
 3.1.  Specifically for did:web
@@ -193,7 +193,7 @@ Table of Contents
    *Services*: Alternatively, [services] are used in DID documents to
    express ways of communicating with the DID subject or associated
    entities.  In this case we are referring specifically to the
-   "LinkedDomains" service type.
+   [LinkedDomains] service type.
 
 3.3.  DIDs with URI records
 
@@ -303,13 +303,15 @@ Table of Contents
    multiple keypairs associated with a single DID to sign and issue
    credentials.  In this case, a TLSA record will be created per
    [verificationMethod] and then be bundled into the corresponding TLSA
-   RRset.  A resolver can then parse the returned records for the
-   corresponding verificationMethod they wish to interact with or
+   RRset.  A resolver can then parse the returned records and match the
+   key content to the verificationMethod they wish to interact with or
    verify.
 
    *_Ex: _did.example-issuer.ca IN TLSA 3 1 0
-   "4e18ac22c00fb9...b96270a7b4"_* *_Ex: _did.example-issuer.ca IN TLSA
-   3 1 0 "4e18ac22c00fb9...b96270a7b5"_*
+   "4e18ac22c00fb9...b96270a7b4"_*
+
+   *_Ex: _did.example-issuer.ca IN TLSA 3 1 0
+   "5f29bd33d11gc1...b96270a7b5"_*
 
 3.4.5.  Benefits of Public Keys in the DNS
 
@@ -327,9 +329,9 @@ Table of Contents
 
 4.  Role of DNSSEC for Assurance and Revocation
 
-   It is hihgly recommended that all the participants in this digital
-   identity ecosystem enable DNSSEC signing for the DNS instances they
-   operate.  See [RFC9364].
+   It is RECOMMENDED that all the participants in this digital identity
+   ecosystem enable DNSSEC signing for the DNS instances they operate.
+   See [RFC9364].
 
    DNSSEC provides cryptographic assurance that the DNS records returned
    in response to a query are authentic and have not been tampered with.
@@ -365,10 +367,10 @@ Table of Contents
 
    javascript "proof": { "type": "DataIntegrityProof", "cryptosuite":
    "ecdsa-jfc-2019", "created": "2023-10-11T15:27:27Z", "expires":
-   "2099-10-11T15:27:27Z", "verificationMethod":
-   "did:web:trustregistry.ca#key-1", }
+   "2099-10-11T15:27:27Z", "proofPurpose": "authentication",
+   "verificationMethod": "did:web:trustregistry.ca#key-1", }
 
-   The data integrety proof SHOULD be signed using a verificationMethod
+   The data integrity proof SHOULD be signed using a verificationMethod
    that has an associated TLSA record to allow for the verification of
    the data integrity proof using data contained outside of the DID
    document.  This provides an added layer of authenticity, as the
@@ -381,7 +383,7 @@ Table of Contents
    enable a more secure and higher assurance verification process for
    the DID.  It is important to note that while not strictly necessary,
    DNSSEC verification should be performed each time a DNS record is
-   resolved to ensure authenticity.
+   resolved to ensure their authenticity.
 
    1.  *Initial presentation:* The user is presented with a DID
        document, ex. did:web:example.ca.
@@ -648,6 +650,11 @@ Table of Contents
 
    [issuer]   "Verifiable Credentials Data Model v2.0", n.d.,
               <https://www.w3.org/TR/vc-data-model-2.0/#issuer>.
+
+   [LinkedDomains]
+              "Well Known DID Configuration", n.d.,
+              <https://identity.foundation/.well-known/resources/did-
+              configuration/#linked-domain-service-endpoint>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
