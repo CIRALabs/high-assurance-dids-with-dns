@@ -65,6 +65,9 @@ normative:
    services:
       title: "Decentralized Identifiers (DIDs) v1.0"
       target: https://www.w3.org/TR/did-core/#services
+   LinkedDomains:
+      title: "Well Known DID Configuration"
+      target: https://identity.foundation/.well-known/resources/did-configuration/#linked-domain-service-endpoint
    DID-in-the-DNS:
       title: "The Decentralized Identifier (DID) in the DNS"
       target: https://datatracker.ietf.org/doc/html/draft-mayrhofer-did-dns-05#section-2
@@ -120,7 +123,7 @@ Much like presenting two pieces of ID to provide a higher level of assurance whe
     |                |     |                |
     +----------------+     +----------------+
 
-The diagram above illustrates how a web server storing the DID document, and the DNS server storing the URI and TLSA records shares and links the key information about the DID accross to independant sets of infrastructure.
+The diagram above illustrates how a web server storing the DID document, and the DNS server storing the URI and TLSA records shares and links the key information about the DID accross two independant sets of infrastructure.
 
 ## Specifically for did:web
 
@@ -132,7 +135,7 @@ In the case of other DID methods, the association between a DID and a DNS domain
 
 **alsoKnownAs**: The assertion that two or more DIDs (or other types of URI, such as a domain name) refer to the same DID subject can be made using the {{alsoKnownAs}} property.
 
-**Services**: Alternatively, {{services}} are used in DID documents to express ways of communicating with the DID subject or associated entities. In this case we are referring specifically to the "LinkedDomains" service type.
+**Services**: Alternatively, {{services}} are used in DID documents to express ways of communicating with the DID subject or associated entities. In this case we are referring specifically to the {{LinkedDomains}} service type.
 
 ## DIDs with URI records
 
@@ -187,10 +190,11 @@ It is also likely an issuer may be using or wish to associate multiple DIDs with
 
 ### Instances of Multiple Key Pairs
 
-Depending on the needs of the issuer, it is possible they may use multiple keypairs associated with a single DID to sign and issue credentials. In this case, a TLSA record will be created per {{verificationMethod}} and then be bundled into the corresponding TLSA RRset. A resolver can then parse the returned records for the corresponding verificationMethod they wish to interact with or verify.
+Depending on the needs of the issuer, it is possible they may use multiple keypairs associated with a single DID to sign and issue credentials. In this case, a TLSA record will be created per {{verificationMethod}} and then be bundled into the corresponding TLSA RRset. A resolver can then parse the returned records and match the key content to the verificationMethod they wish to interact with or verify.
 
 ***Ex: _did.example-issuer.ca IN TLSA 3 1 0 "4e18ac22c00fb9...b96270a7b4"***
-***Ex: _did.example-issuer.ca IN TLSA 3 1 0 "4e18ac22c00fb9...b96270a7b5"***
+
+***Ex: _did.example-issuer.ca IN TLSA 3 1 0 "5f29bd33d11gc1...b96270a7b5"***
 
 ### Benefits of Public Keys in the DNS
 
@@ -198,7 +202,7 @@ Hosting the public keys in TLSA records provides a stronger mechanism for the ve
 
 # Role of DNSSEC for Assurance and Revocation
 
-It is hihgly recommended that all the participants in this digital identity ecosystem enable DNSSEC signing for the DNS instances they operate. See {{!RFC9364}}.
+It is RECOMMENDED that all the participants in this digital identity ecosystem enable DNSSEC signing for the DNS instances they operate. See {{!RFC9364}}.
 
 DNSSEC provides cryptographic assurance that the DNS records returned in response to a query are authentic and have not been tampered with. This assurance within the context of the *_did* URI and *_did* TLSA records provides another mechanism to ensure the integrity of the DID and its public keys outside of infrastructure it resides on directly from the domain of its owner.
 
@@ -216,15 +220,16 @@ In accordance with W3C specifications, we propose including a data integrity pro
     "cryptosuite": "ecdsa-jfc-2019",
     "created": "2023-10-11T15:27:27Z",
     "expires": "2099-10-11T15:27:27Z",
+    "proofPurpose": "authentication",
     "verificationMethod": "did:web:trustregistry.ca#key-1",
   }
 ```
 
-The data integrety proof SHOULD be signed using a verificationMethod that has an associated TLSA record to allow for the verification of the data integrity proof using data contained outside of the DID document. This provides an added layer of authenticity, as the information contained in the DID document would need to be supported accross 2 different domains.
+The data integrity proof SHOULD be signed using a verificationMethod that has an associated TLSA record to allow for the verification of the data integrity proof using data contained outside of the DID document. This provides an added layer of authenticity, as the information contained in the DID document would need to be supported accross 2 different domains.
 
 # Verification Process
 
-Using the new DNS records and proof object in the DID document, we enable a more secure and higher assurance verification process for the DID. It is important to note that while not strictly necessary, DNSSEC verification should be performed each time a DNS record is resolved to ensure authenticity.
+Using the new DNS records and proof object in the DID document, we enable a more secure and higher assurance verification process for the DID. It is important to note that while not strictly necessary, DNSSEC verification should be performed each time a DNS record is resolved to ensure their authenticity.
 
 1. **Initial presentation:** The user is presented with a DID document, ex. did:web:example.ca.
 2. **Verification of the DID:** The user verifies the DID is represented as a URI record in the associated domain.
