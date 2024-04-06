@@ -220,7 +220,7 @@ The data integrity proof SHOULD be signed using a verificationMethod that has an
 
 ## Use of Alternative Cryptosuites
 
-While {{dataIntegrityProofECDSA}} and {{dataIntegrityProofEdDSA}} are the cryptosuites we have chosen to highlight in this specification, it is important to note that this implementation for a high assruance did is cryptosuite agnostic. It is interoperable with any new and existing cryptosuites and associated key types as required by the implementers and verifiers. 
+While {{dataIntegrityProofECDSA}} and {{dataIntegrityProofEdDSA}} are the cryptosuites we have chosen to highlight in this specification, it is important to note that this implementation for a high assruance did is cryptosuite agnostic. It is interoperable with any new and existing cryptosuites and associated key types as required by the implementers and verifiers.
 
 # Verification Process
 
@@ -238,7 +238,7 @@ Using the new DNS records and proof object in the DID document, we enable a more
 
 ## Verification Failure
 
-If at any given step verification fails, the DID document should be deemed INSECURE. Whether it is due to the DID and DNS being out of sync with recent updates, or the DID document or DNS zone themselves being compromised, a failed verification MAY indicate malicious activity. It is then up to the verifier to determine, according to their requirements and use case, the appropiate course of action in regards to interactions with the target DID until succesful verification is restored. 
+If at any given step verification fails, the DID document should be deemed INSECURE. Whether it is due to the DID and DNS being out of sync with recent updates, or the DID document or DNS zone themselves being compromised, a failed verification MAY indicate malicious activity. It is then up to the verifier to determine, according to their requirements and use case, the appropiate course of action in regards to interactions with the target DID until succesful verification is restored.
 
 # Control Requirements
 
