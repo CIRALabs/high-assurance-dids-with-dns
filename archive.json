@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-04-02T00:17:30.988829+00:00",
+  "timestamp": "2024-04-07T00:20:07.123679+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -998,24 +998,26 @@
       "id": "PR_kwDOLLNO0c5qh6K8",
       "title": "add in DANE para",
       "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/pull/33",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "trbouma",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Added in DANE paragraph",
       "createdAt": "2024-03-22T20:33:10Z",
-      "updatedAt": "2024-03-22T20:33:11Z",
+      "updatedAt": "2024-04-02T17:36:36Z",
       "baseRepository": "CIRALabs/high-assurance-dids-with-dns",
       "baseRefName": "main",
       "baseRefOid": "7ae3b3ce18718923f52e17c6ebb8a744754bf0f1",
       "headRepository": "CIRALabs/high-assurance-dids-with-dns",
       "headRefName": "DANE-additions",
       "headRefOid": "73f52878aba400e640ac7eb8e53e309888e4c88b",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2024-04-02T17:36:36Z",
+      "mergedAt": "2024-04-02T17:36:36Z",
+      "mergedBy": "jessecarter111",
+      "mergeCommit": {
+        "oid": "4bff320092ffbf027c52be9f05f1ae48af7a2617"
+      },
       "comments": [],
       "reviews": []
     }
