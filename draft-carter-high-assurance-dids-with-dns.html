@@ -19,17 +19,17 @@
 <meta content="draft-carter-high-assurance-dids-with-dns-latest" name="ietf.draft">
 <!-- Generator version information:
   xml2rfc 3.20.1
-    Python 3.11.8
+    Python 3.10.12
     ConfigArgParse 1.7
     google-i18n-address 3.1.0
     intervaltree 3.1.0
-    Jinja2 3.1.2
-    lxml 4.9.3
+    Jinja2 3.1.3
+    lxml 4.9.4
     platformdirs 4.2.0
-    pycountry 22.3.5
+    pycountry 23.12.11
     PyYAML 6.0.1
     requests 2.31.0
-    setuptools 68.2.2
+    setuptools 69.2.0
     six 1.16.0
     wcwidth 0.2.13
 -->
@@ -1145,36 +1145,35 @@ svg :is([fill="white"], [fill^="#fff"]) {
             <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-securing-a-did-using-the-dn" class="internal xref">Securing a DID using the DNS</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
-                <p id="section-toc.1-1.3.2.1.1" class="keepWithNext"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-specifically-for-didweb" class="internal xref">Specifically for did:web</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
-                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-consideration-for-other-did" class="internal xref">Consideration for other DID methods</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
-                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-dids-with-uri-records" class="internal xref">DIDs with URI records</a></p>
+                <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-specifically-for-didweb" class="internal xref">Specifically for did:web</a></p>
 <ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3.2.1">
-                    <p id="section-toc.1-1.3.2.3.2.1.1"><a href="#section-3.3.1" class="auto internal xref">3.3.1</a>.  <a href="#name-uri-record-scoping" class="internal xref">URI record scoping</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3.2.2">
-                    <p id="section-toc.1-1.3.2.3.2.2.1"><a href="#section-3.3.2" class="auto internal xref">3.3.2</a>.  <a href="#name-issuer-handles" class="internal xref">Issuer Handles</a></p>
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1.2.1">
+                    <p id="section-toc.1-1.3.2.1.2.1.1" class="keepWithNext"><a href="#section-3.1.1" class="auto internal xref">3.1.1</a>.  <a href="#name-consideration-for-other-did" class="internal xref">Consideration for other DID methods</a></p>
 </li>
                 </ul>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4">
-                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-pki-with-tlsa-records" class="internal xref">PKI with TLSA records</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-mapping-dids-to-domains-wit" class="internal xref">Mapping DIDs to Domains with URI records</a></p>
 <ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4.2.1">
-                    <p id="section-toc.1-1.3.2.4.2.1.1"><a href="#section-3.4.1" class="auto internal xref">3.4.1</a>.  <a href="#name-tlsa-record-scoping-selecto" class="internal xref">TLSA Record Scoping, Selector Field</a></p>
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2.2.1">
+                    <p id="section-toc.1-1.3.2.2.2.1.1"><a href="#section-3.2.1" class="auto internal xref">3.2.1</a>.  <a href="#name-uri-record-scoping" class="internal xref">URI record scoping</a></p>
 </li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4.2.2">
-                    <p id="section-toc.1-1.3.2.4.2.2.1"><a href="#section-3.4.2" class="auto internal xref">3.4.2</a>.  <a href="#name-issuer-handles-2" class="internal xref">Issuer Handles</a></p>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2.2.2">
+                    <p id="section-toc.1-1.3.2.2.2.2.1"><a href="#section-3.2.2" class="auto internal xref">3.2.2</a>.  <a href="#name-entity-handles" class="internal xref">Entity Handles</a></p>
 </li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4.2.3">
-                    <p id="section-toc.1-1.3.2.4.2.3.1"><a href="#section-3.4.3" class="auto internal xref">3.4.3</a>.  <a href="#name-instances-of-multiple-key-p" class="internal xref">Instances of Multiple Key Pairs</a></p>
+                </ul>
 </li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4.2.4">
-                    <p id="section-toc.1-1.3.2.4.2.4.1"><a href="#section-3.4.4" class="auto internal xref">3.4.4</a>.  <a href="#name-benefits-of-public-keys-in-" class="internal xref">Benefits of Public Keys in the DNS</a></p>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
+                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-pki-with-tlsa-records" class="internal xref">PKI with TLSA records</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3.2.1">
+                    <p id="section-toc.1-1.3.2.3.2.1.1"><a href="#section-3.3.1" class="auto internal xref">3.3.1</a>.  <a href="#name-tlsa-record-scoping-selecto" class="internal xref">TLSA Record Scoping, Selector Field</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3.2.2">
+                    <p id="section-toc.1-1.3.2.3.2.2.1"><a href="#section-3.3.2" class="auto internal xref">3.3.2</a>.  <a href="#name-instances-of-multiple-key-p" class="internal xref">Instances of Multiple Key Pairs</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3.2.3">
+                    <p id="section-toc.1-1.3.2.3.2.3.1"><a href="#section-3.3.3" class="auto internal xref">3.3.3</a>.  <a href="#name-benefits-of-public-keys-in-" class="internal xref">Benefits of Public Keys in the DNS</a></p>
 </li>
                 </ul>
 </li>
@@ -1287,106 +1286,96 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-specifically-for-didweb" class="section-name selfRef">Specifically for did:web</a>
         </h3>
 <p id="section-3.1-1">With did:web, there’s an inherent link between the DNS needed to resolve the associated DID document and the domain where the relevant supporting DNS records are located. This means that the domain specified by the did:web identifier (for example, did:web:<strong>example.ca</strong>) is also the location where you can find the supporting DNS records.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
-</section>
-</div>
 <div id="consideration-for-other-did-methods">
-<section id="section-3.2">
-        <h3 id="name-consideration-for-other-did">
-<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-consideration-for-other-did" class="section-name selfRef">Consideration for other DID methods</a>
-        </h3>
-<p id="section-3.2-1">In the case of other DID methods, the association between a DID and a DNS domain is still possible although less obvious than with the aforementioned did:web. This association is currently out of scope at this time.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<section id="section-3.1.1">
+          <h4 id="name-consideration-for-other-did">
+<a href="#section-3.1.1" class="section-number selfRef">3.1.1. </a><a href="#name-consideration-for-other-did" class="section-name selfRef">Consideration for other DID methods</a>
+          </h4>
+<p id="section-3.1.1-1">In the case of other DID methods, the association between a DID and a DNS domain is still possible although less inherent than with the aforementioned did:web. This association is currently out of scope at this time.<a href="#section-3.1.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="dids-with-uri-records">
-<section id="section-3.3">
-        <h3 id="name-dids-with-uri-records">
-<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-dids-with-uri-records" class="section-name selfRef">DIDs with URI records</a>
+</section>
+</div>
+<div id="mapping-dids-to-domains-with-uri-records">
+<section id="section-3.2">
+        <h3 id="name-mapping-dids-to-domains-wit">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-mapping-dids-to-domains-wit" class="section-name selfRef">Mapping DIDs to Domains with URI records</a>
         </h3>
-<p id="section-3.3-1">The association stemming only from the did:web's id field is unidirectional. By leveraging URI records as outlined in <span>[<a href="#DID-in-the-DNS" class="cite xref">DID-in-the-DNS</a>]</span>, we can create a bidirectional relationship, allowing a domain to publish their associated DID in the DNS.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
-<p id="section-3.3-2"><strong><em>Ex: _did.example-issuer.ca IN URI 1 0 “did:web:XXXXXX”</em></strong><a href="#section-3.3-2" class="pilcrow">¶</a></p>
-<p id="section-3.3-3">This relationship enhances security, as an entity would require control over both the DID and the domain’s DNS server to create this bidirectional association, reducing the likelihood of malicious impersonation.<a href="#section-3.3-3" class="pilcrow">¶</a></p>
+<p id="section-3.2-1">The association to a domain stemming only from the did is unidirectional. By leveraging URI records as outlined in <span>[<a href="#DID-in-the-DNS" class="cite xref">DID-in-the-DNS</a>]</span>, we can create a bidirectional relationship, allowing a domain to publish their associated DID in the DNS.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.2-2"><strong><em>Ex: _did.example-issuer.ca IN URI 1 0 “did:web:XXXXXX”</em></strong><a href="#section-3.2-2" class="pilcrow">¶</a></p>
+<p id="section-3.2-3">This relationship enhances security, as an entity would require control over both the DID and the domain’s DNS server to create this bidirectional association, reducing the likelihood of malicious impersonation.<a href="#section-3.2-3" class="pilcrow">¶</a></p>
 <div id="uri-record-scoping">
-<section id="section-3.3.1">
+<section id="section-3.2.1">
           <h4 id="name-uri-record-scoping">
-<a href="#section-3.3.1" class="section-number selfRef">3.3.1. </a><a href="#name-uri-record-scoping" class="section-name selfRef">URI record scoping</a>
+<a href="#section-3.2.1" class="section-number selfRef">3.2.1. </a><a href="#name-uri-record-scoping" class="section-name selfRef">URI record scoping</a>
           </h4>
 <ul class="normal">
-<li class="normal" id="section-3.3.1-1.1">
-              <p id="section-3.3.1-1.1.1">The records <span class="bcp14">MUST</span> be scoped by setting the global underscore name of the URI RRset to <em>_did</em> (0x5F 0x64 0x69 0x64).<a href="#section-3.3.1-1.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-3.2.1-1.1">
+              <p id="section-3.2.1-1.1.1">The records <span class="bcp14">MUST</span> be scoped by setting the global underscore name of the URI RRset to <em>_did</em> (0x5F 0x64 0x69 0x64).<a href="#section-3.2.1-1.1.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 </section>
 </div>
-<div id="issuer-handles">
-<section id="section-3.3.2">
-          <h4 id="name-issuer-handles">
-<a href="#section-3.3.2" class="section-number selfRef">3.3.2. </a><a href="#name-issuer-handles" class="section-name selfRef">Issuer Handles</a>
+<div id="entity-handles">
+<section id="section-3.2.2">
+          <h4 id="name-entity-handles">
+<a href="#section-3.2.2" class="section-number selfRef">3.2.2. </a><a href="#name-entity-handles" class="section-name selfRef">Entity Handles</a>
           </h4>
-<p id="section-3.3.2-1">An issuer may have multiple sub entities issuing credentials on their behalf, such as the different faculties in a university issuing diplomas. For this reason, the introduction of an issuer handle, represented as a subdomain in the resource record name, provides a simple way to facilitate the distinction of DIDs, their public keys, and credentials they issue in their relationship to an issuer or root authority.<a href="#section-3.3.2-1" class="pilcrow">¶</a></p>
-<p id="section-3.3.2-2"><strong><em>Ex: _did.diplomas.example-issuer.ca IN URI 1 0 “did:web:diplomas.XXXXXX”</em></strong><a href="#section-3.3.2-2" class="pilcrow">¶</a></p>
-<p id="section-3.3.2-3"><strong><em>Ex: _did.certificates.example-issuer.ca IN URI 1 0 “did:web:certificates.XXXXXXX”</em></strong><a href="#section-3.3.2-3" class="pilcrow">¶</a></p>
+<p id="section-3.2.2-1">An implementer may have multiple sub entities operating and issuing credentials on their behalf, like the different deparments in a university issuing diplomas or publishing research. For this reason, the introduction of an entity handle, represented as a subdomain in the resource record name, provides a simple way to facilitate the distinction of DIDs, their public keys, and credentials they issue in their relationship to another entity or root authority.<a href="#section-3.2.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.2.2-2"><strong><em>Ex: _did.diplomas.example-issuer.ca IN URI 1 0 “did:web:diplomas.XXXXXX”</em></strong><a href="#section-3.2.2-2" class="pilcrow">¶</a></p>
+<p id="section-3.2.2-3"><strong><em>Ex: _did.certificates.example-issuer.ca IN URI 1 0 “did:web:certificates.XXXXXXX”</em></strong><a href="#section-3.2.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
 <div id="pki-with-tlsa-records">
-<section id="section-3.4">
+<section id="section-3.3">
         <h3 id="name-pki-with-tlsa-records">
-<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-pki-with-tlsa-records" class="section-name selfRef">PKI with TLSA records</a>
+<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-pki-with-tlsa-records" class="section-name selfRef">PKI with TLSA records</a>
         </h3>
-<p id="section-3.4-1">The DID to DNS mapping illustrated in section 4 provides a way of showing the association between a DID and a domain, but no way of verifying that relationship. By hosting the public keys of that DID in its related domain’s zone, we can provide a cryptographic linkage to bolster this relationship while also providing access to the DID’s public keys outside of the infrastructure where the DID document itself resides, facilitating interoperability.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
-<p id="section-3.4-2">TLSA records <span>[<a href="#RFC6698" class="cite xref">RFC6698</a>]</span> provide a simple way of hosting cryptographic information in the DNS.<a href="#section-3.4-2" class="pilcrow">¶</a></p>
+<p id="section-3.3-1">The DID to DNS mapping illustrated in section 3.3 provides a way of expressing the association between a DID and a domain, but no way of verifying that relationship. By hosting the public keys of that DID in its associated domain’s zone, we can provide a cryptographic linkage to bolster this relationship while also providing access to the DID’s public keys outside of the infrastructure where the DID document itself resides, facilitating interoperability and increasing availability.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
+<p id="section-3.3-2">TLSA records <span>[<a href="#RFC6698" class="cite xref">RFC6698</a>]</span> provide a simple way of hosting cryptographic information in the DNS. Key material can be represented in TLSA records either hashed or unhashed depending on the requirements and use case of the implementer.<a href="#section-3.3-2" class="pilcrow">¶</a></p>
 <div id="tlsa-record-scoping-selector-field">
-<section id="section-3.4.1">
+<section id="section-3.3.1">
           <h4 id="name-tlsa-record-scoping-selecto">
-<a href="#section-3.4.1" class="section-number selfRef">3.4.1. </a><a href="#name-tlsa-record-scoping-selecto" class="section-name selfRef">TLSA Record Scoping, Selector Field</a>
+<a href="#section-3.3.1" class="section-number selfRef">3.3.1. </a><a href="#name-tlsa-record-scoping-selecto" class="section-name selfRef">TLSA Record Scoping, Selector Field</a>
           </h4>
-<p id="section-3.4.1-1">When public keys related to DIDs are published in the DNS as TLSA records:<a href="#section-3.4.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.3.1-1">When public keys related to DIDs are published in the DNS as TLSA records:<a href="#section-3.3.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-3.4.1-2.1">
-              <p id="section-3.4.1-2.1.1">The records <span class="bcp14">MUST</span> be scoped by setting the global underscore name of the TLSA RRset to <em>_did</em> (0x5F 0x64 0x69 0x64).<a href="#section-3.4.1-2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-3.3.1-2.1">
+              <p id="section-3.3.1-2.1.1">The records <span class="bcp14">MUST</span> be scoped by setting the global underscore name of the TLSA RRset to <em>_did</em> (0x5F 0x64 0x69 0x64).<a href="#section-3.3.1-2.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-3.4.1-2.2">
-              <p id="section-3.4.1-2.2.1">The Selector Field of the TLSA record must be set to 1, SubjectPublicKeyInfo: DER-encoded binary structure as defined in <span>[<a href="#RFC5280" class="cite xref">RFC5280</a>]</span>.<a href="#section-3.4.1-2.2.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-3.3.1-2.2">
+              <p id="section-3.3.1-2.2.1">The Selector Field of the TLSA record must be set to 1, SubjectPublicKeyInfo: DER-encoded binary structure as defined in <span>[<a href="#RFC5280" class="cite xref">RFC5280</a>]</span>.<a href="#section-3.3.1-2.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 </section>
 </div>
-<div id="issuer-handles-1">
-<section id="section-3.4.2">
-          <h4 id="name-issuer-handles-2">
-<a href="#section-3.4.2" class="section-number selfRef">3.4.2. </a><a href="#name-issuer-handles-2" class="section-name selfRef">Issuer Handles</a>
-          </h4>
-<p id="section-3.4.2-1">As mentioned in section 4.2, an issuer may have multiple sub entities issuing credentials on their behalf, likely with their own set or sets of keypairs. Because these keypairs will need to be represented in the DNS as TLSA records, the use of an issuer handle as outlined in section 4.2 will facilitate the distinction of the different public keys in their relation to the issuer.<a href="#section-3.4.2-1" class="pilcrow">¶</a></p>
-<p id="section-3.4.2-2"><strong><em>Ex: _did.diplomas.example-issuer.ca IN TLSA 3 1 0 “4e18ac22c00fb9...b96270a7b2”</em></strong><a href="#section-3.4.2-2" class="pilcrow">¶</a></p>
-<p id="section-3.4.2-3"><strong><em>Ex: _did.certificates.example-issuer.ca IN TLSA 3 1 0 “4e18ac22c00fb9...b96270a7b3”</em></strong><a href="#section-3.4.2-3" class="pilcrow">¶</a></p>
-</section>
-</div>
 <div id="instances-of-multiple-key-pairs">
-<section id="section-3.4.3">
+<section id="section-3.3.2">
           <h4 id="name-instances-of-multiple-key-p">
-<a href="#section-3.4.3" class="section-number selfRef">3.4.3. </a><a href="#name-instances-of-multiple-key-p" class="section-name selfRef">Instances of Multiple Key Pairs</a>
+<a href="#section-3.3.2" class="section-number selfRef">3.3.2. </a><a href="#name-instances-of-multiple-key-p" class="section-name selfRef">Instances of Multiple Key Pairs</a>
           </h4>
-<p id="section-3.4.3-1">Depending on the needs of the issuer, it is possible they may use multiple keypairs associated with a single DID to sign and issue credentials. In this case, a TLSA record will be created per <span>[<a href="#verificationMethod" class="cite xref">verificationMethod</a>]</span> and then be bundled into the corresponding TLSA RRset. A resolver can then parse the returned records and match the key content to the verificationMethod they wish to interact with or verify.<a href="#section-3.4.3-1" class="pilcrow">¶</a></p>
-<p id="section-3.4.3-2"><strong><em>Ex: _did.example-issuer.ca IN TLSA 3 1 0 "4e18ac22c00fb9...b96270a7b4"</em></strong><a href="#section-3.4.3-2" class="pilcrow">¶</a></p>
-<p id="section-3.4.3-3"><strong><em>Ex: _did.example-issuer.ca IN TLSA 3 1 0 "5f29bd33d11gc1...b96270a7b5"</em></strong><a href="#section-3.4.3-3" class="pilcrow">¶</a></p>
+<p id="section-3.3.2-1">Depending on the needs of the implementer, it is possible they may use multiple keypairs associated with a single DID to sign and issue credentials or enable other PKI related interactions. In this case, a TLSA record will be created per <span>[<a href="#verificationMethod" class="cite xref">verificationMethod</a>]</span> and then be bundled into the corresponding TLSA RRset. A resolver can then parse the returned records and match the key content to the verificationMethod they wish to interact with or verify.<a href="#section-3.3.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.3.2-2"><strong><em>Ex: _did.example-issuer.ca IN TLSA 3 1 0 "4e18ac22c00fb9...b96270a7b4"</em></strong><a href="#section-3.3.2-2" class="pilcrow">¶</a></p>
+<p id="section-3.3.2-3"><strong><em>Ex: _did.example-issuer.ca IN TLSA 3 1 0 "5f29bd33d11gc1...b96270a7b5"</em></strong><a href="#section-3.3.2-3" class="pilcrow">¶</a></p>
 <div id="security-consideration">
-<section id="section-3.4.3.1">
+<section id="section-3.3.2.1">
             <h5 id="name-security-consideration">
-<a href="#section-3.4.3.1" class="section-number selfRef">3.4.3.1. </a><a href="#name-security-consideration" class="section-name selfRef">Security Consideration</a>
+<a href="#section-3.3.2.1" class="section-number selfRef">3.3.2.1. </a><a href="#name-security-consideration" class="section-name selfRef">Security Consideration</a>
             </h5>
-<p id="section-3.4.3.1-1">It is <span class="bcp14">RECOMMENDED</span> implementers limit the total number of TLSA records for a given domain to 255 to mitigate DoS style attacks, such as creating a problematic number of TLSA records to then be resolved and parsed by the verifier.<a href="#section-3.4.3.1-1" class="pilcrow">¶</a></p>
-<p id="section-3.4.3.1-2">If the total number of TLSA records returned to a verifier exceeds this threshold, it is <span class="bcp14">RECOMMENDED</span> they abort the verification process and deem the target DID insecure.<a href="#section-3.4.3.1-2" class="pilcrow">¶</a></p>
+<p id="section-3.3.2.1-1">It is <span class="bcp14">RECOMMENDED</span> implementers limit the total number of TLSA records for a given domain to 255 to mitigate DoS style attacks, such as creating a problematic number of TLSA records to then be resolved and parsed by the verifier.<a href="#section-3.3.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.3.2.1-2">If the total number of TLSA records returned to a verifier exceeds this threshold, it is <span class="bcp14">RECOMMENDED</span> they abort the verification process and deem the target DID insecure.<a href="#section-3.3.2.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
 </div>
 <div id="benefits-of-public-keys-in-the-dns">
-<section id="section-3.4.4">
+<section id="section-3.3.3">
           <h4 id="name-benefits-of-public-keys-in-">
-<a href="#section-3.4.4" class="section-number selfRef">3.4.4. </a><a href="#name-benefits-of-public-keys-in-" class="section-name selfRef">Benefits of Public Keys in the DNS</a>
+<a href="#section-3.3.3" class="section-number selfRef">3.3.3. </a><a href="#name-benefits-of-public-keys-in-" class="section-name selfRef">Benefits of Public Keys in the DNS</a>
           </h4>
-<p id="section-3.4.4-1">Hosting the public keys in TLSA records provides a stronger mechanism for the verifier to verify the issuer with, as they are able to perform a cryptographic challenge against the DID using the corresponding TLSA records, or against the domain using the corresponding <span>[<a href="#verificationMethod" class="cite xref">verificationMethod</a>]</span> in the DID document. The accessibility of the public keys is also beneficial, as the verifier does not need to resolve the DID document to accesss its associated key material, enhancing interoperability.<a href="#section-3.4.4-1" class="pilcrow">¶</a></p>
+<p id="section-3.3.3-1">Hosting the public keys in TLSA records provides a stronger mechanism for the verifier to verify a did and its associated entity with, as they are able to perform a cryptographic challenge against the DID using the corresponding TLSA records, or against the domain using the corresponding <span>[<a href="#verificationMethod" class="cite xref">verificationMethod</a>]</span> in the DID document. The accessibility of the public keys is also beneficial, as the verifier does not need to resolve the DID document to accesss its associated key material, enhancing interoperability.<a href="#section-3.3.3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1410,7 +1399,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
       </h2>
 <p id="section-5-1">Digital signatures ensure the integrity of the DID Document, and by extent the public keys, authentication protocols, and service endpoints necessary for initiating trustworthy interactions with the identified entity. The use of digital signatures in this context provides a robust mechanism for verifying that the DID Document has not been tampered with and indeed originates from the correct entity.<a href="#section-5-1" class="pilcrow">¶</a></p>
 <p id="section-5-2">In accordance with W3C specifications, we propose including a data integrity proof such as those outlined in <span>[<a href="#dataIntegrityProofECDSA" class="cite xref">dataIntegrityProofECDSA</a>]</span> and <span>[<a href="#dataIntegrityProofEdDSA" class="cite xref">dataIntegrityProofEdDSA</a>]</span>, with the mandatory inclusions of the "created" and "expires" fields. The inclusion of which acts as a lifespan for the document, similar to the TTL for a DNS record. Depending on the use case and security requirement, a longer or shorter expiry period would be used as necessary.<a href="#section-5-2" class="pilcrow">¶</a></p>
-<p id="section-5-3"><code>javascript
+<p id="section-5-3"><code>json
    "proof": {
        "type": "DataIntegrityProof",
        "cryptosuite": "ecdsa-jfc-2019",
@@ -1437,39 +1426,39 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <a href="#section-6" class="section-number selfRef">6. </a><a href="#name-verification-process" class="section-name selfRef">Verification Process</a>
       </h2>
 <p id="section-6-1">Using the new DNS records and proof object in the DID document, we enable a more secure and higher assurance verification process for the DID. It is important to note that while not strictly necessary, DNSSEC verification <span class="bcp14">SHOULD</span> be performed each time a DNS record is resolved to ensure their authenticity.<a href="#section-6-1" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-6-2">
-<li id="section-6-2.1">
-          <p id="section-6-2.1.1"><strong>Initial presentation:</strong> The user is presented with a DID document, ex. <strong>did:web:example.ca</strong>.<a href="#section-6-2.1.1" class="pilcrow">¶</a></p>
-</li>
-        <li id="section-6-2.2">
-          <p id="section-6-2.2.1"><strong>Verification of the DID:</strong> The user verifies the DID is represented as a URI record in the associated domain.<a href="#section-6-2.2.1" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-6-2.2.2">
-<li id="section-6-2.2.2.1">
-              <p id="section-6-2.2.2.1.1">In the case of did:web, the domain and record name to be queried is indicated by the last segment of the did. ex. <strong>did:web:example.ca -&gt; _did.example.ca</strong><a href="#section-6-2.2.2.1.1" class="pilcrow">¶</a></p>
+<p id="section-6-2">The process below outlines the general steps required to complete the higher assurance did verification process;<a href="#section-6-2" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-6-3">
+<li id="section-6-3.1">
+          <p id="section-6-3.1.1"><strong>Verification of the DID:</strong> The user verifies the DID is represented as a URI record in the associated domain.<a href="#section-6-3.1.1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-6-3.1.2">
+<li id="section-6-3.1.2.1">
+              <p id="section-6-3.1.2.1.1">In the case of did:web, the domain and record name to be queried is indicated by the last segment of the did. ex. <strong>did:web:example.ca -&gt; _did.example.ca</strong><a href="#section-6-3.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
           </ol>
 </li>
-        <li id="section-6-2.3">
-          <p id="section-6-2.3.1"><strong>Verification of the PKI:</strong> With the association between the DID and the domain verified, the user would then proceed to verify the key material between the DID and the domain.<a href="#section-6-2.3.1" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-6-2.3.2">
-<li id="section-6-2.3.2.1">
-              <p id="section-6-2.3.2.1.1">The user would query for a TLSA record. Depending on the type of TLSA record/s returned, the user would verify either the hash of the verificationMethod or verificationMethod itself matches what was returned by the TLSA record content.<a href="#section-6-2.3.2.1.1" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-6-2.3.2.1.2">
-<li id="section-6-2.3.2.1.2.1">
-                  <p id="section-6-2.3.2.1.2.1.1">Note: This may require some conversion, as TLSA records store key material as hex encoded DER format, and this representation is not supported by <span>[<a href="#verificationMethod" class="cite xref">verificationMethod</a>]</span>. However, there are many well supported cryptography libraries in a variety of languages that facilitate the conversion process.<a href="#section-6-2.3.2.1.2.1.1" class="pilcrow">¶</a></p>
+        <li id="section-6-3.2">
+          <p id="section-6-3.2.1"><strong>Verification of the PKI:</strong> With the association between the DID and the domain verified, the user would then proceed to verify the key material between the DID and the domain.<a href="#section-6-3.2.1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-6-3.2.2">
+<li id="section-6-3.2.2.1">
+              <p id="section-6-3.2.2.1.1">The user would query for a TLSA record. Depending on the type of TLSA record/s returned, the user would verify either the hash of the verificationMethod or verificationMethod itself matches what was returned by the TLSA record content.<a href="#section-6-3.2.2.1.1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-6-3.2.2.1.2">
+<li id="section-6-3.2.2.1.2.1">
+                  <p id="section-6-3.2.2.1.2.1.1">Note: This may require some conversion, as TLSA records store key material as hex encoded DER format, and this representation is not supported by <span>[<a href="#verificationMethod" class="cite xref">verificationMethod</a>]</span>. However, there are many well supported cryptography libraries in a variety of languages that facilitate the conversion process.<a href="#section-6-3.2.2.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
               </ol>
 </li>
           </ol>
 </li>
-        <li id="section-6-2.4">
-          <p id="section-6-2.4.1"><strong>Verification of the DID document's integrity:</strong> After verifying that the did's key material matches what is represented in the TLSA records of the associated domain, the user would then verify the "proof" object to ensure the integrity of the DID document.<a href="#section-6-2.4.1" class="pilcrow">¶</a></p>
-<ol start="1" type="1" class="normal type-1" id="section-6-2.4.2">
-<li id="section-6-2.4.2.1">
-              <p id="section-6-2.4.2.1.1">This can be accomplished by using either the <span>[<a href="#verificationMethod" class="cite xref">verificationMethod</a>]</span> directly from the did document, or using the key material stored in the TLSA record. Using the TLSA record would provide a higher level of assurance as this confirms the key material is being accurately represented across 2 different domains, both at the DID document level and the DNS level.<a href="#section-6-2.4.2.1.1" class="pilcrow">¶</a></p>
+        <li id="section-6-3.3">
+          <p id="section-6-3.3.1"><strong>Verification of the DID document's integrity:</strong> After verifying that the did's key material matches what is represented in the TLSA records of the associated domain, the user would then verify the "proof" object to ensure the integrity of the DID document.<a href="#section-6-3.3.1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-6-3.3.2">
+<li id="section-6-3.3.2.1">
+              <p id="section-6-3.3.2.1.1">This can be accomplished by using either the <span>[<a href="#verificationMethod" class="cite xref">verificationMethod</a>]</span> directly from the did document, or using the key material stored in the TLSA record. Using the TLSA record would provide a higher level of assurance as this confirms the key material is being accurately represented across 2 different domains, both at the DID document level and the DNS level.<a href="#section-6-3.3.2.1.1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-6-3.3.2.1.2">
+<li id="section-6-3.3.2.1.2.1">
+                  <p id="section-6-3.3.2.1.2.1.1">Note: Unlike with matching the verificationMethod and TLSA record in step 2, DER is a widely supported encoding format for key material enabling a verifier to directly use the TLSA record content to verify the signature without having to convert the key back to its representation in the verificationMethod.<a href="#section-6-3.3.2.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li id="section-6-2.4.2.2">
-              <p id="section-6-2.4.2.2.1">As mentioned above, if using the TLSA record, some conversion will be necessary to convert the DER format public key to whatever is required by the proof's cryptosuite.<a href="#section-6-2.4.2.2.1" class="pilcrow">¶</a></p>
+              </ol>
 </li>
           </ol>
 </li>
@@ -1489,20 +1478,14 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
       <h2 id="name-control-requirements">
 <a href="#section-7" class="section-number selfRef">7. </a><a href="#name-control-requirements" class="section-name selfRef">Control Requirements</a>
       </h2>
-<p id="section-7-1">This section defines a simple framework to define a set of technical controls that can be implemented and mapped into levels of assurance for did:web identifiers.<a href="#section-7-1" class="pilcrow">¶</a></p>
-<p id="section-7-2">To assist in decision-making and implementation, The controls are ordered in increasing level of security assurance and are grouped into levels of assurance from <strong>LOW-</strong> to <strong>HIGH+</strong><a href="#section-7-2" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-7-3.1">
-          <p id="section-7-3.1.1"><strong>Issuing Authority</strong> is the entity accountable for the did:web identifier.<a href="#section-7-3.1.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="section-7-3.2">
-          <p id="section-7-3.2.1"><strong>Issuing Service</strong> is the entity responsible for operating the did:web identifier infrastructure.<a href="#section-7-3.2.1" class="pilcrow">¶</a></p>
-</li>
-      </ul>
-<p id="section-7-4">In many cases the <strong>Issuing Authority</strong> may delegate elements of providing a high assurance did:web identifier to an <strong>Issuing Service</strong> that may be a commercial provider.<a href="#section-7-4" class="pilcrow">¶</a></p>
-<p id="section-7-5">In the simplest case, the <strong>Issuing Authority</strong> can be regarded as the same as the <strong>Issuing Service</strong>.<a href="#section-7-5" class="pilcrow">¶</a></p>
-<p id="section-7-6">Note that Controls 9, 10, and 11 CANNOT BE DELEGATED to an <strong>Issuing Service</strong><a href="#section-7-6" class="pilcrow">¶</a></p>
-<p id="section-7-7">11 technical controls are defined. These controls would be implemented in order of precedence for an increasing level of security assurance. (e.g., Control No. N would need to be implemented before implementing Control No. N+1)<a href="#section-7-7" class="pilcrow">¶</a></p>
+<p id="section-7-1">This section defines a simple framework to define a set of technical controls that can be implemented and mapped into levels of assurance for did:web identifiers.
+To assist in decision-making and implementation, The controls are ordered in increasing level of security assurance and are grouped into levels of assurance from <strong>LOW-</strong> to <strong>HIGH+</strong>
+- <strong>Issuing Authority</strong> is the entity accountable for the did:web identifier.
+- <strong>Issuing Service</strong> is the entity responsible for operating the did:web identifier infrastructure.
+In many cases the <strong>Issuing Authority</strong> may delegate elements of providing a high assurance did:web identifier to an <strong>Issuing Service</strong> that may be a commercial provider.
+In the simplest case, the <strong>Issuing Authority</strong> can be regarded as the same as the <strong>Issuing Service</strong>.
+Note that Controls 9, 10, and 11 CANNOT BE DELEGATED to an <strong>Issuing Service</strong><a href="#section-7-1" class="pilcrow">¶</a></p>
+<p id="section-7-2">11 technical controls are defined. These controls would be implemented in order of precedence for an increasing level of security assurance. (e.g., Control No. N would need to be implemented before implementing Control No. N+1)<a href="#section-7-2" class="pilcrow">¶</a></p>
 <table class="center" id="table-1">
         <caption><a href="#table-1" class="selfRef">Table 1</a></caption>
 <thead>
@@ -1572,7 +1555,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
           </tr>
         </tbody>
       </table>
-<p id="section-7-9">In addition to the technical controls specified in the table it is advisable to add in DANE (DNS-based Authentication of Named Entities) <span>[<a href="#RFC6698" class="cite xref">RFC6698</a>]</span> to secure TLS communications. TLS uses certificates to bind keys to names, which are published by public "Certification Authorities" (CAs). It is important to realize that the public CA model is fundamentally vulnerable because it allows any CA to issue a certificate for any domain name. Thus, a compromised CA can issue a fake replacement certificate which could be used to subvert TLS-protected websites. DANE offers the option to use the DNSSEC infrastructure to store and sign keys and certificates that are used by a TLS-protected website. The keys are bound to names in the Domain Name System (DNS), instead of relying on arbitrary keys and names issued in a potentially compromised certificate.<a href="#section-7-9" class="pilcrow">¶</a></p>
+<p id="section-7-4">In addition to the technical controls specified in the table it is advisable to add in DANE (DNS-based Authentication of Named Entities) <span>[<a href="#RFC6698" class="cite xref">RFC6698</a>]</span> to secure TLS communications. TLS uses certificates to bind keys to names, which are published by public "Certification Authorities" (CAs). It is important to realize that the public CA model is fundamentally vulnerable because it allows any CA to issue a certificate for any domain name. Thus, a compromised CA can issue a fake replacement certificate which could be used to subvert TLS-protected websites. DANE offers the option to use the DNSSEC infrastructure to store and sign keys and certificates that are used by a TLS-protected website. The keys are bound to names in the Domain Name System (DNS), instead of relying on arbitrary keys and names issued in a potentially compromised certificate.<a href="#section-7-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="levels-of-assurance">
