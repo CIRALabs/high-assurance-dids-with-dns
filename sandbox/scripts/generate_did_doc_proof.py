@@ -11,6 +11,7 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from joserfc import jwk
+import rfc8785
 
 SUPPORTED_CRYPTOSUITES = ["ecdsa-jcs-2019", "eddsa-jcs-2022"]
 
@@ -181,19 +182,19 @@ def sign_did(did, target_verification_method, verify, expiry, cryptosuite, priva
         del did_doc["proof"]
 
     # Canonicalize the DID doc
-    canonical_json = json.dumps(did_doc, sort_keys=True)
+    canonical_json = rfc8785.dumps(did_doc)
 
     private_key = extract_private_key(private_key)
     if cryptosuite == "ecdsa-jcs-2019" and isinstance(
         private_key, ec.EllipticCurvePrivateKey
     ):
         signature = private_key.sign(
-            canonical_json.encode("utf-8"),
+            canonical_json,
             ec.ECDSA(hashes.SHA256()),
         )
     elif cryptosuite == "eddsa-jcs-2022" and isinstance(private_key, Ed25519PrivateKey):
         signature = private_key.sign(
-            canonical_json.encode("utf-8"),
+            canonical_json,
         )
     else:
         raise ValueError("Invalid cryptosuite or private key type")
@@ -208,6 +209,7 @@ def sign_did(did, target_verification_method, verify, expiry, cryptosuite, priva
             "verificationMethod": target_verification_method,
             "created": datetime.now().isoformat(timespec="seconds"),
             "expires": expiry,
+            "proofPurpose": "assertionMethod",
             "proofValue": encoded_signature,
         }
     }

@@ -30,8 +30,8 @@ author:
 -
    ins: M. Glaude
    name: Mathieu Glaude
-   org: NorthernBlock
-   email: mathieu@northernblock.io
+   org: Northern Block
+   email: mathieu@northernblock.ca
 -
    ins: T. Bouma
    name: Tim Bouma
@@ -123,7 +123,7 @@ Much like presenting two pieces of ID to provide a higher level of assurance whe
     |                |     |                |
     +----------------+     +----------------+
 
-The diagram above illustrates how a web server storing the DID document, and the DNS server storing the URI and TLSA records shares and links the key information about the DID accross two independant sets of infrastructure.
+The diagram above illustrates how a web server storing the DID document, and the DNS server storing the URI and TLSA records shares and links the key information about the DID across two independent sets of infrastructure.
 
 ## Specifically for did:web
 
@@ -131,7 +131,7 @@ With did:web, there’s an inherent link between the DNS needed to resolve the a
 
 ## Consideration for other DID methods
 
-In the case of other DID methods, the association between a DID and a DNS domain is still possible although less obvious than with the aformentioned did:web. This association is currently out of scope at this time.
+In the case of other DID methods, the association between a DID and a DNS domain is still possible although less obvious than with the aforementioned did:web. This association is currently out of scope at this time.
 
 ## DIDs with URI records
 
@@ -183,6 +183,7 @@ Depending on the needs of the issuer, it is possible they may use multiple keypa
 ***Ex: _did.example-issuer.ca IN TLSA 3 1 0 "5f29bd33d11gc1...b96270a7b5"***
 
 #### Security Consideration
+
 It is RECOMMENDED implementers limit the total number of TLSA records for a given domain to 255 to mitigate DoS style attacks, such as creating a problematic number of TLSA records to then be resolved and parsed by the verifier.
 
 If the total number of TLSA records returned to a verifier exceeds this threshold, it is RECOMMENDED they abort the verification process and deem the target DID insecure.
@@ -205,22 +206,22 @@ Digital signatures ensure the integrity of the DID Document, and by extent the p
 
 In accordance with W3C specifications, we propose including a data integrity proof such as those outlined in {{dataIntegrityProofECDSA}} and {{dataIntegrityProofEdDSA}}, with the mandatory inclusions of the "created" and "expires" fields. The inclusion of which acts as a lifespan for the document, similar to the TTL for a DNS record. Depending on the use case and security requirement, a longer or shorter expiry period would be used as necessary.
 
-```javascript
-"proof": {
-    "type": "DataIntegrityProof",
-    "cryptosuite": "ecdsa-jfc-2019",
-    "created": "2023-10-11T15:27:27Z",
-    "expires": "2099-10-11T15:27:27Z",
-    "proofPurpose": "authentication",
-    "verificationMethod": "did:web:trustregistry.ca#key-1",
-  }
-```
+   ```javascript
+   "proof": {
+       "type": "DataIntegrityProof",
+       "cryptosuite": "ecdsa-jfc-2019",
+       "created": "2023-10-11T15:27:27Z",
+       "expires": "2099-10-11T15:27:27Z",
+       "proofPurpose": "assertionMethod",
+       "verificationMethod": "did:web:trustregistry.ca#key-1",
+     }
+   ```
 
-The data integrity proof SHOULD be signed using a verificationMethod that has an associated TLSA record to allow for the verification of the data integrity proof using data contained outside of the DID document. This provides an added layer of authenticity, as the PKI information contained in the DID document would need to be supported accross 2 different domains.
+The data integrity proof SHOULD be signed using a verificationMethod that has an associated TLSA record to allow for the verification of the data integrity proof using data contained outside of the DID document. This provides an added layer of authenticity, as the PKI information contained in the DID document would need to be supported across 2 different domains.
 
 ## Use of Alternative Cryptosuites
 
-While {{dataIntegrityProofECDSA}} and {{dataIntegrityProofEdDSA}} are the cryptosuites we have chosen to highlight in this specification, it is important to note that this implementation for a high assruance did is cryptosuite agnostic. It is interoperable with any new and existing cryptosuites and associated key types as required by the implementers and verifiers.
+While {{dataIntegrityProofECDSA}} and {{dataIntegrityProofEdDSA}} are the cryptosuites we have chosen to highlight in this specification, it is important to note that this implementation for a high assurance did is cryptosuite agnostic. It is interoperable with any new and existing cryptosuites and associated key types as required by the implementers and verifiers.
 
 # Verification Process
 
@@ -233,12 +234,12 @@ Using the new DNS records and proof object in the DID document, we enable a more
    1. The user would query for a TLSA record. Depending on the type of TLSA record/s returned, the user would verify either the hash of the verificationMethod or verificationMethod itself matches what was returned by the TLSA record content.
       1. Note: This may require some conversion, as TLSA records store key material as hex encoded DER format, and this representation is not supported by {{verificationMethod}}. However, there are many well supported cryptography libraries in a variety of languages that facilitate the conversion process.
 4. **Verification of the DID document's integrity:** After verifying that the did's key material matches what is represented in the TLSA records of the associated domain, the user would then verify the "proof" object to ensure the integrity of the DID document.
-   1. This can be accomplished by using either the {{verificationMethod}} directly from the did document, or using the key material stored in the TLSA record. Using the TLSA record would provide a higher level of assurance as this confirms the key material is being accurately represented accross 2 different domains, both at the DID document level and the DNS level.
+   1. This can be accomplished by using either the {{verificationMethod}} directly from the did document, or using the key material stored in the TLSA record. Using the TLSA record would provide a higher level of assurance as this confirms the key material is being accurately represented across 2 different domains, both at the DID document level and the DNS level.
    2. As mentioned above, if using the TLSA record, some conversion will be necessary to convert the DER format public key to whatever is required by the proof's cryptosuite.
 
 ## Verification Failure
 
-If at any given step verification fails, the DID document should be deemed INSECURE. Whether it is due to the DID and DNS being out of sync with recent updates, or the DID document or DNS zone themselves being compromised, a failed verification MAY indicate malicious activity. It is then up to the verifier to determine, according to their requirements and use case, the appropiate course of action in regards to interactions with the target DID until succesful verification is restored.
+If at any given step verification fails, the DID document should be deemed INSECURE. Whether it is due to the DID and DNS being out of sync with recent updates, or the DID document or DNS zone themselves being compromised, a failed verification MAY indicate malicious activity. It is then up to the verifier to determine, according to their requirements and use case, the appropriate course of action regarding interactions with the target DID until successful verification is restored.
 
 # Control Requirements
 
@@ -247,9 +248,9 @@ This section defines a simple framework to define a set of technical controls th
 To assist in decision-making and implementation, The controls are ordered in increasing level of security assurance and are grouped into levels of assurance from **LOW-** to **HIGH+**
 
 - **Issuing Authority** is the entity accountable for the did:web identifier.
-- **Issuing Service** is the entity responsible for operating the did:web identifier insfrastructure.
+- **Issuing Service** is the entity responsible for operating the did:web identifier infrastructure.
 
-In many cases the **Issuing Authority** may delegate elements of providing a high assurance did:web identitifier to an **Issuing Service** that may be a commercial provider.
+In many cases the **Issuing Authority** may delegate elements of providing a high assurance did:web identifier to an **Issuing Service** that may be a commercial provider.
 
 In the simplest case, the **Issuing Authority** can be regarded as the same as the **Issuing Service**.
 
@@ -261,7 +262,7 @@ Note that Controls 9, 10, and 11 CANNOT BE DELEGATED to an **Issuing Service**
 |--|---|---|
 |1|DID Resource Control|The Issuing Service MUST control the resource that generates the DID document. (i.e., website)|
 |2|DID Document Management|The Issuing Service MUST have the ability to do CRUD operations on the DID document.|
-|3|DID Document Data Integrity|The Issuing Service MUST ensure the data integrity of the DID document by cryptographic means, typically a digital signature or other means. The use of approved or established cryptographic algorithmsis HIGHLY RECOMMENDED|
+|3|DID Document Data Integrity|The Issuing Service MUST ensure the data integrity of the DID document by cryptographic means, typically a digital signature or other means. The use of approved or established cryptographic algorithms is HIGHLY RECOMMENDED|
 |4|DID Document Key Control|The Issuing Service MUST control the keys required to sign the DID document.|
 |5|DID Document Key Generation|With proper delegation from the Issuing Authority, the DID Document signing key MAY be generated by the Issuing Service. Otherwise, the signing key must be generated by the Issuing Authority.|
 |6|Domain Zone Control|The Issuing Service MUST have control of the domain zone (or subdomain zone).If direct control of the domain is not feasible, the use of an accredited DNS provider is HIGHLY RECOMMENDED|
@@ -271,20 +272,20 @@ Note that Controls 9, 10, and 11 CANNOT BE DELEGATED to an **Issuing Service**
 |10|Domain Zone Signing Key Generation|The signing keys MUST be generated under the control of the Issuing Authority.|
 |11|Hardware Security Module|A FIPS 140-2 compliant hardware security module must be under the control of the Issuing Authority.|
 
-In addition to the technical controls specificed in the table it is advisable to add in DANE (DNS-based Authentication of Named Entities) {{!RFC6698}} to secure TLS communications. TLS uses certificates to bind keys to names, which are published by public "Certification Authorities" (CAs). It is important to realize that the public CA model is fundamentally vulnerable because it allows any CA to issue a certificate for any domain name. Thus, a compromised CA can issue a fake replacement certificate which could be used to subvert TLS-protected websites. DANE)offers the option to use the DNSSEC infrastructure to store and sign keys and certificates that are used by a TLS-protected website. The keys are bound to names in the Domain Name System (DNS), instead of relying on arbitrary keys and names issued in a potentially compromised certificate.
+In addition to the technical controls specified in the table it is advisable to add in DANE (DNS-based Authentication of Named Entities) {{!RFC6698}} to secure TLS communications. TLS uses certificates to bind keys to names, which are published by public "Certification Authorities" (CAs). It is important to realize that the public CA model is fundamentally vulnerable because it allows any CA to issue a certificate for any domain name. Thus, a compromised CA can issue a fake replacement certificate which could be used to subvert TLS-protected websites. DANE offers the option to use the DNSSEC infrastructure to store and sign keys and certificates that are used by a TLS-protected website. The keys are bound to names in the Domain Name System (DNS), instead of relying on arbitrary keys and names issued in a potentially compromised certificate.
 
 # Levels of Assurance
 
-Many trust frameworks specify levels of assurance to assist in determing which controls must be implemented.
+Many trust frameworks specify levels of assurance to assist in determining which controls must be implemented.
 
-The following table is not a definitive mapping to trust framework levels of assurance. It is intended to assist in determing mappings by grouping the controls within a range from **LOW-** to **HIGH+** relating to the appropriate risk level. Note that controls are additive in nature. (i.e.,, controls of the preceding level must be fulfilled).
+The following table is not a definitive mapping to trust framework levels of assurance. It is intended to assist in determining mappings by grouping the controls within a range from **LOW-** to **HIGH+** relating to the appropriate risk level. Note that controls are additive in nature. (i.e.,, controls of the preceding level must be fulfilled).
 
 |Level of Assurance|Controls|Description|
 |---|---|---|
-|**LOW-**| Control 1|SHOULD only be used for low risk transactions where attribution to originator is desireable.|
-|**LOW**|Control 2|SHOULD only be used for lower risk transactions where establishing the accountablity of the originator is desirable.|
+|**LOW-**| Control 1|SHOULD only be used for low risk transactions where attribution to originator is desirable.|
+|**LOW**|Control 2|SHOULD only be used for lower risk transactions where establishing the accountability of the originator is desirable.|
 |**MEDIUM**|Controls 3, 4 and 5|MAY be used for medium risk commercial transactions, such as correspondence, proposals, etc.|
-|**MEDIUM+**| Controls 6 and 7|MAY be used for higher risk transcations, such as signing and verifying invoices, contracts, or official/legal docmentation|
+|**MEDIUM+**| Controls 6 and 7|MAY be used for higher risk transactions, such as signing and verifying invoices, contracts, or official/legal documentation|
 |**HIGH**| Controls 8, 9 and 10|MUST be high risk transactions, such as government transactions for signing and verifying licenses, certifications or identification|
 |**HIGH+**| Control 11|MUST be used for extremely high risk transactions where there may be systemic or national security implications|
 
@@ -309,7 +310,6 @@ Per {{!RFC8552}}, IANA is requested to add the following entries to the
 # W3C Considerations
 
 1. We propose the inclusion of an optional data integrity proof for the DID document, as outlined in {{dataIntegrityProofECDSA}} and {{dataIntegrityProofEdDSA}}.
-2. We propose the inclusion of an optional TTL ("timeToLive") field in the DID document to indicate the amount of time a resolver should cache the document.
 
 # Acknowledgments
 {:numbered="false"}

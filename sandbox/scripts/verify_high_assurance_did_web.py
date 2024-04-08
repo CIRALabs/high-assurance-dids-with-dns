@@ -5,11 +5,13 @@ import logging
 from typing import Optional
 from urllib.parse import urlparse
 from datetime import datetime
+import rfc8785
 
 import dns
 import multibase
 import requests
-from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives import serialization, hashes
+from cryptography.hazmat.primitives.asymmetric import ec
 from dns import rdatatype, resolver, dnssec
 from joserfc.jwk import JWKRegistry
 
@@ -131,7 +133,6 @@ def verify_proof(did_doc: dict) -> dict:
         raise ValueError("Proof has expired.")
     verification_methods = did_doc.get("verificationMethod")
     target_verification_method_id = proof.get("verificationMethod")
-    print("***", proof, target_verification_method_id)
     if target_verification_method_id.split("#")[0] != did_doc.get("id"):
         new_did_doc = download_did_document(target_verification_method_id.split("#")[0])
         if new_did_doc is None:
@@ -152,10 +153,16 @@ def verify_proof(did_doc: dict) -> dict:
         )
     public_key = extract_verification_method_to_der(target_verification_method)
     del did_doc["proof"]
-    canonical_did_doc = json.dumps(did_doc, sort_keys=True)
-    public_key.verify(
-        multibase.decode(proof.get("proofValue")), canonical_did_doc.encode("utf-8")
-    )
+    if proof.get("cryptosuite") == "ecdsa-jcs-2019":
+        public_key.verify(
+            multibase.decode(proof.get("proofValue")),
+            rfc8785.dumps(did_doc),
+            ec.ECDSA(hashes.SHA256()),
+        )
+    elif proof.get("cryptosuite") == "eddsa-jcs-2022":
+        public_key.verify(
+            multibase.decode(proof.get("proofValue")), rfc8785.dumps(did_doc)
+        )
     logging.info("Succesfully verified proof using: %s", target_verification_method_id)
     return target_verification_method
 
@@ -181,9 +188,7 @@ def extract_verification_method_to_der(
         return serialization.load_der_public_key(public_key.as_der(), None)
     elif verifcation_method.get("publicKeyMultibase"):
         public_key = verifcation_method.get("publicKeyMultibase")
-        return serialization.load_der_public_key(
-            multibase.decode(public_key).encode(), None
-        )
+        return serialization.load_der_public_key(multibase.decode(public_key), None)
     else:
         raise ValueError("Unsupported verificationMethod format.")
 
