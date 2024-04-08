@@ -6,7 +6,7 @@ Network Working Group                                          J. Carter
 Internet-Draft                                                 J. Latour
 Intended status: Informational                                      CIRA
 Expires: 10 October 2024                                       M. Glaude
-                                                          Northern Block
+                                                           NorthernBlock
                                                                 T. Bouma
                                               Digital Governance Council
                                                             8 April 2024
@@ -166,7 +166,7 @@ Table of Contents
 
    The diagram above illustrates how a web server storing the DID
    document, and the DNS server storing the URI and TLSA records shares
-   and links the key information about the DID across two independent
+   and links the key information about the DID accross two independant
    sets of infrastructure.
 
 3.1.  Specifically for did:web
@@ -182,8 +182,8 @@ Table of Contents
 
    In the case of other DID methods, the association between a DID and a
    DNS domain is still possible although less obvious than with the
-   aforementioned did:web.  This association is currently out of scope
-   at this time.
+   aformentioned did:web.  This association is currently out of scope at
+   this time.
 
 3.3.  DIDs with URI records
 
@@ -338,7 +338,7 @@ Table of Contents
 
    javascript "proof": { "type": "DataIntegrityProof", "cryptosuite":
    "ecdsa-jfc-2019", "created": "2023-10-11T15:27:27Z", "expires":
-   "2099-10-11T15:27:27Z", "proofPurpose": "assertionMethod",
+   "2099-10-11T15:27:27Z", "proofPurpose": "authentication",
    "verificationMethod": "did:web:trustregistry.ca#key-1", }
 
    The data integrity proof SHOULD be signed using a verificationMethod
@@ -346,13 +346,13 @@ Table of Contents
    the data integrity proof using data contained outside of the DID
    document.  This provides an added layer of authenticity, as the PKI
    information contained in the DID document would need to be supported
-   across 2 different domains.
+   accross 2 different domains.
 
 5.1.  Use of Alternative Cryptosuites
 
    While [dataIntegrityProofECDSA] and [dataIntegrityProofEdDSA] are the
    cryptosuites we have chosen to highlight in this specification, it is
-   important to note that this implementation for a high assurance did
+   important to note that this implementation for a high assruance did
    is cryptosuite agnostic.  It is interoperable with any new and
    existing cryptosuites and associated key types as required by the
    implementers and verifiers.
@@ -401,7 +401,7 @@ Table of Contents
            the key material stored in the TLSA record.  Using the TLSA
            record would provide a higher level of assurance as this
            confirms the key material is being accurately represented
-           across 2 different domains, both at the DID document level
+           accross 2 different domains, both at the DID document level
            and the DNS level.
 
        2.  As mentioned above, if using the TLSA record, some conversion
@@ -415,8 +415,8 @@ Table of Contents
    sync with recent updates, or the DID document or DNS zone themselves
    being compromised, a failed verification MAY indicate malicious
    activity.  It is then up to the verifier to determine, according to
-   their requirements and use case, the appropriate course of action
-   regarding interactions with the target DID until successful
+   their requirements and use case, the appropiate course of action in
+   regards to interactions with the target DID until succesful
    verification is restored.
 
 7.  Control Requirements
@@ -433,11 +433,11 @@ Table of Contents
       identifier.
 
    *  *Issuing Service* is the entity responsible for operating the
-      did:web identifier infrastructure.
+      did:web identifier insfrastructure.
 
    In many cases the *Issuing Authority* may delegate elements of
-   providing a high assurance did:web identifier to an *Issuing Service*
-   that may be a commercial provider.
+   providing a high assurance did:web identitifier to an *Issuing
+   Service* that may be a commercial provider.
 
    In the simplest case, the *Issuing Authority* can be regarded as the
    same as the *Issuing Service*.
@@ -467,7 +467,7 @@ Table of Contents
     |         | Data       | cryptographic means, typically a digital |
     |         | Integrity  | signature or other means.  The use of    |
     |         |            | approved or established cryptographic    |
-    |         |            | algorithms is HIGHLY RECOMMENDED         |
+    |         |            | algorithmsis HIGHLY RECOMMENDED          |
     +---------+------------+------------------------------------------+
     | 4       | DID        | The Issuing Service MUST control the     |
     |         | Document   | keys required to sign the DID document.  |
@@ -514,7 +514,7 @@ Table of Contents
 
                                   Table 1
 
-   In addition to the technical controls specified in the table it is
+   In addition to the technical controls specificed in the table it is
    advisable to add in DANE (DNS-based Authentication of Named Entities)
    [RFC6698] to secure TLS communications.  TLS uses certificates to
    bind keys to names, which are published by public "Certification
@@ -522,7 +522,7 @@ Table of Contents
    model is fundamentally vulnerable because it allows any CA to issue a
    certificate for any domain name.  Thus, a compromised CA can issue a
    fake replacement certificate which could be used to subvert TLS-
-   protected websites.  DANE offers the option to use the DNSSEC
+   protected websites.  DANE)offers the option to use the DNSSEC
    infrastructure to store and sign keys and certificates that are used
    by a TLS-protected website.  The keys are bound to names in the
    Domain Name System (DNS), instead of relying on arbitrary keys and
@@ -531,14 +531,14 @@ Table of Contents
 8.  Levels of Assurance
 
    Many trust frameworks specify levels of assurance to assist in
-   determining which controls must be implemented.
+   determing which controls must be implemented.
 
    The following table is not a definitive mapping to trust framework
-   levels of assurance.  It is intended to assist in determining
-   mappings by grouping the controls within a range from *LOW-* to
-   *HIGH+* relating to the appropriate risk level.  Note that controls
-   are additive in nature. (i.e.,, controls of the preceding level must
-   be fulfilled).
+   levels of assurance.  It is intended to assist in determing mappings
+   by grouping the controls within a range from *LOW-* to *HIGH+*
+   relating to the appropriate risk level.  Note that controls are
+   additive in nature. (i.e.,, controls of the preceding level must be
+   fulfilled).
 
       +===========+==========+=====================================+
       | Level of  | Controls | Description                         |
@@ -546,11 +546,11 @@ Table of Contents
       +===========+==========+=====================================+
       | *LOW-*    | Control  | SHOULD only be used for low risk    |
       |           | 1        | transactions where attribution to   |
-      |           |          | originator is desirable.            |
+      |           |          | originator is desireable.           |
       +-----------+----------+-------------------------------------+
       | *LOW*     | Control  | SHOULD only be used for lower risk  |
       |           | 2        | transactions where establishing the |
-      |           |          | accountability of the originator is |
+      |           |          | accountablity of the originator is  |
       |           |          | desirable.                          |
       +-----------+----------+-------------------------------------+
       | *MEDIUM*  | Controls | MAY be used for medium risk         |
@@ -558,9 +558,9 @@ Table of Contents
       |           | 5        | correspondence, proposals, etc.     |
       +-----------+----------+-------------------------------------+
       | *MEDIUM+* | Controls | MAY be used for higher risk         |
-      |           | 6 and 7  | transactions, such as signing and   |
+      |           | 6 and 7  | transcations, such as signing and   |
       |           |          | verifying invoices, contracts, or   |
-      |           |          | official/legal documentation        |
+      |           |          | official/legal docmentation         |
       +-----------+----------+-------------------------------------+
       | *HIGH*    | Controls | MUST be high risk transactions,     |
       |           | 8, 9 and | such as government transactions for |
@@ -703,8 +703,8 @@ Authors' Addresses
 
 
    Mathieu Glaude
-   Northern Block
-   Email: mathieu@northernblock.ca
+   NorthernBlock
+   Email: mathieu@northernblock.io
 
 
    Tim Bouma
