@@ -221,7 +221,7 @@ Table of Contents
 
 3.3.  PKI with TLSA records
 
-   The DID to DNS mapping illustrated in section 3.3 provides a way of
+   The DID to DNS mapping illustrated in section 3.2 provides a way of
    expressing the association between a DID and a domain, but no way of
    verifying that relationship.  By hosting the public keys of that DID
    in its associated domain’s zone, we can provide a cryptographic
