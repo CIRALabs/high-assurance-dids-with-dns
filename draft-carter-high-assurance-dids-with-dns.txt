@@ -359,8 +359,9 @@ Table of Contents
        represented as a URI record in the associated domain.
 
        1.  In the case of did:web, the domain and record name to be
-           queried is indicated by the last segment of the did. ex.
-           *did:web:example.ca -> _did.example.ca*
+           queried is indicated by the last segment of the did.  In
+           example, *did:web:example.ca* would translate to a URI record
+           with the name *_did.example.ca*.
 
    2.  *Verification of the PKI:* With the association between the DID
        and the domain verified, the user would then proceed to verify
