@@ -1399,16 +1399,18 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
       </h2>
 <p id="section-5-1">Digital signatures ensure the integrity of the DID Document, and by extent the public keys, authentication protocols, and service endpoints necessary for initiating trustworthy interactions with the identified entity. The use of digital signatures in this context provides a robust mechanism for verifying that the DID Document has not been tampered with and indeed originates from the correct entity.<a href="#section-5-1" class="pilcrow">¶</a></p>
 <p id="section-5-2">In accordance with W3C specifications, we propose including a data integrity proof such as those outlined in <span>[<a href="#dataIntegrityProofECDSA" class="cite xref">dataIntegrityProofECDSA</a>]</span> and <span>[<a href="#dataIntegrityProofEdDSA" class="cite xref">dataIntegrityProofEdDSA</a>]</span>, with the mandatory inclusions of the "created" and "expires" fields. The inclusion of which acts as a lifespan for the document, similar to the TTL for a DNS record. Depending on the use case and security requirement, a longer or shorter expiry period would be used as necessary.<a href="#section-5-2" class="pilcrow">¶</a></p>
-<p id="section-5-3"><code>json
-   "proof": {
-       "type": "DataIntegrityProof",
-       "cryptosuite": "ecdsa-jfc-2019",
-       "created": "2023-10-11T15:27:27Z",
-       "expires": "2099-10-11T15:27:27Z",
-       "proofPurpose": "assertionMethod",
-       "verificationMethod": "did:web:trustregistry.ca#key-1",
-     }
-        </code><a href="#section-5-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5-3">
+<pre>
+"proof": {
+   "type": "DataIntegrityProof",
+   "cryptosuite": "ecdsa-jfc-2019",
+   "created": "2023-10-11T15:27:27Z",
+   "expires": "2099-10-11T15:27:27Z",
+   "proofPurpose": "assertionMethod",
+   "verificationMethod": "did:web:trustregistry.ca#key-1",
+}
+</pre><a href="#section-5-3" class="pilcrow">¶</a>
+</div>
 <p id="section-5-4">The data integrity proof <span class="bcp14">SHOULD</span> be signed using a verificationMethod that has an associated TLSA record to allow for the verification of the data integrity proof using data contained outside of the DID document. This provides an added layer of authenticity, as the PKI information contained in the DID document would need to be supported across 2 different domains.<a href="#section-5-4" class="pilcrow">¶</a></p>
 <div id="use-of-alternative-cryptosuites">
 <section id="section-5.1">

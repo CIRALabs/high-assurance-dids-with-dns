@@ -323,10 +323,14 @@ Table of Contents
    Depending on the use case and security requirement, a longer or
    shorter expiry period would be used as necessary.
 
-   json "proof": { "type": "DataIntegrityProof", "cryptosuite": "ecdsa-
-   jfc-2019", "created": "2023-10-11T15:27:27Z", "expires":
-   "2099-10-11T15:27:27Z", "proofPurpose": "assertionMethod",
-   "verificationMethod": "did:web:trustregistry.ca#key-1", }
+   "proof": {
+      "type": "DataIntegrityProof",
+      "cryptosuite": "ecdsa-jfc-2019",
+      "created": "2023-10-11T15:27:27Z",
+      "expires": "2099-10-11T15:27:27Z",
+      "proofPurpose": "assertionMethod",
+      "verificationMethod": "did:web:trustregistry.ca#key-1",
+   }
 
    The data integrity proof SHOULD be signed using a verificationMethod
    that has an associated TLSA record to allow for the verification of
