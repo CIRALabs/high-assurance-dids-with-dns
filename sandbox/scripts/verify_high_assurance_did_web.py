@@ -269,7 +269,7 @@ def validate_tlsa_record(
         elif (
             tlsa_record.usage == 3
             and tlsa_record.selector == 1
-            and tlsa_record.mtype == 0
+            and tlsa_record.mtype == 1
         ):
             if tlsa_record.cert.hex() == hashlib.sha256(key).hexdigest():
                 logging.info("TLSA record matches %s.", verificationMethod.get("id"))
