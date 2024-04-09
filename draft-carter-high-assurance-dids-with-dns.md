@@ -222,7 +222,7 @@ Using the new DNS records and proof object in the DID document, we enable a more
 The process below outlines the general steps required to complete the higher assurance did verification process;
 
 1. **Verification of the DID:** The user verifies the DID is represented as a URI record in the associated domain.
-   1. In the case of did:web, the domain and record name to be queried is indicated by the last segment of the did. ex. **did:web:example.ca -> _did.example.ca**
+   1. In the case of did:web, the domain and record name to be queried is indicated by the last segment of the did. In example, **did:web:example.ca** would translate to a URI record with the name **_did.example.ca**.
 
 2. **Verification of the PKI:** With the association between the DID and the domain verified, the user would then proceed to verify the key material between the DID and the domain.
    1. The user would query for a TLSA record. Depending on the type of TLSA record/s returned, the user would verify either the hash of the verificationMethod or verificationMethod itself matches what was returned by the TLSA record content.
