@@ -198,16 +198,14 @@ Digital signatures ensure the integrity of the DID Document, and by extent the p
 
 In accordance with W3C specifications, we propose including a data integrity proof such as those outlined in {{dataIntegrityProofECDSA}} and {{dataIntegrityProofEdDSA}}, with the mandatory inclusions of the "created" and "expires" fields. The inclusion of which acts as a lifespan for the document, similar to the TTL for a DNS record. Depending on the use case and security requirement, a longer or shorter expiry period would be used as necessary.
 
-   ```json
-   "proof": {
+    "proof": {
        "type": "DataIntegrityProof",
        "cryptosuite": "ecdsa-jfc-2019",
        "created": "2023-10-11T15:27:27Z",
        "expires": "2099-10-11T15:27:27Z",
        "proofPurpose": "assertionMethod",
        "verificationMethod": "did:web:trustregistry.ca#key-1",
-     }
-   ```
+    }
 
 The data integrity proof SHOULD be signed using a verificationMethod that has an associated TLSA record to allow for the verification of the data integrity proof using data contained outside of the DID document. This provides an added layer of authenticity, as the PKI information contained in the DID document would need to be supported across 2 different domains.
 
