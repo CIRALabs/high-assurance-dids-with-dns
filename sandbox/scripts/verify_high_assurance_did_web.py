@@ -212,11 +212,12 @@ def validate_uri_record(did_doc: dict, domain: str, do_dnssec: bool = False) -> 
     try:
         if do_dnssec:
             response = resolve_dns_record_with_dnssec(f"_did.{domain}", rdatatype.URI)
+            logging.info("Resolved URI record/s: %s", response)
         else:
             response = resolver.resolve(f"_did.{domain}", rdatatype.URI)
+            logging.info("Resolved URI record/s: %s", response.rrset)
     except dns.resolver.NoAnswer:
         raise ValueError("No URI record found.")
-    logging.info("Resolved URI records: %s", response)
     uri_record_match = False
     for uri_record in response:
         if uri_record.target.decode() == did_doc.get("id"):
@@ -247,15 +248,16 @@ def validate_tlsa_record(
     try:
         if do_dnssec:
             response = resolve_dns_record_with_dnssec(f"_did.{domain}", rdatatype.TLSA)
+            logging.info("Resolved TLSA record/s: %s", response)
         else:
             response = resolver.resolve(f"_did.{domain}", rdatatype.TLSA)
+            logging.info("Resolved TLSA record/s: %s", response.rrset)
     except dns.resolver.NoAnswer:
         raise ValueError("No TLSA record found.")
     key = extract_verification_method_to_der(verificationMethod).public_bytes(
         serialization.Encoding.DER, serialization.PublicFormat.SubjectPublicKeyInfo
     )
     valid_tlsa_record = False
-    logging.info("Resolved TLSA records: %s", response)
     for tlsa_record in response:
         if (
             tlsa_record.usage == 3
@@ -276,8 +278,11 @@ def validate_tlsa_record(
                 valid_tlsa_record = True
                 break
     if not valid_tlsa_record:
+        logging.info("%s as DER: %s", verificationMethod.get("id"), key.hex())
         raise ValueError(
-            f"No TLSA record corresponding to {verificationMethod.get('id')} found."
+            "No TLSA record corresponding to {} found.".format(
+                verificationMethod.get("id")
+            )
         )
 
 
