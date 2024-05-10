@@ -71,14 +71,15 @@ Table of Contents
    2.  Conventions and Definitions
    3.  Securing a DID using the DNS
      3.1.  Specifically for did:web
-       3.1.1.  Consideration for other DID methods
-     3.2.  Mapping DIDs to Domains with URI records
-       3.2.1.  URI record scoping
-       3.2.2.  Entity Handles
-     3.3.  Mapping verificationMethods to the DNS with TLSA records
-       3.3.1.  TLSA Record Scoping, Selector Field
-       3.3.2.  Instances of Multiple Key Pairs
-       3.3.3.  Benefits of Public Keys in the DNS
+     3.2.  Consideration for other DID methods
+       3.2.1.  The "dnsDomain" property
+     3.3.  Mapping DIDs to Domains with URI records
+       3.3.1.  URI record scoping
+       3.3.2.  Entity Handles
+     3.4.  Mapping verificationMethods to the DNS with TLSA records
+       3.4.1.  TLSA Record Scoping, Selector Field
+       3.4.2.  Instances of Multiple Key Pairs
+       3.4.3.  Benefits of Public Keys in the DNS
    4.  Role of DNSSEC for Assurance and Revocation
    5.  Digital Signature and Proof Value of the DID Document
      5.1.  Use of Alternative Cryptosuites
@@ -177,7 +178,7 @@ Table of Contents
    did:web:*example.ca*) is also the location where you can find the
    supporting DNS records.
 
-3.1.1.  Consideration for other DID methods
+3.2.  Consideration for other DID methods
 
    In the case of other DID methods, the association between a DID and a
    DNS domain is still possible although less inherent than with the
@@ -190,7 +191,7 @@ Table of Contents
    explicitly duplicated in the DNS, rather than only being referenced
    back to the DID document which is being verified.
 
-3.1.1.1.  The "dnsDomain" field
+3.2.1.  The "dnsDomain" property
 
    To faciliate the linking of a non did:web to the DNS, we propose the
    inclusion of an optional property "dnsDomain" to the DID document.
@@ -203,7 +204,7 @@ Table of Contents
    verifier must use the domain referenced by the "dnsDomain" property
    instead.
 
-3.2.  Mapping DIDs to Domains with URI records
+3.3.  Mapping DIDs to Domains with URI records
 
    The association to a domain stemming only from the did is
    unidirectional.  By leveraging URI records as outlined in
@@ -217,12 +218,12 @@ Table of Contents
    bidirectional association, reducing the likelihood of malicious
    impersonation.
 
-3.2.1.  URI record scoping
+3.3.1.  URI record scoping
 
    *  The records MUST be scoped by setting the global underscore name
       of the URI RRset to __did_ (0x5F 0x64 0x69 0x64).
 
-3.2.2.  Entity Handles
+3.3.2.  Entity Handles
 
    An implementer may have multiple sub entities operating and issuing
    credentials on their behalf, like the different deparments in a
@@ -238,7 +239,7 @@ Table of Contents
    *_Ex: _did.certificates.example-issuer.ca IN URI 1 0
    “did:web:certificates.example-issuer.ca”_*
 
-3.3.  Mapping verificationMethods to the DNS with TLSA records
+3.4.  Mapping verificationMethods to the DNS with TLSA records
 
    The DID to DNS mapping illustrated in section 3.2 provides a way of
    expressing the association between a DID and a domain, but no way of
@@ -259,7 +260,7 @@ Table of Contents
    keys via the hashed representation, making this implementation post-
    quantum compatible.
 
-3.3.1.  TLSA Record Scoping, Selector Field
+3.4.1.  TLSA Record Scoping, Selector Field
 
    When public keys related to DIDs are published in the DNS as TLSA
    records:
@@ -271,7 +272,7 @@ Table of Contents
       SubjectPublicKeyInfo: DER-encoded binary structure as defined in
       [RFC5280].
 
-3.3.2.  Instances of Multiple Key Pairs
+3.4.2.  Instances of Multiple Key Pairs
 
    Depending on the needs of the implementer, it is possible they may
    use multiple keypairs associated with a single DID to sign and issue
@@ -287,7 +288,7 @@ Table of Contents
    *_Ex: _did.example-issuer.ca IN TLSA 3 1 0
    "5f29bd33d11gc1...b96270a7b5"_*
 
-3.3.2.1.  Security Consideration
+3.4.2.1.  Security Consideration
 
    It is RECOMMENDED implementers limit the total number of TLSA records
    for a given domain to 255 to mitigate DoS style attacks, such as
@@ -299,7 +300,7 @@ Table of Contents
    verifier exceeds this threshold, it is RECOMMENDED the verifier abort
    the verification process and deem the target DID insecure.
 
-3.3.3.  Benefits of Public Keys in the DNS
+3.4.3.  Benefits of Public Keys in the DNS
 
    Hosting the public keys in TLSA records provides a stronger mechanism
    for the verifier to verify a did and its associated entity with, as
@@ -719,7 +720,7 @@ Appendix A.  W3C Considerations
        [dataIntegrityProofEdDSA].
 
    2.  We propose the inclusion of the optional "dnsDomain" property to
-       the [didSpecRegistries] as outlined in section X.
+       the [didSpecRegistries] as outlined in section 3.2.
 
 Acknowledgments
 
