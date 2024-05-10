@@ -135,11 +135,11 @@ The diagram above illustrates how a web server storing the DID document, and the
 
 With did:web, there’s an inherent link between the DNS needed to resolve the associated DID document and the domain where the relevant supporting DNS records are located. This means that the domain specified by the did:web identifier (for example, did:web:**example.ca**) is also the location where you can find the supporting DNS records.
 
-### Consideration for other DID methods
+## Consideration for other DID methods
 
 In the case of other DID methods, the association between a DID and a DNS domain is still possible although less inherent than with the aforementioned did:web. As such, it provides much of the same benefits as the {{wellKnownDidConfiguration}}, but the method in which it accomplishes this is slightly different. Specifically, the integrity of the DID document is secured by including a dataIntegrityProof inside the DID document itself rather than in a seperate resource, and the key material used to verify this proof is explicitly duplicated in the DNS, rather than only being referenced back to the DID document which is being verified.
 
-#### The "dnsDomain" field
+### The "dnsDomain" property
 
 To faciliate the linking of a non did:web to the DNS, we propose the inclusion of an optional property "dnsDomain" to the DID document.
 
@@ -317,7 +317,7 @@ Per {{!RFC8552}}, IANA is requested to add the following entries to the
 # W3C Considerations
 
 1. We propose the inclusion of an optional data integrity proof for the DID document, as outlined in {{dataIntegrityProofECDSA}} and {{dataIntegrityProofEdDSA}}.
-2. We propose the inclusion of the optional "dnsDomain" property to the {{didSpecRegistries}} as outlined in section X.
+2. We propose the inclusion of the optional "dnsDomain" property to the {{didSpecRegistries}} as outlined in section 3.2.
 
 # Acknowledgments
 {:numbered="false"}
