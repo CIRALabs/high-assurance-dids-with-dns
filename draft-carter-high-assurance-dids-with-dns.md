@@ -145,7 +145,7 @@ To faciliate the linking of a non did:web to the DNS, we propose the inclusion o
 
     {"dnsDomain": "example.ca"}
 
-In the case of non did:webs that wish to use DNS for increased assurance, the verification process is identical to the one used for did:web but instead of referencing the domain in the identifier, the verifier must use the domain referenced by the "dnsDomain" property instead.
+In the case of non did:webs that wish to use DNS for increased assurance, the verification process is identical to the one used for did:web but instead of referencing the domain in the identifier, the verifier MUST use the domain referenced by the "dnsDomain" property instead.
 
 ## Mapping DIDs to Domains with URI records
 
@@ -194,7 +194,7 @@ Depending on the needs of the implementer, it is possible they may use multiple 
 
 It is RECOMMENDED implementers limit the total number of TLSA records for a given domain to 255 to mitigate DoS style attacks, such as creating a problematic number of TLSA records to then be resolved and parsed by the verifier.
 
-If target DID has indicated it has implemented the high assurance DNS integration and the total number of TLSA records returned to a verifier exceeds this threshold, it is RECOMMENDED the verifier abort the verification process and deem the target DID insecure.
+If total number of TLSA records returned to a verifier exceeds this threshold, it is RECOMMENDED the verifier abort the verification process and deem the target DID insecure.
 
 ### Benefits of Public Keys in the DNS
 
