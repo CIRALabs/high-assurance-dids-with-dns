@@ -5,11 +5,11 @@
 Network Working Group                                          J. Carter
 Internet-Draft                                                 J. Latour
 Intended status: Informational                                      CIRA
-Expires: 11 October 2024                                       M. Glaude
+Expires: 11 November 2024                                      M. Glaude
                                                           Northern Block
                                                                 T. Bouma
                                               Digital Governance Council
-                                                            9 April 2024
+                                                             10 May 2024
 
 
                       High Assurance DIDs with DNS
@@ -52,7 +52,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 11 October 2024.
+   This Internet-Draft will expire on 11 November 2024.
 
 Copyright Notice
 
@@ -75,7 +75,7 @@ Table of Contents
      3.2.  Mapping DIDs to Domains with URI records
        3.2.1.  URI record scoping
        3.2.2.  Entity Handles
-     3.3.  PKI with TLSA records
+     3.3.  Mapping verificationMethods to the DNS with TLSA records
        3.3.1.  TLSA Record Scoping, Selector Field
        3.3.2.  Instances of Multiple Key Pairs
        3.3.3.  Benefits of Public Keys in the DNS
@@ -181,8 +181,27 @@ Table of Contents
 
    In the case of other DID methods, the association between a DID and a
    DNS domain is still possible although less inherent than with the
-   aforementioned did:web.  This association is currently out of scope
-   at this time.
+   aforementioned did:web.  As such, it provides much of the same
+   benefits as the [wellKnownDidConfiguration], but the method in which
+   it accomplishes this is slightly different.  Specifically, the
+   integrity of the DID document is secured by including a
+   dataIntegrityProof inside the DID document itself rather than in a
+   seperate resource, and the key material used to verify this proof is
+   explicitly duplicated in the DNS, rather than only being referenced
+   back to the DID document which is being verified.
+
+3.1.1.1.  The "dnsDomain" field
+
+   To faciliate the linking of a non did:web to the DNS, we propose the
+   inclusion of an optional property "dnsDomain" to the DID document.
+
+   {"dnsDomain": "example.ca"}
+
+   In the case of non did:webs that wish to use DNS for increased
+   assurance, the verification process is identical to the one used for
+   did:web but instead of referencing the domain in the identifier, the
+   verifier must use the domain referenced by the "dnsDomain" property
+   instead.
 
 3.2.  Mapping DIDs to Domains with URI records
 
@@ -214,12 +233,12 @@ Table of Contents
    their relationship to another entity or root authority.
 
    *_Ex: _did.diplomas.example-issuer.ca IN URI 1 0
-   “did:web:diplomas.XXXXXX”_*
+   “did:web:diplomas.example-issuer.ca”_*
 
    *_Ex: _did.certificates.example-issuer.ca IN URI 1 0
-   “did:web:certificates.XXXXXXX”_*
+   “did:web:certificates.example-issuer.ca”_*
 
-3.3.  PKI with TLSA records
+3.3.  Mapping verificationMethods to the DNS with TLSA records
 
    The DID to DNS mapping illustrated in section 3.2 provides a way of
    expressing the association between a DID and a domain, but no way of
@@ -234,6 +253,11 @@ Table of Contents
    information in the DNS.  Key material can be represented in TLSA
    records either hashed or unhashed depending on the requirements and
    use case of the implementer.
+
+   It is important to note that as key sizes increase in respect to the
+   needs of post-quantum cryptography, TLSA records can support these
+   keys via the hashed representation, making this implementation post-
+   quantum compatible.
 
 3.3.1.  TLSA Record Scoping, Selector Field
 
@@ -270,9 +294,10 @@ Table of Contents
    creating a problematic number of TLSA records to then be resolved and
    parsed by the verifier.
 
-   If the total number of TLSA records returned to a verifier exceeds
-   this threshold, it is RECOMMENDED they abort the verification process
-   and deem the target DID insecure.
+   If target DID has indicated it has implemented the high assurance DNS
+   integration and the total number of TLSA records returned to a
+   verifier exceeds this threshold, it is RECOMMENDED the verifier abort
+   the verification process and deem the target DID insecure.
 
 3.3.3.  Benefits of Public Keys in the DNS
 
@@ -294,17 +319,19 @@ Table of Contents
    DNSSEC provides cryptographic assurance that the DNS records returned
    in response to a query are authentic and have not been tampered with.
    This assurance within the context of the __did_ URI and __did_ TLSA
-   records provides another mechanism to ensure the integrity of the DID
-   and its public keys outside of infrastructure it resides on directly
-   from the domain of its owner.
+   records greatly strengthens the mechanism to ensure the integrity of
+   the DID and its public keys.  DNSSEC vastly reduces the possible
+   attack vectors in which the repudiated DID information in the DNS can
+   be tampered with.
 
    Within this use-case, DNSSEC also provides revocation checks for both
-   DIDs and public keys.  In particular, a DNS query for a specific
-   __did_ URI record or __did_ TLSA record can return an NXDOMAIN
-   [RFC8020] response if the DID or public key has been revoked.  This
-   approach can simplify the process of verifying the current validity
-   of DIDs and public keys by reducing the need for complex revocation
-   mechanisms or implementation specific technologies.
+   DIDs and their public keys.  In particular, a DNS query for a
+   specific __did_ URI record or __did_ TLSA record can return an
+   NXDOMAIN [RFC8020] response if the DID or public key has been
+   revoked.  This approach can simplify the process of verifying the
+   current validity of DIDs and public keys by reducing the need for
+   complex revocation mechanisms or implementation specific
+   technologies.
 
 5.  Digital Signature and Proof Value of the DID Document
 
@@ -320,28 +347,33 @@ Table of Contents
    and [dataIntegrityProofEdDSA], with the mandatory inclusions of the
    "created" and "expires" fields.  The inclusion of which acts as a
    lifespan for the document, similar to the TTL for a DNS record.
-   Depending on the use case and security requirement, a longer or
+   Depending on the use case and security requirements, a longer or
    shorter expiry period would be used as necessary.
 
-   json "proof": { "type": "DataIntegrityProof", "cryptosuite": "ecdsa-
-   jfc-2019", "created": "2023-10-11T15:27:27Z", "expires":
-   "2099-10-11T15:27:27Z", "proofPurpose": "assertionMethod",
-   "verificationMethod": "did:web:trustregistry.ca#key-1", }
+   "proof": {
+      "type": "DataIntegrityProof",
+      "cryptosuite": "ecdsa-jfc-2019",
+      "created": "2023-10-11T15:27:27Z",
+      "expires": "2099-10-11T15:27:27Z",
+      "proofPurpose": "assertionMethod",
+      "verificationMethod": "did:web:trustregistry.ca#key-1",
+   }
 
    The data integrity proof SHOULD be signed using a verificationMethod
    that has an associated TLSA record to allow for the verification of
-   the data integrity proof using data contained outside of the DID
-   document.  This provides an added layer of authenticity, as the PKI
-   information contained in the DID document would need to be supported
-   across 2 different domains.
+   the data integrity proof using pki material contained outside of the
+   DID document.  This provides an added layer of authenticity, as the
+   PKI information contained in the DID document would need to be
+   repudiated across 2 different domains, the resource hosting the DID
+   document and its associated DNS domain.
 
 5.1.  Use of Alternative Cryptosuites
 
    While [dataIntegrityProofECDSA] and [dataIntegrityProofEdDSA] are the
    cryptosuites we have chosen to highlight in this specification, it is
    important to note that this implementation for a high assurance did
-   is cryptosuite agnostic.  It is interoperable with any new and
-   existing cryptosuites and associated key types as required by the
+   using dns is cryptosuite agnostic.  It is interoperable with any new
+   and existing cryptosuites and associated key types as required by the
    implementers and verifiers.
 
 6.  Verification Process
@@ -363,29 +395,31 @@ Table of Contents
            example, *did:web:example.ca* would translate to a URI record
            with the name *_did.example.ca*.
 
-   2.  *Verification of the PKI:* With the association between the DID
-       and the domain verified, the user would then proceed to verify
-       the key material between the DID and the domain.
+       2.  In the case of other did methods, the domain and record name
+           to be queried is indicated by the "dnsDomain" property.  In
+           example, *{"dnsDomain": "example.ca"}* would translate to a
+           URI record with the name *_did.example.ca*.
 
-       1.  The user would query for a TLSA record.  Depending on the
-           type of TLSA record/s returned, the user would verify either
-           the hash of the verificationMethod or verificationMethod
-           itself matches what was returned by the TLSA record content.
+   2.  *Verification of the PKI:* The user verifies the
+       verificationMethod/s in the DID document are represented as TLSA
+       record/s in the associated domain.
 
-           1.  Note: This may require some conversion, as TLSA records
-               store key material as hex encoded DER format, and this
-               representation is not supported by [verificationMethod].
-               However, there are many well supported cryptography
-               libraries in a variety of languages that facilitate the
-               conversion process.
+       1.  The domain and record name for the TLSA record to be queried
+           is determined identically to steps 1.a or 1.b.
 
-   3.  *Verification of the DID document's integrity:* After verifying
-       that the did's key material matches what is represented in the
-       TLSA records of the associated domain, the user would then verify
+           1.  Note: The matching of the TLSA record content and
+               verificationMethod may require some conversion, as TLSA
+               records store key material as hex encoded DER format, and
+               this representation is not supported by
+               [verificationMethod].  However, there are many well
+               supported cryptography libraries in a variety of
+               languages that facilitate the conversion process.
+
+   3.  *Verification of the DID document's integrity:* The user verifies
        the "proof" object to ensure the integrity of the DID document.
 
        1.  This can be accomplished by using either the
-           [verificationMethod] directly from the did document, or using
+           [verificationMethod] directly from the DID document, or using
            the key material stored in the TLSA record.  Using the TLSA
            record would provide a higher level of assurance as this
            confirms the key material is being accurately represented
@@ -399,16 +433,28 @@ Table of Contents
                without having to convert the key back to its
                representation in the verificationMethod.
 
+   _Note_: The order of the steps presented does not specify a required
+   order for verification.  As a general rule (and depending on the use
+   case) the 3 verification steps outlined above may be performed in any
+   order as best fits the verifier's needs.  In example, a verifier may
+   arrive at the DID document during a credential verification process,
+   in which case it makes sense to peform step 3 before steps 1 and 2.
+   Alternatively, a verifier may arrive at the DID document after
+   exploring an organization's domain, in which case it may make more
+   sense to perform steps 1 and 2 prior to step 3.  So long as the 3
+   steps are performed together, the same level of assurance is achieved
+   irrespective of their order.
+
 6.1.  Verification Failure
 
    If at any given step verification fails, the DID document should be
    deemed INSECURE.  Whether it is due to the DID and DNS being out of
-   sync with recent updates, or the DID document or DNS zone themselves
-   being compromised, a failed verification MAY indicate malicious
-   activity.  It is then up to the verifier to determine, according to
-   their requirements and use case, the appropriate course of action
-   regarding interactions with the target DID until successful
-   verification is restored.
+   sync with recent updates, or the resource hosting the DID document or
+   DNS zone themselves being compromised, a failed verification MAY
+   indicate malicious activity.  It is then up to the verifier to
+   determine, according to their requirements and use case, the
+   appropriate course of action regarding interactions with the target
+   DID until successful verification is restored.
 
 7.  Control Requirements
 
@@ -599,6 +645,10 @@ Table of Contents
               "DID Specification Registries", n.d.,
               <https://www.w3.org/TR/did-spec-registries/#did-methods>.
 
+   [didSpecRegistries]
+              "Did Specification Registries", n.d.,
+              <https://w3c.github.io/did-spec-registries>.
+
    [issuer]   "Verifiable Credentials Data Model v2.0", n.d.,
               <https://www.w3.org/TR/vc-data-model-2.0/#issuer>.
 
@@ -651,6 +701,11 @@ Table of Contents
               "Verifiable Credentials Data Model v1.1", n.d.,
               <https://www.w3.org/TR/vc-data-model/>.
 
+   [wellKnownDidConfiguration]
+              "Well Known DID Configuration", n.d.,
+              <https://identity.foundation/.well-known/resources/did-
+              configuration/>.
+
 11.2.  Informative References
 
    [Self-Sovereign-Identity]
@@ -662,6 +717,9 @@ Appendix A.  W3C Considerations
    1.  We propose the inclusion of an optional data integrity proof for
        the DID document, as outlined in [dataIntegrityProofECDSA] and
        [dataIntegrityProofEdDSA].
+
+   2.  We propose the inclusion of the optional "dnsDomain" property to
+       the [didSpecRegistries] as outlined in section X.
 
 Acknowledgments
 
