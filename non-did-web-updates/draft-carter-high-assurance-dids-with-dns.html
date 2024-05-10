@@ -1308,7 +1308,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 {"dnsDomain": "example.ca"}
 </pre><a href="#section-3.2.1-2" class="pilcrow">¶</a>
 </div>
-<p id="section-3.2.1-3">In the case of non did:webs that wish to use DNS for increased assurance, the verification process is identical to the one used for did:web but instead of referencing the domain in the identifier, the verifier must use the domain referenced by the "dnsDomain" property instead.<a href="#section-3.2.1-3" class="pilcrow">¶</a></p>
+<p id="section-3.2.1-3">In the case of non did:webs that wish to use DNS for increased assurance, the verification process is identical to the one used for did:web but instead of referencing the domain in the identifier, the verifier <span class="bcp14">MUST</span> use the domain referenced by the "dnsDomain" property instead.<a href="#section-3.2.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1383,7 +1383,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <a href="#section-3.4.2.1" class="section-number selfRef">3.4.2.1. </a><a href="#name-security-consideration" class="section-name selfRef">Security Consideration</a>
             </h5>
 <p id="section-3.4.2.1-1">It is <span class="bcp14">RECOMMENDED</span> implementers limit the total number of TLSA records for a given domain to 255 to mitigate DoS style attacks, such as creating a problematic number of TLSA records to then be resolved and parsed by the verifier.<a href="#section-3.4.2.1-1" class="pilcrow">¶</a></p>
-<p id="section-3.4.2.1-2">If target DID has indicated it has implemented the high assurance DNS integration and the total number of TLSA records returned to a verifier exceeds this threshold, it is <span class="bcp14">RECOMMENDED</span> the verifier abort the verification process and deem the target DID insecure.<a href="#section-3.4.2.1-2" class="pilcrow">¶</a></p>
+<p id="section-3.4.2.1-2">If total number of TLSA records returned to a verifier exceeds this threshold, it is <span class="bcp14">RECOMMENDED</span> the verifier abort the verification process and deem the target DID insecure.<a href="#section-3.4.2.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>

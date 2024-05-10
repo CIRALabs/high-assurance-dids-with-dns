@@ -201,7 +201,7 @@ Table of Contents
    In the case of non did:webs that wish to use DNS for increased
    assurance, the verification process is identical to the one used for
    did:web but instead of referencing the domain in the identifier, the
-   verifier must use the domain referenced by the "dnsDomain" property
+   verifier MUST use the domain referenced by the "dnsDomain" property
    instead.
 
 3.3.  Mapping DIDs to Domains with URI records
@@ -295,10 +295,9 @@ Table of Contents
    creating a problematic number of TLSA records to then be resolved and
    parsed by the verifier.
 
-   If target DID has indicated it has implemented the high assurance DNS
-   integration and the total number of TLSA records returned to a
-   verifier exceeds this threshold, it is RECOMMENDED the verifier abort
-   the verification process and deem the target DID insecure.
+   If total number of TLSA records returned to a verifier exceeds this
+   threshold, it is RECOMMENDED the verifier abort the verification
+   process and deem the target DID insecure.
 
 3.4.3.  Benefits of Public Keys in the DNS
 
