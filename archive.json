@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-05-09T00:18:06.552804+00:00",
+  "timestamp": "2024-05-12T00:20:13.644381+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -1017,6 +1017,34 @@
       "mergedBy": "jessecarter111",
       "mergeCommit": {
         "oid": "4bff320092ffbf027c52be9f05f1ae48af7a2617"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 34,
+      "id": "PR_kwDOLLNO0c5vHlUt",
+      "title": "Non did web updates",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/pull/34",
+      "state": "MERGED",
+      "author": "jessecarter111",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2024-05-10T17:03:03Z",
+      "updatedAt": "2024-05-10T17:28:06Z",
+      "baseRepository": "CIRALabs/high-assurance-dids-with-dns",
+      "baseRefName": "main",
+      "baseRefOid": "6ef5d5fce813d4f575941cae2a39a8f0effdf06a",
+      "headRepository": "CIRALabs/high-assurance-dids-with-dns",
+      "headRefName": "non-did-web-updates",
+      "headRefOid": "8f04af2e9db9b5077af73058b641340f8f767002",
+      "closedAt": "2024-05-10T17:28:06Z",
+      "mergedAt": "2024-05-10T17:28:06Z",
+      "mergedBy": "jessecarter111",
+      "mergeCommit": {
+        "oid": "a0b072e9805920dd5a29f1be9bbb2e7b68b8eca7"
       },
       "comments": [],
       "reviews": []
