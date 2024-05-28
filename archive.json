@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-05-26T00:20:15.001526+00:00",
+  "timestamp": "2024-05-28T00:18:46.197758+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -529,6 +529,22 @@
       "body": "I deployed another domain name I had https://openproof.org - It's all working save for the dns/dnssec validation because I am using rebel.ca and I cannot add URI and TLSA records. I can switch this to desec.io, but I've decided to leave at rebel and implement a -dnstxt verification option, where a domain owner can add the TXT records and have them verified. I know this might not be considered the most secure option, but for mass adoption, this control is likely just fine for commerical operators. I should have the script done by end of day today, or tomorrow.",
       "createdAt": "2024-03-20T12:19:56Z",
       "updatedAt": "2024-03-20T12:19:57Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 35,
+      "id": "I_kwDOLLNO0c6KRmHx",
+      "title": "Using this with did:tdw \u2014 Trust DID Web",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/35",
+      "state": "OPEN",
+      "author": "swcurran",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "A team at BC Gov has been working on what might be considered an extension to DID Web that we\u2019re calling Trust DID Web (did:tdw) \u2014 links below. The <tl;dr> is that did:tdw is a file that resides beside a did:web \u201cdid.json\u201d file on a web server that is a log with a record per version of the DID. The log enables (at least) the following features:\r\n\r\n- Ongoing publishing of all DID Document (DIDDoc) versions for a DID instead of, or alongside a did:web DID/DIDDoc.\r\n- The same DID-to-HTTPS transformation as did:web.\r\n- The ability to resolve the full history of the DID using a verifiable chain of updates to the DIDDoc from genesis to deactivation.\r\n- A self-certifying identifier (SCID) for the DID that is globally unique, embedded in the DID, and derived from the initial DIDDoc.\r\n   - The SCID enables [DID portability](https://bcgov.github.io/trustdidweb/#term:did-portability), such as moving the DID\u2019s web location (and so changing the DID string itself) while retaining a connection to the predecessor DID(s) and the DID\u2019s verifiable history.\r\n- DIDDoc updates include a proof signed by the DID Controller(s) authorized to update the DID.\r\n\r\nWe\u2019d like to include in the did:tdw spec how to use High Assurance DIDs with did:tdw. Going through this specification I see a couple of things that raise questions:\r\n\r\n- As we have defined did:tdw, the SCID may be the sub-domain in the DID, or may be in the path under the domain, as is supported in did:web.  There is no reference to that in the High Assurance DIDs spec. Have you considered that use case and is it supported?\r\n- did:tdw includes the same idea of a data integrity proof in the log file (vs. in the DIDDoc) of the DID, since that is not a DID Core spec concept (AFAIK?).  Can you think of how that might be made optional if it is not needed?\r\n\r\nWe\u2019d love to have a meeting with you to talk about did:tdw and how it might connect with this work if there is interest.\r\n\r\ndid:tdw links:\r\n\r\n- did:tdw Specification (rendered): https://bcgov.github.io/trustdidweb/\r\n- did:tdw Specification (repository): https://github.com/bcgov/trustdidweb\r\n- Presentation from IIW 38 (April 2024). The details start at slide 11: https://docs.google.com/presentation/d/1PHo16asyceRiNKN7UkV8BSmtWtN6Wp3A6_9MV0IQ2jg/edit?usp=sharing\r\n- Typescript Implementation: https://github.com/bcgov/trustdidweb-ts\r\n- Python Implementation: https://github.com/bcgov/trustdidweb-py\r\n",
+      "createdAt": "2024-05-27T23:01:26Z",
+      "updatedAt": "2024-05-27T23:01:26Z",
       "closedAt": null,
       "comments": []
     }
