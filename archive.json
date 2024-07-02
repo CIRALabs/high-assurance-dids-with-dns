@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-06-30T00:21:24.254451+00:00",
+  "timestamp": "2024-07-02T00:19:18.855765+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -545,6 +545,22 @@
       "body": "A team at BC Gov has been working on what might be considered an extension to DID Web that we\u2019re calling Trust DID Web (did:tdw) \u2014 links below. The <tl;dr> is that did:tdw is a file that resides beside a did:web \u201cdid.json\u201d file on a web server that is a log with a record per version of the DID. The log enables (at least) the following features:\r\n\r\n- Ongoing publishing of all DID Document (DIDDoc) versions for a DID instead of, or alongside a did:web DID/DIDDoc.\r\n- The same DID-to-HTTPS transformation as did:web.\r\n- The ability to resolve the full history of the DID using a verifiable chain of updates to the DIDDoc from genesis to deactivation.\r\n- A self-certifying identifier (SCID) for the DID that is globally unique, embedded in the DID, and derived from the initial DIDDoc.\r\n   - The SCID enables [DID portability](https://bcgov.github.io/trustdidweb/#term:did-portability), such as moving the DID\u2019s web location (and so changing the DID string itself) while retaining a connection to the predecessor DID(s) and the DID\u2019s verifiable history.\r\n- DIDDoc updates include a proof signed by the DID Controller(s) authorized to update the DID.\r\n\r\nWe\u2019d like to include in the did:tdw spec how to use High Assurance DIDs with did:tdw. Going through this specification I see a couple of things that raise questions:\r\n\r\n- As we have defined did:tdw, the SCID may be the sub-domain in the DID, or may be in the path under the domain, as is supported in did:web.  There is no reference to that in the High Assurance DIDs spec. Have you considered that use case and is it supported?\r\n- did:tdw includes the same idea of a data integrity proof in the log file (vs. in the DIDDoc) of the DID, since that is not a DID Core spec concept (AFAIK?).  Can you think of how that might be made optional if it is not needed?\r\n\r\nWe\u2019d love to have a meeting with you to talk about did:tdw and how it might connect with this work if there is interest.\r\n\r\ndid:tdw links:\r\n\r\n- did:tdw Specification (rendered): https://bcgov.github.io/trustdidweb/\r\n- did:tdw Specification (repository): https://github.com/bcgov/trustdidweb\r\n- Presentation from IIW 38 (April 2024). The details start at slide 11: https://docs.google.com/presentation/d/1PHo16asyceRiNKN7UkV8BSmtWtN6Wp3A6_9MV0IQ2jg/edit?usp=sharing\r\n- Typescript Implementation: https://github.com/bcgov/trustdidweb-ts\r\n- Python Implementation: https://github.com/bcgov/trustdidweb-py\r\n",
       "createdAt": "2024-05-27T23:01:26Z",
       "updatedAt": "2024-05-27T23:01:26Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 36,
+      "id": "I_kwDOLLNO0c6OAVHR",
+      "title": "Cryptographic Link between DID <> DIDdoc <> Domain",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/36",
+      "state": "OPEN",
+      "author": "aniltj",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "I was re-reading these sections of the spec/recipe:\r\n\r\n>By leveraging URI records as outlined ...., we can create a bidirectional relationship, allowing \r\n>a domain to publish their associated DID in the DNS.\r\n\r\nWhich allows a DID \"owned\" by a domain to published via that domain's URI record, and ...\r\n\r\n>By hosting the public keys of that DID in its associated domain\u2019s zone, \r\n>we can provide a cryptographic linkage to bolster this relationship \r\n>while also providing access to the DID\u2019s public keys outside of the infrastructure \r\n>where the DID document itself resides, facilitating interoperability and increasing availability.\r\n\r\nWhich allows the public keys associated with the DID, and available in a **digtially signed DIDDoc** to also be available via the domain's TLSA record.\r\n\r\nThe digital signature on the DIDdoc (available in the /.well-known of the domain) ensures the integrity and provenance of:\r\n\r\n- The DID published in the DIDdoc\r\n- The public keys associated with the DID published in the DIDdoc\r\n- Additional metadata published in the DIDDoc\r\n\r\n>The data integrity proof SHOULD be signed using a verificationMethod that has an \r\n>associated TLSA record to allow for the verification of the data integrity proof using pki \r\n>material contained outside of the DID document. This provides an added layer of \r\n>authenticity, as the PKI information contained in the DID document would need to \r\n>be repudiated across 2 different domains, the resource hosting the DID document and its associated DNS domain.\r\n\r\nThe question I have is why the extra step of actually publishing the DID's public key's via the TLSA record? \r\n\r\nWould it not be simpler to only publish in the TLSA record the public key associated with the digital signature on the DIDdoc?\r\n\r\n1. The URI record that points to the same DID that is present in the DIDdoc is the \"second factor\". \r\n2. In order to validate the digital signature on the DIDDoc, you need to obtain the public key from the TLSA record which is protected using DNSSEC. \r\n3. W3C Data Integrity, which is used to digitally sign the DIDDoc, can utilize existing PKI infrastructure. \r\n\r\nThe ability to cryptographically link together existing DNS/DNSSEC, PKI and DIDs becomes very powerful way of linking existing trusted infrastructure (DNS/DNSSEC, PKI) with DIDs  \r\n\r\n\r\n",
+      "createdAt": "2024-06-30T21:20:56Z",
+      "updatedAt": "2024-06-30T21:24:01Z",
       "closedAt": null,
       "comments": []
     }
