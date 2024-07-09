@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-07-07T00:21:29.552177+00:00",
+  "timestamp": "2024-07-09T00:19:26.481243+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -163,9 +163,17 @@
       "labels": [],
       "body": "I did a close read of the IETF URI RFC 3986 and concluded that these two versions of a did:web identifier can be regarded as equivalent URNs: \r\n```bash\r\ndid:web:credentials.trustroot.ca:trbouma\r\ndid:web:trbouma@credentials.trustroot.ca\r\n```\r\n\r\nFor mass adoption I see the latter format being more popular and understandable - e.g., Verify me at: ```trbouma@credentials.trustroot.ca```  Note that it is the same static internet identifier (URN) format for email and the same format for lightning addresses. Over time, the mailto: urn got dropped, and I see the same thing happening to \"did:web\" - people will just say, \"you can verify me at trbouma@credentials.trustroot.ca\" and knowing that that context is verification (versue email or payment) whatever scheme will be prepended and whatever routine will resolve to get the necessary did material to do the verification.\r\n\r\nI have implemented in the latest commit of sandbox and have testing in the scripts/verify_did.py",
       "createdAt": "2024-02-14T13:04:59Z",
-      "updatedAt": "2024-02-14T13:04:59Z",
+      "updatedAt": "2024-07-08T20:35:12Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "andrewwhitehead",
+          "authorAssociation": "NONE",
+          "body": "'@' is not allowed by the DID syntax for the method-specific-id: https://www.w3.org/TR/did-core/#did-syntax\r\n\r\nIt could be percent-encoded, although it becomes less legible: `did:web:trbouma%40credentials.trustroot.ca`",
+          "createdAt": "2024-07-08T20:34:01Z",
+          "updatedAt": "2024-07-08T20:35:12Z"
+        }
+      ]
     },
     {
       "number": 18,
@@ -561,6 +569,38 @@
       "body": "I was re-reading these sections of the spec/recipe:\r\n\r\n>By leveraging URI records as outlined ...., we can create a bidirectional relationship, allowing \r\n>a domain to publish their associated DID in the DNS.\r\n\r\nWhich allows a DID \"owned\" by a domain to published via that domain's URI record, and ...\r\n\r\n>By hosting the public keys of that DID in its associated domain\u2019s zone, \r\n>we can provide a cryptographic linkage to bolster this relationship \r\n>while also providing access to the DID\u2019s public keys outside of the infrastructure \r\n>where the DID document itself resides, facilitating interoperability and increasing availability.\r\n\r\nWhich allows the public keys associated with the DID, and available in a **digtially signed DIDDoc** to also be available via the domain's TLSA record.\r\n\r\nThe digital signature on the DIDdoc (available in the /.well-known of the domain) ensures the integrity and provenance of:\r\n\r\n- The DID published in the DIDdoc\r\n- The public keys associated with the DID published in the DIDdoc\r\n- Additional metadata published in the DIDDoc\r\n\r\n>The data integrity proof SHOULD be signed using a verificationMethod that has an \r\n>associated TLSA record to allow for the verification of the data integrity proof using pki \r\n>material contained outside of the DID document. This provides an added layer of \r\n>authenticity, as the PKI information contained in the DID document would need to \r\n>be repudiated across 2 different domains, the resource hosting the DID document and its associated DNS domain.\r\n\r\nThe question I have is why the extra step of actually publishing the DID's public key's via the TLSA record? \r\n\r\nWould it not be simpler to only publish in the TLSA record the public key associated with the digital signature on the DIDdoc?\r\n\r\n1. The URI record that points to the same DID that is present in the DIDdoc is the \"second factor\". \r\n2. In order to validate the digital signature on the DIDDoc, you need to obtain the public key from the TLSA record which is protected using DNSSEC. \r\n3. W3C Data Integrity, which is used to digitally sign the DIDDoc, can utilize existing PKI infrastructure. \r\n\r\nThe ability to cryptographically link together existing DNS/DNSSEC, PKI and DIDs becomes very powerful way of linking existing trusted infrastructure (DNS/DNSSEC, PKI) with DIDs  \r\n\r\n\r\n",
       "createdAt": "2024-06-30T21:20:56Z",
       "updatedAt": "2024-06-30T21:24:01Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 37,
+      "id": "I_kwDOLLNO0c6O2SU7",
+      "title": "Support DID resolution parameters?",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/37",
+      "state": "OPEN",
+      "author": "andrewwhitehead",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "In order to restrict the resolution of the associated DID, it may be useful to support DID resolution parameters in the _did subdomain URI record. This would change the URI field from a DID to a DID-URL, meaning that a resolver would be expected to strip off any parameters to discover the base DID. As a motivating example, the following syntax could be used to attach a hashlink to the DID-URL and provide some integrity protection over the resulting document:\r\n\r\n    did:web:domain.example?hl={hash}\r\n\r\nFor use with `did:tdw`, it would also be beneficial to define a minimum version ID (and hash) to resolve, such that the log file can't be rolled back past a certain point without breaking the resolution process.",
+      "createdAt": "2024-07-08T21:20:34Z",
+      "updatedAt": "2024-07-08T21:21:24Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 38,
+      "id": "I_kwDOLLNO0c6O2VMQ",
+      "title": "Undefined DID document properties",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/38",
+      "state": "OPEN",
+      "author": "andrewwhitehead",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "The current draft refers to a couple properties \u2013 `dnsDomain` and `proof` \u2013\u00a0which are not defined by the DID Core 1.0 syntax. There's also a `header` property mentioned in other issues. In order to produce a JSON-LD conforming document an additional context would need to be defined and referenced by DID documents, for example:\r\n\r\n```json\r\n{\r\n  \"@context\": [\r\n    \"https://www.w3.org/ns/did/v1\",\r\n    \"https://domain.example/high-assurance-did/v1\"\r\n  ],\r\n  \"id\": \"did:web:example.com\",\r\n  ...\r\n}\r\n```\r\n\r\nOtherwise, these properties could be proposed for addition to the core spec (although not at the current stage of the working group). They could also be proposed for individual DID methods, particularly did:web.",
+      "createdAt": "2024-07-08T21:27:43Z",
+      "updatedAt": "2024-07-08T21:28:12Z",
       "closedAt": null,
       "comments": []
     }
