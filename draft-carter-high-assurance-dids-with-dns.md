@@ -171,7 +171,7 @@ An implementer may have multiple sub entities operating and issuing credentials 
 
 The DID to DNS mapping illustrated in section 3.2 provides a way of expressing the association between a DID and a domain, but no way of verifying that relationship. By hosting the public keys of that DID in its associated domain’s zone, we can provide a cryptographic linkage to bolster this relationship while also providing access to the DID’s public keys outside of the infrastructure where the DID document itself resides, facilitating interoperability and increasing availability.
 
-TLSA records {{!RFC6698}} provide a simple way of hosting cryptographic information in the DNS. Key material can be represented in TLSA records either hashed or unhashed depending on the requirements and use case of the implementer.
+TLSA records {{!RFC6698}} provide a simple way of hosting X.509 cryptographic information in the DNS. Key material can be represented in TLSA records either hashed or unhashed depending on the requirements and use case of the implementer.
 
 It is important to note that as key sizes increase in respect to the needs of post-quantum cryptography, TLSA records can support these keys via the hashed representation, making this implementation post-quantum compatible.
 
@@ -199,6 +199,10 @@ If total number of TLSA records returned to a verifier exceeds this threshold, i
 ### Benefits of Public Keys in the DNS
 
 Hosting the public keys in TLSA records provides a stronger mechanism for the verifier to verify a did and its associated entity with, as they are able to perform a cryptographic challenge against the DID using the corresponding TLSA records, or against the domain using the corresponding {{verificationMethod}} in the DID document. The accessibility of the public keys is also beneficial, as the verifier does not need to resolve the DID document to accesss its associated key material, enhancing interoperability.
+
+#### Hosting Other Key Formats
+
+Although NOT RECOMMENDED in this guidance, it is possible to host public keys of other certificate and public key formats for validaton using TXT records. For example, a 32 byte secp256k1 public key may be represented as a string in hexadecimal encoded format, or in Bech32 encoded format. Validation methods would need to be additionally specified and implemented for these other certificate and public key formats.
 
 # Role of DNSSEC for Assurance and Revocation
 
