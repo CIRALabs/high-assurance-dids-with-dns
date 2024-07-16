@@ -5,11 +5,11 @@
 Network Working Group                                          J. Carter
 Internet-Draft                                                 J. Latour
 Intended status: Informational                                      CIRA
-Expires: 11 November 2024                                      M. Glaude
+Expires: 17 January 2025                                       M. Glaude
                                                           Northern Block
                                                                 T. Bouma
                                               Digital Governance Council
-                                                             10 May 2024
+                                                            16 July 2024
 
 
                       High Assurance DIDs with DNS
@@ -52,7 +52,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 11 November 2024.
+   This Internet-Draft will expire on 17 January 2025.
 
 Copyright Notice
 
@@ -528,9 +528,9 @@ Table of Contents
     |         | Key        |                                          |
     |         | Control    |                                          |
     +---------+------------+------------------------------------------+
-    | 10      | Domain     | The signing keys MUST be generated under |
-    |         | Zone       | the control of the Issuing Authority.    |
-    |         | Signing    |                                          |
+    | 10      | Domain     | The domain zone signing key MUST be      |
+    |         | Zone       | generated under the control of the       |
+    |         | Signing    | Issuing Authority.                       |
     |         | Key        |                                          |
     |         | Generation |                                          |
     +---------+------------+------------------------------------------+
