@@ -139,13 +139,13 @@ With did:web, there’s an inherent link between the DNS needed to resolve the a
 
 In the case of other DID methods, the association between a DID and a DNS domain is still possible although less inherent than with the aforementioned did:web. As such, it provides much of the same benefits as the {{wellKnownDidConfiguration}}, but the method in which it accomplishes this is slightly different. Specifically, the integrity of the DID document is secured by including a dataIntegrityProof inside the DID document itself rather than in a seperate resource, and the key material used to verify this proof is explicitly duplicated in the DNS, rather than only being referenced back to the DID document which is being verified.
 
-### The "dnsDomain" property
+### dnsValidationDomain
 
-To faciliate the linking of a non did:web to the DNS, we propose the inclusion of an optional property "dnsDomain" to the DID document.
+To faciliate the linking of a non did:web to the DNS, we propose the inclusion of an optional property "dnsValidationDomain" to the DID document.
 
-    {"dnsDomain": "example.ca"}
+    {"dnsValidationDomain": "example.ca"}
 
-In the case of non did:webs that wish to use DNS for increased assurance, the verification process is identical to the one used for did:web but instead of referencing the domain in the identifier, the verifier MUST use the domain referenced by the "dnsDomain" property instead.
+In the case of non did:webs that wish to use DNS for increased assurance, the verification process is identical to the one used for did:web but instead of referencing the domain in the identifier, the verifier MUST use the domain referenced by the "dnsValidationDomain" property instead.
 
 ## Mapping DIDs to Domains with URI records
 
@@ -171,7 +171,7 @@ An implementer may have multiple sub entities operating and issuing credentials 
 
 The DID to DNS mapping illustrated in section 3.2 provides a way of expressing the association between a DID and a domain, but no way of verifying that relationship. By hosting the public keys of that DID in its associated domain’s zone, we can provide a cryptographic linkage to bolster this relationship while also providing access to the DID’s public keys outside of the infrastructure where the DID document itself resides, facilitating interoperability and increasing availability.
 
-TLSA records {{!RFC6698}} provide a simple way of hosting cryptographic information in the DNS. Key material can be represented in TLSA records either hashed or unhashed depending on the requirements and use case of the implementer.
+TLSA records {{!RFC6698}} provide a simple way of hosting cryptographic information in the DNS. Key material or full x509 certificates can be represented in TLSA records either hashed or unhashed depending on the requirements and use case of the implementer.
 
 It is important to note that as key sizes increase in respect to the needs of post-quantum cryptography, TLSA records can support these keys via the hashed representation, making this implementation post-quantum compatible.
 
@@ -181,6 +181,11 @@ When public keys related to DIDs are published in the DNS as TLSA records:
 
 - The records MUST be scoped by setting the global underscore name of the TLSA RRset to *_did* (0x5F 0x64 0x69 0x64).
 - The Selector Field of the TLSA record must be set to 1, SubjectPublicKeyInfo: DER-encoded binary structure as defined in {{!RFC5280}}.
+
+When x509 certificates related to DIDs are published in the DNS as TLSA records:
+
+- The records MUST be scoped by setting the global underscore name of the TLSA RRset to *_did* (0x5F 0x64 0x69 0x64).
+- The Selector Field of the TLSA record must be set to 0, full certificate: the Certificate binary structure as defined in {{!RFC5280}}.
 
 ### Instances of Multiple Key Pairs
 
@@ -237,7 +242,7 @@ The process below outlines the general steps required to complete the higher ass
 
 1. **Verification of the DID:** The user verifies the DID is represented as a URI record in the associated domain.
    1. In the case of did:web, the domain and record name to be queried is indicated by the last segment of the did. In example, **did:web:example.ca** would translate to a URI record with the name **_did.example.ca**.
-   2. In the case of other did methods, the domain and record name to be queried is indicated by the "dnsDomain" property. In example, **{"dnsDomain": "example.ca"}** would translate to a URI record with the name **_did.example.ca**.
+   2. In the case of other did methods, the domain and record name to be queried is indicated by the "dnsValidationDomain" property. In example, **{"dnsValidationDomain": "example.ca"}** would translate to a URI record with the name **_did.example.ca**.
 
 2. **Verification of the PKI:** The user verifies the verificationMethod/s in the DID document are represented as TLSA record/s in the associated domain.
    1. The domain and record name for the TLSA record to be queried is determined identically to steps 1.a or 1.b.
@@ -276,7 +281,7 @@ Note that Controls 9, 10, and 11 CANNOT BE DELEGATED to an **Issuing Service**
 |7|Domain Zone Mapping|There MUST be domain zone records that map the necessary URI, TLSA, CERT and/or TXT records to the specified did:web identifier.|
 |8|Domain Zone Signing|The domain zone records MUST be signed according to DNSSEC. (RRSIG)|
 |9|Domain Zone Signing Key Control|The Issuing Authority MUST have control over the domain zone keys used for signing and delegation. (KSK and ZSK)|
-|10|Domain Zone Signing Key Generation|The signing keys MUST be generated under the control of the Issuing Authority.|
+|10|Domain Zone Signing Key Generation|The zone signing keys MUST be generated under the control of the Issuing Authority.|
 |11|Hardware Security Module|A FIPS 140-2 compliant hardware security module must be under the control of the Issuing Authority.|
 
 In addition to the technical controls specified in the table it is advisable to add in DANE (DNS-based Authentication of Named Entities) {{!RFC6698}} to secure TLS communications. TLS uses certificates to bind keys to names, which are published by public "Certification Authorities" (CAs). It is important to realize that the public CA model is fundamentally vulnerable because it allows any CA to issue a certificate for any domain name. Thus, a compromised CA can issue a fake replacement certificate which could be used to subvert TLS-protected websites. DANE offers the option to use the DNSSEC infrastructure to store and sign keys and certificates that are used by a TLS-protected website. The keys are bound to names in the Domain Name System (DNS), instead of relying on arbitrary keys and names issued in a potentially compromised certificate.
@@ -317,7 +322,7 @@ Per {{!RFC8552}}, IANA is requested to add the following entries to the
 # W3C Considerations
 
 1. We propose the inclusion of an optional data integrity proof for the DID document, as outlined in {{dataIntegrityProofECDSA}} and {{dataIntegrityProofEdDSA}}.
-2. We propose the inclusion of the optional "dnsDomain" property to the {{didSpecRegistries}} as outlined in section 3.2.
+2. We propose the inclusion of the optional "dnsValidationDomain" property to the {{didSpecRegistries}} as outlined in section 3.2.
 
 # Acknowledgments
 {:numbered="false"}
