@@ -540,9 +540,9 @@ Table of Contents
     |         | Key        |                                          |
     |         | Control    |                                          |
     +---------+------------+------------------------------------------+
-    | 10      | Domain     | The zone signing keys MUST be generated  |
-    |         | Zone       | under the control of the Issuing         |
-    |         | Signing    | Authority.                               |
+    | 10      | Domain     | The domain zone signing key MUST be      |
+    |         | Zone       | generated under the control of the       |
+    |         | Signing    | Issuing Authority.                       |
     |         | Key        |                                          |
     |         | Generation |                                          |
     +---------+------------+------------------------------------------+
