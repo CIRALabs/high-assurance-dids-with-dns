@@ -202,7 +202,7 @@ Hosting the public keys in TLSA records provides a stronger mechanism for the ve
 
 #### Hosting Other Key Formats
 
-Although NOT RECOMMENDED in this guidance, it is possible to host public keys of other certificate and public key formats for validaton using TXT records. For example, a 32 byte secp256k1 public key may be represented as a string in hexadecimal encoded format, or in Bech32 encoded format. Validation methods would need to be additionally specified and implemented for these other certificate and public key formats.
+Although NOT RECOMMENDED in this guidance, it is possible to host public keys of other certificate and public key formats for validation using TXT records. For example, a 32 byte secp256k1 public key may be represented as a string in hexadecimal encoded format, or in Bech32 encoded format. Validation methods would need to be additionally specified and implemented for these other certificate and public key formats.
 
 # Role of DNSSEC for Assurance and Revocation
 
