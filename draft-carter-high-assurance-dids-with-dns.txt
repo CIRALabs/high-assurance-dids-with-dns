@@ -5,11 +5,11 @@
 Network Working Group                                          J. Carter
 Internet-Draft                                                 J. Latour
 Intended status: Informational                                      CIRA
-Expires: 17 January 2025                                       M. Glaude
+Expires: 18 January 2025                                       M. Glaude
                                                           Northern Block
                                                                 T. Bouma
                                               Digital Governance Council
-                                                            16 July 2024
+                                                            17 July 2024
 
 
                       High Assurance DIDs with DNS
@@ -52,7 +52,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 17 January 2025.
+   This Internet-Draft will expire on 18 January 2025.
 
 Copyright Notice
 
@@ -72,7 +72,7 @@ Table of Contents
    3.  Securing a DID using the DNS
      3.1.  Specifically for did:web
      3.2.  Consideration for other DID methods
-       3.2.1.  The "dnsDomain" property
+       3.2.1.  dnsValidationDomain
      3.3.  Mapping DIDs to Domains with URI records
        3.3.1.  URI record scoping
        3.3.2.  Entity Handles
@@ -191,18 +191,19 @@ Table of Contents
    explicitly duplicated in the DNS, rather than only being referenced
    back to the DID document which is being verified.
 
-3.2.1.  The "dnsDomain" property
+3.2.1.  dnsValidationDomain
 
    To faciliate the linking of a non did:web to the DNS, we propose the
-   inclusion of an optional property "dnsDomain" to the DID document.
+   inclusion of an optional property "dnsValidationDomain" to the DID
+   document.
 
-   {"dnsDomain": "example.ca"}
+   {"dnsValidationDomain": "example.ca"}
 
    In the case of non did:webs that wish to use DNS for increased
    assurance, the verification process is identical to the one used for
    did:web but instead of referencing the domain in the identifier, the
-   verifier MUST use the domain referenced by the "dnsDomain" property
-   instead.
+   verifier MUST use the domain referenced by the "dnsValidationDomain"
+   property instead.
 
 3.3.  Mapping DIDs to Domains with URI records
 
@@ -251,9 +252,9 @@ Table of Contents
    availability.
 
    TLSA records [RFC6698] provide a simple way of hosting cryptographic
-   information in the DNS.  Key material can be represented in TLSA
-   records either hashed or unhashed depending on the requirements and
-   use case of the implementer.
+   information in the DNS.  Key material or full x509 certificates can
+   be represented in TLSA records either hashed or unhashed depending on
+   the requirements and use case of the implementer.
 
    It is important to note that as key sizes increase in respect to the
    needs of post-quantum cryptography, TLSA records can support these
@@ -270,6 +271,16 @@ Table of Contents
 
    *  The Selector Field of the TLSA record must be set to 1,
       SubjectPublicKeyInfo: DER-encoded binary structure as defined in
+      [RFC5280].
+
+   When x509 certificates related to DIDs are published in the DNS as
+   TLSA records:
+
+   *  The records MUST be scoped by setting the global underscore name
+      of the TLSA RRset to __did_ (0x5F 0x64 0x69 0x64).
+
+   *  The Selector Field of the TLSA record must be set to 0, full
+      certificate: the Certificate binary structure as defined in
       [RFC5280].
 
 3.4.2.  Instances of Multiple Key Pairs
@@ -396,9 +407,10 @@ Table of Contents
            with the name *_did.example.ca*.
 
        2.  In the case of other did methods, the domain and record name
-           to be queried is indicated by the "dnsDomain" property.  In
-           example, *{"dnsDomain": "example.ca"}* would translate to a
-           URI record with the name *_did.example.ca*.
+           to be queried is indicated by the "dnsValidationDomain"
+           property.  In example, *{"dnsValidationDomain":
+           "example.ca"}* would translate to a URI record with the name
+           *_did.example.ca*.
 
    2.  *Verification of the PKI:* The user verifies the
        verificationMethod/s in the DID document are represented as TLSA
@@ -718,8 +730,8 @@ Appendix A.  W3C Considerations
        the DID document, as outlined in [dataIntegrityProofECDSA] and
        [dataIntegrityProofEdDSA].
 
-   2.  We propose the inclusion of the optional "dnsDomain" property to
-       the [didSpecRegistries] as outlined in section 3.2.
+   2.  We propose the inclusion of the optional "dnsValidationDomain"
+       property to the [didSpecRegistries] as outlined in section 3.2.
 
 Acknowledgments
 

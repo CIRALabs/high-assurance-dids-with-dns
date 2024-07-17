@@ -1033,7 +1033,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Carter, et al.</td>
-<td class="center">Expires 17 January 2025</td>
+<td class="center">Expires 18 January 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1046,12 +1046,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-carter-high-assurance-dids-with-dns-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2024-07-16" class="published">16 July 2024</time>
+<time datetime="2024-07-17" class="published">17 July 2024</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-01-17">17 January 2025</time></dd>
+<dd class="expires"><time datetime="2025-01-18">18 January 2025</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1108,7 +1108,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 17 January 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 18 January 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1150,7 +1150,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
                 <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-consideration-for-other-did" class="internal xref">Consideration for other DID methods</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2.2.1">
-                    <p id="section-toc.1-1.3.2.2.2.1.1"><a href="#section-3.2.1" class="auto internal xref">3.2.1</a>.  <a href="#name-the-dnsdomain-property" class="internal xref">The "dnsDomain" property</a></p>
+                    <p id="section-toc.1-1.3.2.2.2.1.1"><a href="#section-3.2.1" class="auto internal xref">3.2.1</a>.  <a href="#name-dnsvalidationdomain" class="internal xref">dnsValidationDomain</a></p>
 </li>
                 </ul>
 </li>
@@ -1296,18 +1296,18 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-consideration-for-other-did" class="section-name selfRef">Consideration for other DID methods</a>
         </h3>
 <p id="section-3.2-1">In the case of other DID methods, the association between a DID and a DNS domain is still possible although less inherent than with the aforementioned did:web. As such, it provides much of the same benefits as the <span>[<a href="#wellKnownDidConfiguration" class="cite xref">wellKnownDidConfiguration</a>]</span>, but the method in which it accomplishes this is slightly different. Specifically, the integrity of the DID document is secured by including a dataIntegrityProof inside the DID document itself rather than in a seperate resource, and the key material used to verify this proof is explicitly duplicated in the DNS, rather than only being referenced back to the DID document which is being verified.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
-<div id="the-dnsdomain-property">
+<div id="dnsvalidationdomain">
 <section id="section-3.2.1">
-          <h4 id="name-the-dnsdomain-property">
-<a href="#section-3.2.1" class="section-number selfRef">3.2.1. </a><a href="#name-the-dnsdomain-property" class="section-name selfRef">The "dnsDomain" property</a>
+          <h4 id="name-dnsvalidationdomain">
+<a href="#section-3.2.1" class="section-number selfRef">3.2.1. </a><a href="#name-dnsvalidationdomain" class="section-name selfRef">dnsValidationDomain</a>
           </h4>
-<p id="section-3.2.1-1">To faciliate the linking of a non did:web to the DNS, we propose the inclusion of an optional property "dnsDomain" to the DID document.<a href="#section-3.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.2.1-1">To faciliate the linking of a non did:web to the DNS, we propose the inclusion of an optional property "dnsValidationDomain" to the DID document.<a href="#section-3.2.1-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-3.2.1-2">
 <pre>
-{"dnsDomain": "example.ca"}
+{"dnsValidationDomain": "example.ca"}
 </pre><a href="#section-3.2.1-2" class="pilcrow">¶</a>
 </div>
-<p id="section-3.2.1-3">In the case of non did:webs that wish to use DNS for increased assurance, the verification process is identical to the one used for did:web but instead of referencing the domain in the identifier, the verifier <span class="bcp14">MUST</span> use the domain referenced by the "dnsDomain" property instead.<a href="#section-3.2.1-3" class="pilcrow">¶</a></p>
+<p id="section-3.2.1-3">In the case of non did:webs that wish to use DNS for increased assurance, the verification process is identical to the one used for did:web but instead of referencing the domain in the identifier, the verifier <span class="bcp14">MUST</span> use the domain referenced by the "dnsValidationDomain" property instead.<a href="#section-3.2.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1350,7 +1350,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 <a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-mapping-verificationmethods" class="section-name selfRef">Mapping verificationMethods to the DNS with TLSA records</a>
         </h3>
 <p id="section-3.4-1">The DID to DNS mapping illustrated in section 3.2 provides a way of expressing the association between a DID and a domain, but no way of verifying that relationship. By hosting the public keys of that DID in its associated domain’s zone, we can provide a cryptographic linkage to bolster this relationship while also providing access to the DID’s public keys outside of the infrastructure where the DID document itself resides, facilitating interoperability and increasing availability.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
-<p id="section-3.4-2">TLSA records <span>[<a href="#RFC6698" class="cite xref">RFC6698</a>]</span> provide a simple way of hosting cryptographic information in the DNS. Key material can be represented in TLSA records either hashed or unhashed depending on the requirements and use case of the implementer.<a href="#section-3.4-2" class="pilcrow">¶</a></p>
+<p id="section-3.4-2">TLSA records <span>[<a href="#RFC6698" class="cite xref">RFC6698</a>]</span> provide a simple way of hosting cryptographic information in the DNS. Key material or full x509 certificates can be represented in TLSA records either hashed or unhashed depending on the requirements and use case of the implementer.<a href="#section-3.4-2" class="pilcrow">¶</a></p>
 <p id="section-3.4-3">It is important to note that as key sizes increase in respect to the needs of post-quantum cryptography, TLSA records can support these keys via the hashed representation, making this implementation post-quantum compatible.<a href="#section-3.4-3" class="pilcrow">¶</a></p>
 <div id="tlsa-record-scoping-selector-field">
 <section id="section-3.4.1">
@@ -1364,6 +1364,15 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
 </li>
             <li class="normal" id="section-3.4.1-2.2">
               <p id="section-3.4.1-2.2.1">The Selector Field of the TLSA record must be set to 1, SubjectPublicKeyInfo: DER-encoded binary structure as defined in <span>[<a href="#RFC5280" class="cite xref">RFC5280</a>]</span>.<a href="#section-3.4.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+<p id="section-3.4.1-3">When x509 certificates related to DIDs are published in the DNS as TLSA records:<a href="#section-3.4.1-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3.4.1-4.1">
+              <p id="section-3.4.1-4.1.1">The records <span class="bcp14">MUST</span> be scoped by setting the global underscore name of the TLSA RRset to <em>_did</em> (0x5F 0x64 0x69 0x64).<a href="#section-3.4.1-4.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-3.4.1-4.2">
+              <p id="section-3.4.1-4.2.1">The Selector Field of the TLSA record must be set to 0, full certificate: the Certificate binary structure as defined in <span>[<a href="#RFC5280" class="cite xref">RFC5280</a>]</span>.<a href="#section-3.4.1-4.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
 </section>
@@ -1454,7 +1463,7 @@ appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶<
               <p id="section-6-3.1.2.1.1">In the case of did:web, the domain and record name to be queried is indicated by the last segment of the did. In example, <strong>did:web:example.ca</strong> would translate to a URI record with the name <strong>_did.example.ca</strong>.<a href="#section-6-3.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
             <li id="section-6-3.1.2.2">
-              <p id="section-6-3.1.2.2.1">In the case of other did methods, the domain and record name to be queried is indicated by the "dnsDomain" property. In example, <strong>{"dnsDomain": "example.ca"}</strong> would translate to a URI record with the name <strong>_did.example.ca</strong>.<a href="#section-6-3.1.2.2.1" class="pilcrow">¶</a></p>
+              <p id="section-6-3.1.2.2.1">In the case of other did methods, the domain and record name to be queried is indicated by the "dnsValidationDomain" property. In example, <strong>{"dnsValidationDomain": "example.ca"}</strong> would translate to a URI record with the name <strong>_did.example.ca</strong>.<a href="#section-6-3.1.2.2.1" class="pilcrow">¶</a></p>
 </li>
           </ol>
 </li>
@@ -1790,7 +1799,7 @@ Note that Controls 9, 10, and 11 CANNOT BE DELEGATED to an <strong>Issuing Servi
           <p id="appendix-A-1.1.1">We propose the inclusion of an optional data integrity proof for the DID document, as outlined in <span>[<a href="#dataIntegrityProofECDSA" class="cite xref">dataIntegrityProofECDSA</a>]</span> and <span>[<a href="#dataIntegrityProofEdDSA" class="cite xref">dataIntegrityProofEdDSA</a>]</span>.<a href="#appendix-A-1.1.1" class="pilcrow">¶</a></p>
 </li>
         <li id="appendix-A-1.2">
-          <p id="appendix-A-1.2.1">We propose the inclusion of the optional "dnsDomain" property to the <span>[<a href="#didSpecRegistries" class="cite xref">didSpecRegistries</a>]</span> as outlined in section 3.2.<a href="#appendix-A-1.2.1" class="pilcrow">¶</a></p>
+          <p id="appendix-A-1.2.1">We propose the inclusion of the optional "dnsValidationDomain" property to the <span>[<a href="#didSpecRegistries" class="cite xref">didSpecRegistries</a>]</span> as outlined in section 3.2.<a href="#appendix-A-1.2.1" class="pilcrow">¶</a></p>
 </li>
       </ol>
 </section>
