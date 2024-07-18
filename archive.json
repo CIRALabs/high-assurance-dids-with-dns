@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-07-16T00:19:46.565336+00:00",
+  "timestamp": "2024-07-18T00:19:31.413061+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -603,6 +603,22 @@
       "updatedAt": "2024-07-08T21:28:12Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 42,
+      "id": "I_kwDOLLNO0c6P7YSF",
+      "title": "Replace XXXX in the example in section 3.1",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/42",
+      "state": "OPEN",
+      "author": "swcurran",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The example in [Section 3.1](https://github.com/CIRALabs/high-assurance-dids-with-dns/blob/main/draft-carter-high-assurance-dids-with-dns.md#mapping-dids-to-domains-with-uri-records) uses \"did:web:XXXXXX\u201d vs. matching the DID web to the DNS entry.  Later examples in the next sub-section do match the did and domain.  I don\u2019t see why this shouldn\u2019t as well.",
+      "createdAt": "2024-07-17T22:17:31Z",
+      "updatedAt": "2024-07-17T22:17:31Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -1119,6 +1135,104 @@
         "oid": "a0b072e9805920dd5a29f1be9bbb2e7b68b8eca7"
       },
       "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 39,
+      "id": "PR_kwDOLLNO0c51iHuf",
+      "title": "Minor changes",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/pull/39",
+      "state": "MERGED",
+      "author": "jessecarter111",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "- Change name of dnsDomain property to something more descriptive\r\n- Add explicit mention of x509 certificates\r\n- Clarify control 10",
+      "createdAt": "2024-07-16T15:41:01Z",
+      "updatedAt": "2024-07-17T16:18:37Z",
+      "baseRepository": "CIRALabs/high-assurance-dids-with-dns",
+      "baseRefName": "main",
+      "baseRefOid": "ff5de01b94471734a40855b1dabdc15353a6b049",
+      "headRepository": "CIRALabs/high-assurance-dids-with-dns",
+      "headRefName": "minor-revisions",
+      "headRefOid": "dfc2b1e7a20728a7d1d6b4cdb57517a8c2d5d96f",
+      "closedAt": "2024-07-17T16:18:30Z",
+      "mergedAt": "2024-07-17T16:18:30Z",
+      "mergedBy": "jessecarter111",
+      "mergeCommit": {
+        "oid": "1d80e7cdb8f82351f147160d474fbc382daf8be0"
+      },
+      "comments": [
+        {
+          "author": "trbouma",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Can we just say 'full certificate' - x509 is one of several formats and does not need special mention.",
+          "createdAt": "2024-07-16T18:23:53Z",
+          "updatedAt": "2024-07-16T18:23:53Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 40,
+      "id": "PR_kwDOLLNO0c51iLSE",
+      "title": "Control 10",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/pull/40",
+      "state": "MERGED",
+      "author": "trbouma",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "add domain zone signing key to control 10",
+      "createdAt": "2024-07-16T15:49:41Z",
+      "updatedAt": "2024-07-16T16:21:16Z",
+      "baseRepository": "CIRALabs/high-assurance-dids-with-dns",
+      "baseRefName": "main",
+      "baseRefOid": "a0b072e9805920dd5a29f1be9bbb2e7b68b8eca7",
+      "headRepository": "trbouma/high-assurance-dids-with-dns",
+      "headRefName": "control_10",
+      "headRefOid": "e5c71eeafc844899f2b31454f6641b84c35a6b23",
+      "closedAt": "2024-07-16T16:21:16Z",
+      "mergedAt": "2024-07-16T16:21:16Z",
+      "mergedBy": "jessecarter111",
+      "mergeCommit": {
+        "oid": "ff5de01b94471734a40855b1dabdc15353a6b049"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 41,
+      "id": "PR_kwDOLLNO0c51jgKa",
+      "title": "add other methods",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/pull/41",
+      "state": "CLOSED",
+      "author": "trbouma",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Add section on hosting other key formats.  ",
+      "createdAt": "2024-07-16T19:41:46Z",
+      "updatedAt": "2024-07-17T15:18:26Z",
+      "baseRepository": "CIRALabs/high-assurance-dids-with-dns",
+      "baseRefName": "main",
+      "baseRefOid": "ff5de01b94471734a40855b1dabdc15353a6b049",
+      "headRepository": "trbouma/high-assurance-dids-with-dns",
+      "headRefName": "mapping_other_records",
+      "headRefOid": "b082bce024e434edf03c61f0d3bc53a65645c921",
+      "closedAt": "2024-07-17T15:18:26Z",
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "trbouma",
+          "authorAssociation": "COLLABORATOR",
+          "body": "after discussion, this may add to much ambiguity. Consider for future revision",
+          "createdAt": "2024-07-17T15:18:26Z",
+          "updatedAt": "2024-07-17T15:18:26Z"
+        }
+      ],
       "reviews": []
     }
   ]
