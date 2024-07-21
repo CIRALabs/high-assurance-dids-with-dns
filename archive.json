@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-07-18T00:19:31.413061+00:00",
+  "timestamp": "2024-07-21T00:22:06.507566+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -617,6 +617,22 @@
       "body": "The example in [Section 3.1](https://github.com/CIRALabs/high-assurance-dids-with-dns/blob/main/draft-carter-high-assurance-dids-with-dns.md#mapping-dids-to-domains-with-uri-records) uses \"did:web:XXXXXX\u201d vs. matching the DID web to the DNS entry.  Later examples in the next sub-section do match the did and domain.  I don\u2019t see why this shouldn\u2019t as well.",
       "createdAt": "2024-07-17T22:17:31Z",
       "updatedAt": "2024-07-17T22:17:31Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 43,
+      "id": "I_kwDOLLNO0c6QFBdN",
+      "title": "Verification Method - history?",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/43",
+      "state": "OPEN",
+      "author": "trbouma",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Since verificationMethod can support an array, I am wondering if we can add a property to indicate which is current, and which has expired. This way it is possible to have a verification history if someone needs to verify an older doc with the key that was valid at the time.\r\n\r\nSee example below: A new \"id\" has been added, and the old \"id\" has an \"expires\" attribute.\r\n\r\n\r\n\r\n```\r\n\"verificationMethod\": [\r\n     {\r\n      \"id\": \"did:web:trustroot.ca#key-2\",\r\n      \"type\": \"Ed25519VerificationKey2018\",\r\n      \"controller\": \"did:web:trustroot.ca\",\r\n      \"publicKeyJwk\": {\r\n        \"crv\": \"Ed25519\",\r\n        \"x\": \"wwCkQ_BCdECskL2oW0-XiWh5Vkp6tkm5dvp9Ff6vwiU\",\r\n        \"kty\": \"OKP\"\r\n      }\r\n    ,\r\n    {\r\n      \"id\": \"did:web:trustroot.ca#key-1\",\r\n      \"type\": \"Ed25519VerificationKey2018\",\r\n      \"controller\": \"did:web:trustroot.ca\",\r\n      \"publicKeyJwk\": {\r\n        \"crv\": \"Ed25519\",\r\n        \"x\": \"wwCkQ_BCdECskL2oW0-XiWh5Vkp6tkm5dvp9Ff6vwiU\",\r\n        \"kty\": \"OKP\"\r\n      },\r\n     \"expires\": \"2024-07-18...\"\r\n    }\r\n  ]\r\n```",
+      "createdAt": "2024-07-18T19:40:24Z",
+      "updatedAt": "2024-07-18T19:40:25Z",
       "closedAt": null,
       "comments": []
     }
