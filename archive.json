@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-07-21T00:22:06.507566+00:00",
+  "timestamp": "2024-07-23T00:19:51.333516+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -609,15 +609,15 @@
       "id": "I_kwDOLLNO0c6P7YSF",
       "title": "Replace XXXX in the example in section 3.1",
       "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/42",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "swcurran",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "The example in [Section 3.1](https://github.com/CIRALabs/high-assurance-dids-with-dns/blob/main/draft-carter-high-assurance-dids-with-dns.md#mapping-dids-to-domains-with-uri-records) uses \"did:web:XXXXXX\u201d vs. matching the DID web to the DNS entry.  Later examples in the next sub-section do match the did and domain.  I don\u2019t see why this shouldn\u2019t as well.",
       "createdAt": "2024-07-17T22:17:31Z",
-      "updatedAt": "2024-07-17T22:17:31Z",
-      "closedAt": null,
+      "updatedAt": "2024-07-22T16:46:07Z",
+      "closedAt": "2024-07-22T16:46:07Z",
       "comments": []
     },
     {
