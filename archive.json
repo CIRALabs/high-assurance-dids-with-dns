@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-07-23T00:19:51.333516+00:00",
+  "timestamp": "2024-07-25T00:19:42.538051+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -633,6 +633,22 @@
       "body": "Since verificationMethod can support an array, I am wondering if we can add a property to indicate which is current, and which has expired. This way it is possible to have a verification history if someone needs to verify an older doc with the key that was valid at the time.\r\n\r\nSee example below: A new \"id\" has been added, and the old \"id\" has an \"expires\" attribute.\r\n\r\n\r\n\r\n```\r\n\"verificationMethod\": [\r\n     {\r\n      \"id\": \"did:web:trustroot.ca#key-2\",\r\n      \"type\": \"Ed25519VerificationKey2018\",\r\n      \"controller\": \"did:web:trustroot.ca\",\r\n      \"publicKeyJwk\": {\r\n        \"crv\": \"Ed25519\",\r\n        \"x\": \"wwCkQ_BCdECskL2oW0-XiWh5Vkp6tkm5dvp9Ff6vwiU\",\r\n        \"kty\": \"OKP\"\r\n      }\r\n    ,\r\n    {\r\n      \"id\": \"did:web:trustroot.ca#key-1\",\r\n      \"type\": \"Ed25519VerificationKey2018\",\r\n      \"controller\": \"did:web:trustroot.ca\",\r\n      \"publicKeyJwk\": {\r\n        \"crv\": \"Ed25519\",\r\n        \"x\": \"wwCkQ_BCdECskL2oW0-XiWh5Vkp6tkm5dvp9Ff6vwiU\",\r\n        \"kty\": \"OKP\"\r\n      },\r\n     \"expires\": \"2024-07-18...\"\r\n    }\r\n  ]\r\n```",
       "createdAt": "2024-07-18T19:40:24Z",
       "updatedAt": "2024-07-18T19:40:25Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 44,
+      "id": "I_kwDOLLNO0c6QtpHk",
+      "title": "Add DID into subject alternative name for X509 cert?",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/44",
+      "state": "OPEN",
+      "author": "trbouma",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Could this be an additional control added in for X509 certificate issuance Adding the did:web into the Subject Alternative Name? \r\n\r\nSee example below with the URI added.\r\n\r\nThis could be checked to make extra sure that the X509 cert is issued specifically in relation to be used for the DID\r\n\r\n\r\n```\r\n\r\nSubject Alternative Name:\r\n  DNS:www.example.com,\r\n  DNS:example.com,\r\n  DNS:shop.example.com,\r\n  IP:192.0.2.1,\r\n  email:admin@example.com,\r\n  URI:did:web:example.com\r\n\r\n```\r\n",
+      "createdAt": "2024-07-24T15:29:07Z",
+      "updatedAt": "2024-07-24T15:29:07Z",
       "closedAt": null,
       "comments": []
     }
