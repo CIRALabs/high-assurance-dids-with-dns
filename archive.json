@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2024-09-19T00:21:44.368719+00:00",
+  "timestamp": "2024-09-22T00:24:25.814992+00:00",
   "repo": "CIRALabs/high-assurance-dids-with-dns",
   "labels": [
     {
@@ -649,6 +649,22 @@
       "body": "Could this be an additional control added in for X509 certificate issuance Adding the did:web into the Subject Alternative Name? \r\n\r\nSee example below with the URI added.\r\n\r\nThis could be checked to make extra sure that the X509 cert is issued specifically in relation to be used for the DID\r\n\r\n\r\n```\r\n\r\nSubject Alternative Name:\r\n  DNS:www.example.com,\r\n  DNS:example.com,\r\n  DNS:shop.example.com,\r\n  IP:192.0.2.1,\r\n  email:admin@example.com,\r\n  URI:did:web:example.com\r\n\r\n```\r\n",
       "createdAt": "2024-07-24T15:29:07Z",
       "updatedAt": "2024-07-24T15:29:07Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 45,
+      "id": "I_kwDOLLNO0c6XamWu",
+      "title": "normative references cannot be expired or expireing",
+      "url": "https://github.com/CIRALabs/high-assurance-dids-with-dns/issues/45",
+      "state": "OPEN",
+      "author": "TomCJones",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "To get thru review you will need to clean up normative references.\r\n[RFC6698] Has several refs on it to updates - you need to see if the updates apply to this document\r\n[DID-in-the-DNS] is expired - does that matter - if so you will become normative - to keep this move to informative\r\n[wellKnownDidConfiguration] - is this really normative? it doesn't sound like a spec (may apply to others)\r\n",
+      "createdAt": "2024-09-21T14:49:37Z",
+      "updatedAt": "2024-09-21T14:50:28Z",
       "closedAt": null,
       "comments": []
     }
