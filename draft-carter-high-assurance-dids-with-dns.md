@@ -151,7 +151,7 @@ In the case of non did:webs that wish to use DNS for increased assurance, the ve
 
 The association to a domain stemming only from the did is unidirectional. By leveraging URI records as outlined in {{DID-in-the-DNS}}, we can create a bidirectional relationship, allowing a domain to publish their associated DID in the DNS.
 
-***Ex: _did.example-issuer.ca IN URI 1 0 “did:web:XXXXXX”***
+***Ex: _did.example-issuer.ca IN URI 1 0 “did:web:example-issuer.ca”***
 
 This relationship enhances security, as an entity would require control over both the DID and the domain’s DNS server to create this bidirectional association, reducing the likelihood of malicious impersonation.
 
@@ -226,6 +226,7 @@ In accordance with W3C specifications, we propose including a data integrity pro
        "expires": "2099-10-11T15:27:27Z",
        "proofPurpose": "assertionMethod",
        "verificationMethod": "did:web:trustregistry.ca#key-1",
+       "proofValue": "zQeVbY4oey5q2M3XKaxup3tmzN4DRFTLVqpLMweBrSxMY2xHX5XTYV8nQApmEcqaqA3Q1gVHMrXFkXJeV6doDwLWx"
     }
 
 The data integrity proof SHOULD be signed using a verificationMethod that has an associated TLSA record to allow for the verification of the data integrity proof using pki material contained outside of the DID document. This provides an added layer of authenticity, as the PKI information contained in the DID document would need to be repudiated across 2 different domains, the resource hosting the DID document and its associated DNS domain.
