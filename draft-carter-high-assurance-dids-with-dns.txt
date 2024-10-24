@@ -5,11 +5,11 @@
 Network Working Group                                          J. Carter
 Internet-Draft                                                 J. Latour
 Intended status: Informational                                      CIRA
-Expires: 18 January 2025                                       M. Glaude
+Expires: 27 April 2025                                         M. Glaude
                                                           Northern Block
                                                                 T. Bouma
                                               Digital Governance Council
-                                                            17 July 2024
+                                                         24 October 2024
 
 
                       High Assurance DIDs with DNS
@@ -52,7 +52,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 18 January 2025.
+   This Internet-Draft will expire on 27 April 2025.
 
 Copyright Notice
 
@@ -212,7 +212,7 @@ Table of Contents
    [DID-in-the-DNS], we can create a bidirectional relationship,
    allowing a domain to publish their associated DID in the DNS.
 
-   *_Ex: _did.example-issuer.ca IN URI 1 0 “did:web:XXXXXX”_*
+   *_Ex: _did.example-issuer.ca IN URI 1 0 “did:web:example-issuer.ca”_*
 
    This relationship enhances security, as an entity would require
    control over both the DID and the domain’s DNS server to create this
@@ -361,14 +361,15 @@ Table of Contents
    Depending on the use case and security requirements, a longer or
    shorter expiry period would be used as necessary.
 
-   "proof": {
-      "type": "DataIntegrityProof",
-      "cryptosuite": "ecdsa-jfc-2019",
-      "created": "2023-10-11T15:27:27Z",
-      "expires": "2099-10-11T15:27:27Z",
-      "proofPurpose": "assertionMethod",
-      "verificationMethod": "did:web:trustregistry.ca#key-1",
-   }
+"proof": {
+   "type": "DataIntegrityProof",
+   "cryptosuite": "ecdsa-jfc-2019",
+   "created": "2023-10-11T15:27:27Z",
+   "expires": "2099-10-11T15:27:27Z",
+   "proofPurpose": "assertionMethod",
+   "verificationMethod": "did:web:trustregistry.ca#key-1",
+   "proofValue": "zQeVbY4oey5q2M3XKaxup3tmzN4DRFTLVqpLMweBrSxMY2xHX5XTYV8nQApmEcqaqA3Q1gVHMrXFkXJeV6doDwLWx"
+}
 
    The data integrity proof SHOULD be signed using a verificationMethod
    that has an associated TLSA record to allow for the verification of
