@@ -645,10 +645,6 @@ Table of Contents
               <https://www.w3.org/TR/vc-di-eddsa/#proof-
               representations>.
 
-   [didSpecRegistries]
-              "Did Specification Registries", n.d.,
-              <https://w3c.github.io/did-spec-registries>.
-
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997,
@@ -695,6 +691,10 @@ Table of Contents
 
    [DIDCore]  "Decentralized Identifiers (DIDs) v1.0", n.d.,
               <https://www.w3.org/TR/did-core>.
+
+   [didSpecRegistries]
+              "Did Specification Registries", n.d.,
+              <https://w3c.github.io/did-spec-registries>.
 
    [Self-Sovereign-Identity]
               Reed, D. and A. Preukschat, "Self-Sovereign Identity",
