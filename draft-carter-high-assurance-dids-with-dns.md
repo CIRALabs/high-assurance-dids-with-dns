@@ -51,41 +51,28 @@ informative:
       seriesinfo:
          ISBN: 9781617296598
       date: 2021
-
-normative:
-   DID-Specification-Registries:
-      title: "DID Specification Registries"
-      target: https://www.w3.org/TR/did-spec-registries/#did-methods
-   W3C-VC-Data-Model:
-      title: "Verifiable Credentials Data Model v1.1"
-      target: https://www.w3.org/TR/vc-data-model/
-   alsoKnownAs:
-      title: "Decentralized Identifiers (DIDs) v1.0"
-      target: https://www.w3.org/TR/did-core/#also-known-as
-   services:
-      title: "Decentralized Identifiers (DIDs) v1.0"
-      target: https://www.w3.org/TR/did-core/#services
-   LinkedDomains:
-      title: "Well Known DID Configuration"
-      target: https://identity.foundation/.well-known/resources/did-configuration/#linked-domain-service-endpoint
    DID-in-the-DNS:
       title: "The Decentralized Identifier (DID) in the DNS"
       target: https://datatracker.ietf.org/doc/html/draft-mayrhofer-did-dns-05#section-2
+   wellKnownDidConfiguration:
+      title: "Well Known DID Configuration"
+      target: https://identity.foundation/.well-known/resources/did-configuration/
+   W3C-VC-Data-Model:
+      title: "Verifiable Credentials Data Model v2.0"
+      target: https://www.w3.org/TR/vc-data-model/
+   DIDCore:
+      title: "Decentralized Identifiers (DIDs) v1.0"
+      target: https://www.w3.org/TR/did-core
+normative:
    verificationMethod:
       title: "Decentralized Identifiers (DIDs) v1.0"
       target: https://www.w3.org/TR/did-core/#verification-methods
-   issuer:
-      title: "Verifiable Credentials Data Model v2.0"
-      target: https://www.w3.org/TR/vc-data-model-2.0/#issuer
    dataIntegrityProofECDSA:
       title: "Data Integrity ECDSA Cryptosuites v1.0"
       target: https://www.w3.org/TR/vc-di-ecdsa/#proof-representations
    dataIntegrityProofEdDSA:
       title: "Data Integrity ECDSA Cryptosuites v1.0"
       target: https://www.w3.org/TR/vc-di-eddsa/#proof-representations
-   wellKnownDidConfiguration:
-      title: "Well Known DID Configuration"
-      target: https://identity.foundation/.well-known/resources/did-configuration/
    didSpecRegistries:
       title: "Did Specification Registries"
       target: "https://w3c.github.io/did-spec-registries"
