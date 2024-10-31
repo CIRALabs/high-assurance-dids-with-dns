@@ -63,6 +63,9 @@ informative:
    DIDCore:
       title: "Decentralized Identifiers (DIDs) v1.0"
       target: https://www.w3.org/TR/did-core
+   didSpecRegistries:
+      title: "Did Specification Registries"
+      target: "https://w3c.github.io/did-spec-registries"
 normative:
    verificationMethod:
       title: "Decentralized Identifiers (DIDs) v1.0"
@@ -73,9 +76,6 @@ normative:
    dataIntegrityProofEdDSA:
       title: "Data Integrity ECDSA Cryptosuites v1.0"
       target: https://www.w3.org/TR/vc-di-eddsa/#proof-representations
-   didSpecRegistries:
-      title: "Did Specification Registries"
-      target: "https://w3c.github.io/did-spec-registries"
 
 --- abstract
 
