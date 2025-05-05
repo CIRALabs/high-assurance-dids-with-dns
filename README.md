@@ -1,3 +1,5 @@
+<!-- regenerate: on (set to off if you edit this file) -->
+
 # High Assurance DIDs with DNS
 
 This is the working area for the individual Internet-Draft, "High Assurance DIDs with DNS".
